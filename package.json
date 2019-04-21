@@ -1,11 +1,14 @@
 {
-  "name": "angular-electron",
-  "version": "5.1.0",
-  "description": "Angular 7 with Electron (Typescript + SASS + Hot Reload)",
-  "homepage": "https://github.com/maximegris/angular-electron",
+  "name": "ror2-mod-manager",
+  "version": "0.0.0",
+  "description": "Mod Manager for Risk of Rain 2 using thunderstore.io",
+  "homepage": "https://github.com/scottbot95/RoR2ModManager",
+  "repository": {
+    "url": "https://github.com/scottbot95/RoR2ModManager"
+  },
   "author": {
-    "name": "Maxime GRIS",
-    "email": "maxime.gris@gmail.com"
+    "name": "Scott Techau",
+    "email": "scotttechau@gmail.com"
   },
   "keywords": [
     "angular",
@@ -55,7 +58,7 @@
     "@types/jasmine": "2.8.7",
     "@types/jasminewd2": "2.0.3",
     "@types/mocha": "^5.2.6",
-    "@types/node": "8.9.4",
+    "@types/node": "^8.9.4",
     "chai": "^4.2.0",
     "codelyzer": "4.5.0",
     "conventional-changelog-cli": "2.0.11",
