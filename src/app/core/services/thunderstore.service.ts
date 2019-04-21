@@ -6,7 +6,7 @@ import { distinctUntilChanged } from 'rxjs/operators';
 
 @Injectable()
 export class ThunderstoreService {
-  private baseUrl = 'http://thunderstore.io/api/v1';
+  private baseUrl = 'https://thunderstore.io/api/v1';
 
   private allPackagesSource = new BehaviorSubject<Package[]>(null);
   public allPackages$ = this.allPackagesSource
