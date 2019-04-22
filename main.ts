@@ -1,13 +1,9 @@
 import { app, BrowserWindow, autoUpdater } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
-import * as Store from 'electron-store';
 
-import {
-  defaultConfig,
-  preferencesSchema,
-  UserPreferences
-} from './src/electron/preferences.model';
+import { UserPreferences } from './src/electron/preferences.model';
+import { prefs } from './src/electron/prefs';
 
 const server = 'https://hazel.scottbot95.now.sh';
 const feed = `${server}/update/${process.platform}/${app.getVersion()}`;
@@ -17,12 +13,6 @@ autoUpdater.setFeedURL({ url: feed });
 let win: BrowserWindow, serve: boolean;
 const args = process.argv.slice(1);
 serve = args.some(val => val === '--serve');
-
-const prefs = new Store({
-  name: 'user-preferences',
-  defaults: defaultConfig,
-  schema: preferencesSchema
-});
 
 function createWindow() {
   const { height, width, x, y } = <UserPreferences['windowBounds']>(

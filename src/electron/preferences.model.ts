@@ -3,6 +3,7 @@ import { JSONSchema } from 'json-schema-typed';
 export interface UserPreferences {
   windowBounds: { width: number; height: number; x: number; y: number };
   windowMaximized?: boolean;
+  darkMode?: boolean;
   ror2_path?: string;
 }
 
@@ -38,6 +39,9 @@ export const preferencesSchema = <Schema>{
   },
   ror2_path: {
     type: 'string'
+  },
+  darkMode: {
+    type: 'boolean'
   }
 };
 
