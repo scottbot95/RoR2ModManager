@@ -10,7 +10,16 @@
     <mat-toolbar>Menu</mat-toolbar>
     <mat-divider></mat-divider>
     <mat-nav-list (click)="drawer.mode === 'over' && drawer.close()">
-      <a mat-list-item routerLinkActive="active" routerLink="/">Home</a>
+      <a
+        mat-list-item
+        routerLinkActive="active"
+        routerLink="/"
+        [routerLinkActiveOptions]="{ exact: true }"
+        >Home</a
+      >
+      <a mat-list-item routerLinkActive="active" routerLink="/packages"
+        >Packages</a
+      >
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>

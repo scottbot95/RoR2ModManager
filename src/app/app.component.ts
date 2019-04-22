@@ -17,10 +17,11 @@ export class AppComponent implements OnInit {
     private electronService: ElectronService,
     private translate: TranslateService,
     private theme: ThemeService
-  ) {}
+  ) {
+    this.translate.setDefaultLang('en');
+  }
 
   ngOnInit(): void {
-    this.translate.setDefaultLang('en');
     console.log('AppConfig', AppConfig);
 
     if (this.electronService.isElectron()) {
