@@ -27,7 +27,8 @@ export class PreferencesService {
 
     prefs.onDidChange(
       key,
-      (oldValue: UserPreferences[K], newValue: UserPreferences[K]) => {
+      // Parameters out of order in typescript definition (see https://github.com/sindresorhus/conf/issues/69)
+      (newValue: UserPreferences[K], oldValue: UserPreferences[K]) => {
         subject.next({ oldValue, newValue });
       }
     );
