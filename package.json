@@ -26,6 +26,7 @@
     "ng": "ng",
     "start": "npm run postinstall:electron && npm-run-all -p ng:serve electron:serve \"electron:serve-tsc -- -w\"",
     "build": "npm run postinstall:electron && npm run electron:serve-tsc && ng build",
+    "build:ci": "npm run postinstall:electron && npm run electron:serve-tsc && ng build --progress=false",
     "build:dev": "npm run build -- -c dev",
     "build:prod": "npm run build -- -c production",
     "ng:serve": "ng serve",
@@ -37,7 +38,10 @@
     "electron:windows": "npm run build:prod && electron-builder build --windows",
     "electron:mac": "npm run build:prod && electron-builder build --mac",
     "test": "npm run postinstall:web && ng test",
+    "test:ci": "npm run postinstall:web && ng test --progress=false",
+    "test:dev": "npm run postinstall:web && ng test --watch",
     "e2e": "npm run build:prod && mocha --timeout 300000 --require ts-node/register e2e/**/*.spec.ts",
+    "e2e:ci": "npm run build:prod -- --progress=false && mocha --timeout 300000 --require ts-node/register e2e/**/*.spec.ts",
     "version": "conventional-changelog -i CHANGELOG.md -s -r 0 && git add CHANGELOG.md"
   },
   "devDependencies": {

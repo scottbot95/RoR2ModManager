@@ -1,6 +1,13 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PackagesPageComponent } from './packages-page.component';
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-package-table',
+  template: '<p>Mock Package Table Component</p>'
+})
+class MockPackageTableComponent {}
 
 describe('PackagesPageComponent', () => {
   let component: PackagesPageComponent;
@@ -8,9 +15,8 @@ describe('PackagesPageComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ PackagesPageComponent ]
-    })
-    .compileComponents();
+      declarations: [PackagesPageComponent, MockPackageTableComponent]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

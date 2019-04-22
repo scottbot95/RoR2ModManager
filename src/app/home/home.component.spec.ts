@@ -2,6 +2,10 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { HomeComponent } from './home.component';
 import { TranslateModule } from '@ngx-translate/core';
+import { ThunderstoreService } from '../core/services/thunderstore.service';
+import { HttpClient } from '@angular/common/http';
+import { MockHttpClient } from '../shared/helpers';
+import { of } from 'rxjs';
 
 describe('HomeComponent', () => {
   let component: HomeComponent;
@@ -9,12 +13,16 @@ describe('HomeComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ HomeComponent ],
-      imports: [
-        TranslateModule.forRoot()
+      declarations: [HomeComponent],
+      imports: [TranslateModule.forRoot()],
+      providers: [
+        ThunderstoreService,
+        { provide: HttpClient, useClass: MockHttpClient }
       ]
-    })
-    .compileComponents();
+    }).compileComponents();
+
+    const http = TestBed.get(HttpClient);
+    spyOn(http, 'get').and.returnValue(of([]));
   }));
 
   beforeEach(() => {
@@ -29,6 +37,8 @@ describe('HomeComponent', () => {
 
   it('should render title in a h1 tag', async(() => {
     const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('h1').textContent).toContain('PAGES.HOME.TITLE');
+    expect(compiled.querySelector('h1').textContent).toContain(
+      'PAGES.HOME.TITLE'
+    );
   }));
 });

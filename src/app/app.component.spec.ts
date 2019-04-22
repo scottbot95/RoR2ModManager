@@ -3,12 +3,24 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { ElectronService } from './core/services/electron.service';
+import { Component } from '@angular/core';
+import { ThemeService } from './core/services/theme.service';
+import { MockThemeService } from './shared/helpers';
+
+@Component({
+  selector: 'app-nav-menu',
+  template: '<p>Mock Nav Menu component</p>'
+})
+class MockNavMenuComponent {}
 
 describe('AppComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [AppComponent],
-      providers: [ElectronService],
+      declarations: [AppComponent, MockNavMenuComponent],
+      providers: [
+        ElectronService,
+        { provide: ThemeService, useClass: MockThemeService }
+      ],
       imports: [RouterTestingModule, TranslateModule.forRoot()]
     }).compileComponents();
   }));
