@@ -27,3 +27,5 @@ export interface PackageVersion extends PackageBase {
   readme: string;
   icon: string;
 }
+
+export type PackageList = Package[];
