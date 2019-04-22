@@ -29,10 +29,10 @@ export class ThunderstoreService {
         packages.forEach(pkg => {
           pkg.latest_version = pkg.versions.reduce(
             (latest, version) =>
-              semver.gt(version.version_number, latest)
-                ? version.version_number
+              semver.gt(version.version_number, latest.version_number)
+                ? version
                 : latest,
-            '0.0.0'
+            pkg.versions[0]
           );
         });
       })

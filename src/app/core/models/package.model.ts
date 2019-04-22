@@ -15,7 +15,7 @@ export interface Package extends PackageBase {
   date_updated: Date;
   is_pinned: boolean;
   versions: PackageVersion[];
-  latest_version?: string;
+  latest_version?: PackageVersion;
 }
 
 export interface PackageVersion extends PackageBase {

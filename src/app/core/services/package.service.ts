@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ElectronService } from './electron.service';
 import { BehaviorSubject } from 'rxjs';
-import { PackageList, PackageVersion } from '../models/package.model';
+import { PackageList, PackageVersion, Package } from '../models/package.model';
 
 @Injectable()
 export class PackageService {
@@ -10,5 +10,20 @@ export class PackageService {
 
   constructor(private electron: ElectronService) {}
 
-  public installPackage(pkg: PackageVersion) {}
+  public installPackage(pkg: Package, version: PackageVersion) {
+    this.installedPackagesSource.next([
+      ...this.installedPackagesSource.value,
+      pkg
+    ]);
+  }
+
+  public uninstallPackage(pkg: Package, version: PackageVersion) {
+    this.installedPackagesSource.next(
+      this.installedPackagesSource.value.filter(
+        installed => installed.uuid4 !== pkg.uuid4
+      )
+    );
+  }
+
+  public updatePackage(pkg: Package, version: PackageVersion) {}
 }
