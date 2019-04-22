@@ -9,11 +9,11 @@ import { HttpClient } from '@angular/common/http';
 
 import { PackageTableComponent } from './package-table.component';
 import { MaterialModule } from '../../shared/material.module';
-import { MockHttpClient } from '../../shared/helpers';
 import { ThunderstoreService } from '../../core/services/thunderstore.service';
 import { of } from 'rxjs';
 import { PackageService } from '../../core/services/package.service';
 import { ElectronService } from '../../core/services/electron.service';
+import { MockHttpClient } from '../../core/services/mocks';
 
 describe('PackageTableComponent', () => {
   let component: PackageTableComponent;
@@ -31,7 +31,6 @@ describe('PackageTableComponent', () => {
       ],
       providers: [
         ThunderstoreService,
-        PackageService,
         ElectronService,
         { provide: HttpClient, useClass: MockHttpClient }
       ]

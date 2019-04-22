@@ -36,7 +36,6 @@ export class PackageTableComponent implements AfterViewInit, OnDestroy {
 
   constructor(
     public thunderstore: ThunderstoreService,
-    public service: PackageService
   ) {}
 
   ngAfterViewInit() {
