@@ -12,7 +12,7 @@ import { PackageService } from './services/package.service';
     ElectronService,
     ThemeService,
     ThunderstoreService,
-    PreferencesService
+    PreferencesService,
     PackageService
   ]
 })
