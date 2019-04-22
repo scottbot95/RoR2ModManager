@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { UserPreferences } from '../../../electron/preferences.model';
-import { prefs } from '../../../electron/prefs';
+import { PreferencesService } from './preferences.service';
 
 @Injectable()
 export class ThemeService {
@@ -12,16 +12,19 @@ export class ThemeService {
   public themeClass$ = this.themeClassSource.asObservable();
 
   private isDarkModeSource = new BehaviorSubject<boolean>(
-    !!(<UserPreferences['darkMode']>prefs.get('darkMode'))
+    !!(<UserPreferences['darkMode']>this.prefs.get('darkMode'))
   );
   public isDarkMode$ = this.isDarkModeSource.asObservable();
 
-  constructor(private overlay: OverlayContainer) {
+  constructor(
+    private overlay: OverlayContainer,
+    private prefs: PreferencesService
+  ) {
     const { classList } = this.overlay.getContainerElement();
 
     this.isDarkMode$.subscribe(isDarkMode => {
       // doing it this way so adding more themes later should be easier
-      prefs.set('darkMode', isDarkMode);
+      this.prefs.set('darkMode', isDarkMode);
       const newThemeClass = isDarkMode ? 'app-dark-theme' : 'app-light-theme';
       this.themeClassSource.next(newThemeClass);
       classList.remove(this.oldThemeClass);
@@ -29,8 +32,8 @@ export class ThemeService {
       this.oldThemeClass = newThemeClass;
     });
 
-    prefs.onDidChange('darkMode', (oldVal, newVal) => {
-      if (oldVal !== newVal) this.isDarkModeSource.next(!!newVal);
+    prefs.onChange('darkMode').subscribe(({ oldValue, newValue }) => {
+      if (oldValue !== newValue) this.isDarkModeSource.next(!!newValue);
     });
   }
 
