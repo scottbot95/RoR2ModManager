@@ -1,4 +1,4 @@
-import { app, BrowserWindow, screen, autoUpdater } from 'electron';
+import { app, BrowserWindow, autoUpdater } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
 import * as Store from 'electron-store';
@@ -8,7 +8,6 @@ import {
   preferencesSchema,
   UserPreferences
 } from './src/electron/preferences.model';
-import { store } from '@angular/core/src/render3';
 
 const server = 'https://hazel.scottbot95.now.sh';
 const feed = `${server}/update/${process.platform}/${app.getVersion()}`;
@@ -26,17 +25,14 @@ const prefs = new Store({
 });
 
 function createWindow() {
-  const electronScreen = screen;
-  const size = electronScreen.getPrimaryDisplay().workAreaSize;
-
-  const { height, width } = <UserPreferences['windowBounds']>(
+  const { height, width, x, y } = <UserPreferences['windowBounds']>(
     prefs.get('windowBounds')
   );
 
   // Create the browser window.
   win = new BrowserWindow({
-    x: 0,
-    y: 0,
+    x,
+    y,
     width,
     height,
     webPreferences: {
@@ -46,12 +42,28 @@ function createWindow() {
     }
   });
 
+  if (prefs.get('windowMaximized')) {
+    win.maximize();
+  }
+
   win.on('resize', () => {
-    prefs.set('windowBounds', win.getBounds());
+    if (win.isMaximized()) return;
+    const bounds = win.getBounds();
+    prefs.set('windowBounds', bounds);
   });
 
-  win.on('moved', () => {
-    prefs.set('windowBounds', win.getBounds());
+  win.on('move', () => {
+    if (win.isMaximized()) return;
+    const bounds = win.getBounds();
+    prefs.set('windowBounds', bounds);
+  });
+
+  win.on('maximize', () => {
+    prefs.set('windowMaximized', true);
+  });
+
+  win.on('unmaximize', () => {
+    prefs.set('windowMaximized', false);
   });
 
   if (serve) {
