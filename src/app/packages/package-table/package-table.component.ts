@@ -19,7 +19,10 @@ export class PackageTableComponent implements AfterViewInit {
   selection = new SelectionModel<Package>(true, []);
 
   ngAfterViewInit() {
-    this.dataSource = new PackageTableDataSource(this.paginator, this.sort);
+    // FIXME this is a band-aid and we should really solve this in a smarter way
+    setTimeout(() => {
+      this.dataSource = new PackageTableDataSource(this.paginator, this.sort);
+    });
   }
 
   isAllSelected() {

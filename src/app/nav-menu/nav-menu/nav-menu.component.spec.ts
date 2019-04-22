@@ -1,15 +1,12 @@
 import { LayoutModule } from '@angular/cdk/layout';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import {
-  MatButtonModule,
-  MatIconModule,
-  MatListModule,
-  MatSidenavModule,
-  MatToolbarModule,
-} from '@angular/material';
-
 import { NavMenuComponent } from './nav-menu.component';
+import { MaterialModule } from '../../shared/material.module';
+import { MatToolbarModule, MatSidenavModule } from '@angular/material';
+import { ThemeService } from '../../core/services/theme.service';
+import { MockThemeService } from '../../shared/helpers';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('NavMenuComponent', () => {
   let component: NavMenuComponent;
@@ -21,12 +18,12 @@ describe('NavMenuComponent', () => {
       imports: [
         NoopAnimationsModule,
         LayoutModule,
-        MatButtonModule,
-        MatIconModule,
-        MatListModule,
-        MatSidenavModule,
+        MaterialModule,
+        RouterTestingModule,
         MatToolbarModule,
-      ]
+        MatSidenavModule
+      ],
+      providers: [{ provide: ThemeService, useClass: MockThemeService }]
     }).compileComponents();
   }));
 
