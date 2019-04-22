@@ -12,6 +12,7 @@ import { Package } from '../../core/models/package.model';
 import { ThunderstoreService } from '../../core/services/thunderstore.service';
 import { Subscription } from 'rxjs';
 import { PackageService } from '../../core/services/package.service';
+import { delay } from 'rxjs/operators';
 
 @Component({
   selector: 'app-package-table',
@@ -21,8 +22,9 @@ import { PackageService } from '../../core/services/package.service';
 export class PackageTableComponent implements AfterViewInit, OnDestroy {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  @Input() applyChanges: (selection: SelectionModel<Package>) => any;
+  @Input() applyChanges: (selection: SelectionModel<Package>) => void;
   @Input() installedPackages: Set<Package>;
+  @Input() showDetails: (pkg: Package) => void;
   dataSource: PackageTableDataSource;
   isLoading: boolean;
 
@@ -47,7 +49,7 @@ export class PackageTableComponent implements AfterViewInit, OnDestroy {
       );
 
       this.subscription.add(
-        this.dataSource.loading$.subscribe(loading => {
+        this.dataSource.loading$.pipe(delay(0)).subscribe(loading => {
           this.isLoading = loading;
         })
       );
@@ -62,17 +64,9 @@ export class PackageTableComponent implements AfterViewInit, OnDestroy {
     return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row`;
   }
 
-  // applyChanges() {
-  //   this.selection.selected.forEach(pkg => {
-  //     if (!this.installed.has(pkg)) {
-  //       this.service.installPackage(pkg, pkg.latest_version);
-  //     }
-  //   });
-
-  //   this.installed.forEach(pkg => {
-  //     if (!this.selection.isSelected(pkg)) {
-  //       this.service.uninstallPackage(pkg, pkg.latest_version);
-  //     }
-  //   });
-  // }
+  showDetailsSafe(pkg: Package) {
+    if (this.showDetails) {
+      this.showDetails(pkg);
+    }
+  }
 }

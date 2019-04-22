@@ -27,13 +27,14 @@ export class ThunderstoreService {
     const result = this.http.get<PackageList>(url).pipe(
       tap(packages => {
         packages.forEach(pkg => {
-          pkg.latest_version = pkg.versions.reduce(
-            (latest, version) =>
-              semver.gt(version.version_number, latest.version_number)
-                ? version
-                : latest,
-            pkg.versions[0]
-          );
+          pkg.latest_version = pkg.versions[0]; // versions are ordered from api
+          // pkg.latest_version = pkg.versions.reduce(
+          //   (latest, version) =>
+          //     semver.gt(version.version_number, latest.version_number)
+          //       ? version
+          //       : latest,
+          //   pkg.versions[0]
+          // );
         });
       })
     );

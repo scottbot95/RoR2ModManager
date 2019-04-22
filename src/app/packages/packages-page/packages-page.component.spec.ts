@@ -1,13 +1,18 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PackagesPageComponent } from './packages-page.component';
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { Package } from '../../core/models/package.model';
 
 @Component({
   selector: 'app-package-table',
   template: '<p>Mock Package Table Component</p>'
 })
-class MockPackageTableComponent {}
+class MockPackageTableComponent {
+  @Input() applyChanges: (...args: any[]) => void;
+  @Input() installedPackages: Set<Package>;
+  @Input() showDetails: (pkg: Package) => void;
+}
 
 describe('PackagesPageComponent', () => {
   let component: PackagesPageComponent;
