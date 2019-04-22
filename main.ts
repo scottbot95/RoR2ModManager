@@ -1,6 +1,14 @@
 import { app, BrowserWindow, screen, autoUpdater } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
+import * as Store from 'electron-store';
+
+import {
+  defaultConfig,
+  preferencesSchema,
+  UserPreferences
+} from './src/electron/preferences.model';
+import { store } from '@angular/core/src/render3';
 
 const server = 'https://hazel.scottbot95.now.sh';
 const feed = `${server}/update/${process.platform}/${app.getVersion()}`;
@@ -11,21 +19,39 @@ let win: BrowserWindow, serve: boolean;
 const args = process.argv.slice(1);
 serve = args.some(val => val === '--serve');
 
+const prefs = new Store({
+  name: 'user-preferences',
+  defaults: defaultConfig,
+  schema: preferencesSchema
+});
+
 function createWindow() {
   const electronScreen = screen;
   const size = electronScreen.getPrimaryDisplay().workAreaSize;
+
+  const { height, width } = <UserPreferences['windowBounds']>(
+    prefs.get('windowBounds')
+  );
 
   // Create the browser window.
   win = new BrowserWindow({
     x: 0,
     y: 0,
-    width: size.width,
-    height: size.height,
+    width,
+    height,
     webPreferences: {
       nodeIntegration: true,
       webSecurity: false,
       allowRunningInsecureContent: false
     }
+  });
+
+  win.on('resize', () => {
+    prefs.set('windowBounds', win.getBounds());
+  });
+
+  win.on('moved', () => {
+    prefs.set('windowBounds', win.getBounds());
   });
 
   if (serve) {
