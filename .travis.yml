@@ -1,6 +1,7 @@
 language: node_js
 node_js:
   - '10'
+cache: npm # caches $HOME/.npm and node_modules
 dist: xenial
 sudo: required
 services:
