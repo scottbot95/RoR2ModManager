@@ -6,20 +6,32 @@
     matSort
     aria-label="Elements"
   >
+    <!-- Refresh Button "column" -->
+    <ng-container matColumnDef="refresh">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        [attr.colspan]="displayedColumns.length"
+        class="align-right"
+      >
+        <button
+          mat-icon-button
+          (click)="thunderstore.loadAllPackages()"
+          matTooltip="refresh"
+        >
+          <mat-icon>refresh</mat-icon>
+        </button>
+      </th>
+    </ng-container>
+
     <!-- Checkbox column -->
     <ng-container matColumnDef="select">
       <th mat-header-cell *matHeaderCellDef>
-        <mat-checkbox
-          (change)="$event ? masterToggle() : null"
-          [checked]="selection.hasValue() && isAllSelected()"
-          [indeterminate]="selection.hasValue() && !isAllSelected()"
-          [aria-label]="checkboxLabel()"
-        >
-        </mat-checkbox>
+        Install
       </th>
       <td mat-cell *matCellDef="let row">
         <mat-checkbox
-          (click)="$event.stopPropogation()"
+          (click)="$event.stopPropagation()"
           (change)="$event ? selection.toggle(row) : null"
           [checked]="selection.isSelected(row)"
           [aria-label]="checkboxLabel(row)"
@@ -30,7 +42,7 @@
     <!-- Id Column -->
     <ng-container matColumnDef="id">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Id</th>
-      <td mat-cell *matCellDef="let row">{{ row.id }}</td>
+      <td mat-cell *matCellDef="let row">{{ row.uuid4 }}</td>
     </ng-container>
 
     <!-- Name Column -->
@@ -39,16 +51,61 @@
       <td mat-cell *matCellDef="let row">{{ row.name }}</td>
     </ng-container>
 
+    <!-- Author Column -->
+    <ng-container matColumnDef="author">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Author</th>
+      <td mat-cell *matCellDef="let row">{{ row.owner }}</td>
+    </ng-container>
+
+    <!-- Last Updated Column -->
+    <ng-container matColumnDef="updated">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Updated</th>
+      <td mat-cell *matCellDef="let row">{{ row.date_updated | date }}</td>
+    </ng-container>
+
+    <!-- Latest Version Column -->
+    <ng-container matColumnDef="latest">
+      <th mat-header-cell *matHeaderCellDef>Latest Version</th>
+      <td mat-cell *matCellDef="let row">
+        {{ row.latest_version.version_number }}
+      </td>
+    </ng-container>
+
+    <!-- Apply Column -->
+    <ng-container matColumnDef="apply">
+      <td
+        mat-footer-cell
+        *matFooterCellDef="let row"
+        [attr.colspan]="displayedColumns.length"
+        class="align-right"
+      >
+        <button mat-raised-button (click)="applyChanges(selection)">
+          Apply
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="['refresh']"></tr>
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    <tr
+      mat-row
+      *matRowDef="let row; columns: displayedColumns"
+      [hidden]="isLoading"
+      [class.dirty]="selection.isSelected(row) !== installedPackages.has(row)"
+      (click)="showDetailsSafe(row)"
+    ></tr>
+    <tr mat-footer-row *matFooterRowDef="['apply']"></tr>
   </table>
+
+  <mat-spinner *ngIf="isLoading"></mat-spinner>
 
   <mat-paginator
     #paginator
     [length]="dataSource?.data.length"
     [pageIndex]="0"
-    [pageSize]="50"
+    [pageSize]="10"
     [pageSizeOptions]="[10, 25, 50, 100]"
+    [showFirstLastButtons]="true"
   >
   </mat-paginator>
 </div>

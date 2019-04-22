@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { Package } from '../models/package';
-import { distinctUntilChanged } from 'rxjs/operators';
+import { distinctUntilChanged, tap } from 'rxjs/operators';
+import * as semver from 'semver';
+import { PackageList } from '../models/package.model';
 
 @Injectable()
 export class ThunderstoreService {
   private baseUrl = 'https://thunderstore.io/api/v1';
 
-  private allPackagesSource = new BehaviorSubject<Package[]>(null);
+  private allPackagesSource = new BehaviorSubject<PackageList>(null);
   public allPackages$ = this.allPackagesSource
     .asObservable()
     .pipe(distinctUntilChanged()); // prevents update spam
@@ -17,13 +18,26 @@ export class ThunderstoreService {
     this.loadAllPackages();
   }
 
-  public loadAllPackages(): Observable<Package[]> {
+  public loadAllPackages(): Observable<PackageList> {
     // clear obseravble to indicate loading status
     const oldPackages = this.allPackagesSource.value;
     this.allPackagesSource.next(null);
 
     const url = `${this.baseUrl}/package`;
-    const result = this.http.get<Package[]>(url);
+    const result = this.http.get<PackageList>(url).pipe(
+      tap(packages => {
+        packages.forEach(pkg => {
+          pkg.latest_version = pkg.versions[0]; // versions are ordered from api
+          // pkg.latest_version = pkg.versions.reduce(
+          //   (latest, version) =>
+          //     semver.gt(version.version_number, latest.version_number)
+          //       ? version
+          //       : latest,
+          //   pkg.versions[0]
+          // );
+        });
+      })
+    );
     result.subscribe(
       packages => {
         this.allPackagesSource.next(packages);

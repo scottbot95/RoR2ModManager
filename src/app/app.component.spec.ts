@@ -5,7 +5,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ElectronService } from './core/services/electron.service';
 import { Component } from '@angular/core';
 import { ThemeService } from './core/services/theme.service';
-import { MockThemeService } from './shared/helpers';
+import { MockThemeService } from './core/services/mocks';
 
 @Component({
   selector: 'app-nav-menu',

@@ -2,8 +2,8 @@ import { TestBed } from '@angular/core/testing';
 
 import { ThunderstoreService } from './thunderstore.service';
 import { HttpClient } from '@angular/common/http';
-import { MockHttpClient } from '../../shared/helpers';
 import { of } from 'rxjs';
+import { MockHttpClient } from './mocks';
 
 describe('ThunderstoreService', () => {
   beforeEach(() => {

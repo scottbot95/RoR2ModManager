@@ -9,9 +9,10 @@ import {
   MatPaginatorModule,
   MatTableModule
 } from '@angular/material';
+import { PackageDetailsComponent } from './package-details/package-details.component';
 
 @NgModule({
-  declarations: [PackageTableComponent, PackagesPageComponent],
+  declarations: [PackageTableComponent, PackagesPageComponent, PackageDetailsComponent],
   imports: [
     PackagesRoutingModule,
     SharedModule,
