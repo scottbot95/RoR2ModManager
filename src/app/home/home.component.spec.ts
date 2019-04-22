@@ -4,8 +4,8 @@ import { HomeComponent } from './home.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { ThunderstoreService } from '../core/services/thunderstore.service';
 import { HttpClient } from '@angular/common/http';
-import { MockHttpClient } from '../shared/helpers';
 import { of } from 'rxjs';
+import { MockHttpClient } from '../core/services/mocks';
 
 describe('HomeComponent', () => {
   let component: HomeComponent;
