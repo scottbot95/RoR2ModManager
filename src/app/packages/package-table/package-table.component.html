@@ -1,7 +1,4 @@
 <div class="mat-elevation-z8">
-  <button mat-raised-button (click)="thunderstore.loadAllPackages()">
-    Refresh
-  </button>
   <table
     mat-table
     class="full-width-table"
@@ -9,16 +6,32 @@
     matSort
     aria-label="Elements"
   >
+    <!-- Padding Column -->
+    <ng-container matColumnDef="padding">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        [attr.colspan]="displayedColumns.length - 1"
+      ></th>
+    </ng-container>
+
+    <!-- Refresh Button "column" -->
+    <ng-container matColumnDef="refresh">
+      <th mat-header-cell *matHeaderCellDef>
+        <button
+          mat-icon-button
+          (click)="thunderstore.loadAllPackages()"
+          matTooltip="refresh"
+        >
+          <mat-icon>refresh</mat-icon>
+        </button>
+      </th>
+    </ng-container>
+
     <!-- Checkbox column -->
     <ng-container matColumnDef="select">
       <th mat-header-cell *matHeaderCellDef>
-        <mat-checkbox
-          (change)="$event ? masterToggle() : null"
-          [checked]="selection.hasValue() && isAllSelected()"
-          [indeterminate]="selection.hasValue() && !isAllSelected()"
-          [aria-label]="checkboxLabel()"
-        >
-        </mat-checkbox>
+        Install
       </th>
       <td mat-cell *matCellDef="let row">
         <mat-checkbox
@@ -42,6 +55,25 @@
       <td mat-cell *matCellDef="let row">{{ row.name }}</td>
     </ng-container>
 
+    <!-- Author Column -->
+    <ng-container matColumnDef="author">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Author</th>
+      <td mat-cell *matCellDef="let row">{{ row.author }}</td>
+    </ng-container>
+
+    <!-- Last Updated Column -->
+    <ng-container matColumnDef="updated">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Updated</th>
+      <td mat-cell *matCellDef="let row">{{ row.date_updated | date }}</td>
+    </ng-container>
+
+    <!-- Latest Version Column -->
+    <ng-container matColumnDef="latest">
+      <th mat-header-cell *matHeaderCellDef>Latest Version</th>
+      <td mat-cell *matCellDef="let row">{{ row.latest_version }}</td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="['padding', 'refresh']"></tr>
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr
       mat-row

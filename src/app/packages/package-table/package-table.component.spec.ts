@@ -5,9 +5,13 @@ import {
   MatSortModule,
   MatTableModule
 } from '@angular/material';
+import { HttpClient } from '@angular/common/http';
 
 import { PackageTableComponent } from './package-table.component';
 import { MaterialModule } from '../../shared/material.module';
+import { MockHttpClient } from '../../shared/helpers';
+import { ThunderstoreService } from '../../core/services/thunderstore.service';
+import { of } from 'rxjs';
 
 describe('PackageTableComponent', () => {
   let component: PackageTableComponent;
@@ -22,8 +26,15 @@ describe('PackageTableComponent', () => {
         MatPaginatorModule,
         MatSortModule,
         MatTableModule
+      ],
+      providers: [
+        ThunderstoreService,
+        { provide: HttpClient, useClass: MockHttpClient }
       ]
     }).compileComponents();
+
+    const http = TestBed.get(HttpClient);
+    spyOn(http, 'get').and.returnValue(of([]));
   }));
 
   beforeEach(() => {

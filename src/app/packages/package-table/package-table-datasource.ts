@@ -105,7 +105,7 @@ export class PackageTableDataSource extends DataSource<Package> {
         case 'name':
           return compare(a.name, b.name, isAsc);
         case 'id':
-          return compare(+a.uuid4, +b.uuid4, isAsc);
+          return compare(a.uuid4, b.uuid4, isAsc);
         default:
           return 0;
       }
@@ -114,6 +114,12 @@ export class PackageTableDataSource extends DataSource<Package> {
 }
 
 /** Simple sort comparator for example ID/Name columns (for client-side sorting). */
-function compare(a, b, isAsc) {
+function compare(a: any, b: any, isAsc: boolean) {
+  if (typeof a === 'string') {
+    a = a.toUpperCase();
+  }
+  if (typeof b === 'string') {
+    b = b.toUpperCase();
+  }
   return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
 }
