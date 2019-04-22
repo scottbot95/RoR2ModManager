@@ -1,4 +1,7 @@
 <div class="mat-elevation-z8">
+  <button mat-raised-button (click)="thunderstore.loadAllPackages()">
+    Refresh
+  </button>
   <table
     mat-table
     class="full-width-table"
@@ -30,7 +33,7 @@
     <!-- Id Column -->
     <ng-container matColumnDef="id">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Id</th>
-      <td mat-cell *matCellDef="let row">{{ row.id }}</td>
+      <td mat-cell *matCellDef="let row">{{ row.uuid4 }}</td>
     </ng-container>
 
     <!-- Name Column -->
@@ -40,15 +43,22 @@
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    <tr
+      mat-row
+      *matRowDef="let row; columns: displayedColumns"
+      [hidden]="isLoading"
+    ></tr>
   </table>
+
+  <mat-spinner *ngIf="(dataSource?.loading$ | async)"></mat-spinner>
 
   <mat-paginator
     #paginator
     [length]="dataSource?.data.length"
     [pageIndex]="0"
-    [pageSize]="50"
+    [pageSize]="10"
     [pageSizeOptions]="[10, 25, 50, 100]"
+    [showFirstLastButtons]="true"
   >
   </mat-paginator>
 </div>

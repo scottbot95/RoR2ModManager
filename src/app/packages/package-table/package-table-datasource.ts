@@ -1,8 +1,15 @@
 import { DataSource } from '@angular/cdk/collections';
 import { MatPaginator, MatSort } from '@angular/material';
-import { map } from 'rxjs/operators';
-import { Observable, of as observableOf, merge } from 'rxjs';
-import { PackageList, Package } from '../../core/models/package';
+import { map, distinctUntilChanged } from 'rxjs/operators';
+import {
+  Observable,
+  of as observableOf,
+  merge,
+  Subscription,
+  BehaviorSubject
+} from 'rxjs';
+import { PackageList, Package } from '../../core/models/package.model';
+import { ThunderstoreService } from '../../core/services/thunderstore.service';
 
 /**
  * Data source for the PackageTable view. This class should
@@ -10,12 +17,27 @@ import { PackageList, Package } from '../../core/models/package';
  * (including sorting, pagination, and filtering).
  */
 export class PackageTableDataSource extends DataSource<Package> {
-  data: PackageList = [];
+  private dataSource = new BehaviorSubject<PackageList>([]);
+  data: PackageList;
 
   public filteredData$: Observable<PackageList>;
 
-  constructor(private paginator: MatPaginator, private sort: MatSort) {
+  private loadingSource = new BehaviorSubject<boolean>(false);
+  public loading$ = this.loadingSource
+    .asObservable()
+    .pipe(distinctUntilChanged());
+
+  private subscription = new Subscription();
+
+  constructor(
+    private paginator: MatPaginator,
+    private sort: MatSort,
+    private thunderstore: ThunderstoreService
+  ) {
     super();
+    this.dataSource.subscribe(data => {
+      this.data = data;
+    });
   }
 
   /**
@@ -27,13 +49,24 @@ export class PackageTableDataSource extends DataSource<Package> {
     // Combine everything that affects the rendered data into one update
     // stream for the data-table to consume.
     const dataMutations = [
-      observableOf(this.data),
+      this.dataSource,
       this.paginator.page,
       this.sort.sortChange
     ];
 
     // Set the paginator's length
     this.paginator.length = this.data.length;
+
+    this.subscription.add(
+      this.thunderstore.allPackages$.subscribe(packages => {
+        if (packages) {
+          this.dataSource.next(packages);
+          this.loadingSource.next(false);
+        } else {
+          this.loadingSource.next(true);
+        }
+      })
+    );
 
     return merge(...dataMutations).pipe(
       map(() => {
@@ -53,9 +86,6 @@ export class PackageTableDataSource extends DataSource<Package> {
    * this would be replaced by requesting the appropriate data from the server.
    */
   private getPagedData(data: PackageList) {
-    if (!this.paginator) {
-      return data;
-    }
     const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
     return data.splice(startIndex, this.paginator.pageSize);
   }
@@ -65,7 +95,7 @@ export class PackageTableDataSource extends DataSource<Package> {
    * this would be replaced by requesting the appropriate data from the server.
    */
   private getSortedData(data: PackageList) {
-    if (!this.sort || !this.sort.active || this.sort.direction === '') {
+    if (!this.sort.active || this.sort.direction === '') {
       return data;
     }
 

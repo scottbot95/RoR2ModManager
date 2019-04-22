@@ -4,7 +4,8 @@ import {
   MatIconModule,
   MatListModule,
   MatTooltipModule,
-  MatCheckboxModule
+  MatCheckboxModule,
+  MatProgressSpinnerModule
 } from '@angular/material';
 
 @NgModule({
@@ -13,7 +14,8 @@ import {
     MatIconModule,
     MatListModule,
     MatTooltipModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatProgressSpinnerModule
   ]
 })
 export class MaterialModule {}
