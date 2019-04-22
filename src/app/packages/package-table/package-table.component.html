@@ -79,7 +79,9 @@
         [attr.colspan]="displayedColumns.length"
         class="align-right"
       >
-        <button mat-raised-button (click)="applyChanges()">Apply</button>
+        <button mat-raised-button (click)="applyChanges(selection)">
+          Apply
+        </button>
       </td>
     </ng-container>
 
@@ -89,7 +91,7 @@
       mat-row
       *matRowDef="let row; columns: displayedColumns"
       [hidden]="isLoading"
-      [class.dirty]="selection.isSelected(row) !== installed.has(row)"
+      [class.dirty]="selection.isSelected(row) !== installedPackages.has(row)"
     ></tr>
     <tr mat-footer-row *matFooterRowDef="['apply']"></tr>
   </table>

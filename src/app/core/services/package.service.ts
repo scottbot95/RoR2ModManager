@@ -17,7 +17,7 @@ export class PackageService {
     ]);
   }
 
-  public uninstallPackage(pkg: Package, version: PackageVersion) {
+  public uninstallPackage(pkg: Package) {
     this.installedPackagesSource.next(
       this.installedPackagesSource.value.filter(
         installed => installed.uuid4 !== pkg.uuid4

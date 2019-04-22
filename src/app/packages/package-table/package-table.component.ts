@@ -1,4 +1,10 @@
-import { AfterViewInit, Component, ViewChild, OnDestroy } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ViewChild,
+  OnDestroy,
+  Input
+} from '@angular/core';
 import { MatPaginator, MatSort } from '@angular/material';
 import { PackageTableDataSource } from './package-table-datasource';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -15,13 +21,14 @@ import { PackageService } from '../../core/services/package.service';
 export class PackageTableComponent implements AfterViewInit, OnDestroy {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
+  @Input() applyChanges: (selection: SelectionModel<Package>) => any;
+  @Input() installedPackages: Set<Package>;
   dataSource: PackageTableDataSource;
   isLoading: boolean;
 
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
   displayedColumns = ['select', 'id', 'name', 'author', 'updated', 'latest'];
   selection = new SelectionModel<Package>(true, []);
-  installed = new Set<Package>();
 
   private subscription = new Subscription();
 
@@ -45,12 +52,6 @@ export class PackageTableComponent implements AfterViewInit, OnDestroy {
         })
       );
     });
-
-    this.subscription.add(
-      this.service.installedPackages$.subscribe(packages => {
-        this.installed = new Set(packages);
-      })
-    );
   }
 
   ngOnDestroy() {
@@ -61,17 +62,17 @@ export class PackageTableComponent implements AfterViewInit, OnDestroy {
     return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row`;
   }
 
-  applyChanges() {
-    this.selection.selected.forEach(pkg => {
-      if (!this.installed.has(pkg)) {
-        this.service.installPackage(pkg, pkg.latest_version);
-      }
-    });
+  // applyChanges() {
+  //   this.selection.selected.forEach(pkg => {
+  //     if (!this.installed.has(pkg)) {
+  //       this.service.installPackage(pkg, pkg.latest_version);
+  //     }
+  //   });
 
-    this.installed.forEach(pkg => {
-      if (!this.selection.isSelected(pkg)) {
-        this.service.uninstallPackage(pkg, pkg.latest_version);
-      }
-    });
-  }
+  //   this.installed.forEach(pkg => {
+  //     if (!this.selection.isSelected(pkg)) {
+  //       this.service.uninstallPackage(pkg, pkg.latest_version);
+  //     }
+  //   });
+  // }
 }
