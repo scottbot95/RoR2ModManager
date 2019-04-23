@@ -61,6 +61,14 @@
                   "with": "src/environments/environment.prod.ts"
                 }
               ]
+            },
+            "web": {
+              "fileReplacements": [
+                {
+                  "replace": "src/electron/prefs.ts",
+                  "with": "src/electron/prefs.web.ts"
+                }
+              ]
             }
           }
         },
@@ -75,6 +83,9 @@
             },
             "production": {
               "browserTarget": "ror2-mod-manager:build:production"
+            },
+            "web": {
+              "browserTarget": "ror2-mod-manager:build:web"
             }
           }
         },
@@ -104,7 +115,7 @@
             "fileReplacements": [
               {
                 "replace": "src/electron/prefs.ts",
-                "with": "src/electron/prefs.test.ts"
+                "with": "src/electron/prefs.web.ts"
               }
             ]
           }
