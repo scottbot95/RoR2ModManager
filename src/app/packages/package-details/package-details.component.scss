@@ -1,0 +1,9 @@
+.details {
+  width: 100%;
+  tr {
+    padding-bottom: 5px;
+    td:first-child {
+      font-weight: bold;
+    }
+  }
+}

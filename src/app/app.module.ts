@@ -10,6 +10,7 @@ import { AppRoutingModule } from './app-routing.module';
 // NG Translate
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { MarkdownModule } from 'ngx-markdown';
 
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
@@ -33,6 +34,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     HttpClientModule,
     NavMenuModule,
     PackagesModule,
+    MarkdownModule.forRoot(),
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
