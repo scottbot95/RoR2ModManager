@@ -8,3 +8,10 @@ body {
 
   height: 100%;
 }
+
+.fullWidthToggle {
+  width: 100%;
+  label {
+    justify-content: space-between;
+  }
+}
