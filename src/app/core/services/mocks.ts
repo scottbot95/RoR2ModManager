@@ -69,6 +69,7 @@ export class MockElectronService {
       showOpenDialog: (options: object) => {
         return ['C:\\fakepath'];
       }
-    }
+    },
+    require: (module: string) => ({})
   };
 }

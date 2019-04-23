@@ -44,11 +44,31 @@ export class PreferencesPageComponent implements OnInit, OnDestroy {
       properties: ['openDirectory']
     });
     if (result) {
-      console.log(result);
       const path = result[0];
-      // TODO verify it's a valid RoR2 path
-      this.prefs.set('ror2_path', path);
-      this.ror2Path = path;
+      const { join } = this.electron.remote.require('path');
+      this.electron.fs.access(join(path, 'Risk of Rain 2.exe'), err => {
+        if (err) {
+          this.electron.remote.dialog.showMessageBox(
+            this.electron.remote.getCurrentWindow(),
+            {
+              message: 'Directory must contain `Risk of Rain 2.exe',
+              title: 'Invalid Directory',
+              type: 'error',
+              buttons: ['Cancel', 'Retry'],
+              defaultId: 1,
+              cancelId: 0
+            },
+            response => {
+              if (response) {
+                this.selectRoR2Path();
+              }
+            }
+          );
+        } else {
+          this.prefs.set('ror2_path', path);
+          this.ror2Path = path;
+        }
+      });
     }
   }
 }
