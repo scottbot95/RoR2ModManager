@@ -21,12 +21,13 @@
       <mat-list>
         <mat-list-item>
           <label fxLayoutAlign="space-between" fxLayout="row" fxFlex
-            >RoR2 Install Path:
+            ><span><strong>RoR2 Install Path:</strong> {{ ror2Path }}</span>
 
             <button
               mat-raised-button
               type="button"
               matTooltip="Choose RoR2 Install Path"
+              (click)="selectRoR2Path()"
             >
               Browse
             </button>
