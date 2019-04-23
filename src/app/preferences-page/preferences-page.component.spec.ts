@@ -4,8 +4,7 @@ import { PreferencesPageComponent } from './preferences-page.component';
 import { PreferencesService } from '../core/services/preferences.service';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from '../shared/shared.module';
-
-class MockPrefsService {}
+import { MockPreferencesService } from '../core/services/mocks';
 
 describe('PreferencesPageComponent', () => {
   let component: PreferencesPageComponent;
@@ -15,7 +14,9 @@ describe('PreferencesPageComponent', () => {
     TestBed.configureTestingModule({
       declarations: [PreferencesPageComponent],
       imports: [SharedModule, ReactiveFormsModule],
-      providers: [{ provide: PreferencesService, useClass: MockPrefsService }]
+      providers: [
+        { provide: PreferencesService, useClass: MockPreferencesService }
+      ]
     }).compileComponents();
   }));
 
