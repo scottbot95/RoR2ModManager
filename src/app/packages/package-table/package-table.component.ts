@@ -3,7 +3,9 @@ import {
   Component,
   ViewChild,
   OnDestroy,
-  Input
+  Input,
+  Output,
+  EventEmitter
 } from '@angular/core';
 import { MatPaginator, MatSort } from '@angular/material';
 import { PackageTableDataSource } from './package-table-datasource';
@@ -11,7 +13,6 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Package } from '../../core/models/package.model';
 import { ThunderstoreService } from '../../core/services/thunderstore.service';
 import { Subscription } from 'rxjs';
-import { PackageService } from '../../core/services/package.service';
 import { delay } from 'rxjs/operators';
 
 @Component({
@@ -24,19 +25,17 @@ export class PackageTableComponent implements AfterViewInit, OnDestroy {
   @ViewChild(MatSort) sort: MatSort;
   @Input() applyChanges: (selection: SelectionModel<Package>) => void;
   @Input() installedPackages: Set<Package>;
-  @Input() showDetails: (pkg: Package) => void;
+  @Output() showPackageDetails = new EventEmitter<Package>();
   dataSource: PackageTableDataSource;
   isLoading: boolean;
 
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
-  displayedColumns = ['select', 'id', 'name', 'author', 'updated', 'latest'];
+  displayedColumns = ['select', 'name', 'author', 'updated', 'latest'];
   selection = new SelectionModel<Package>(true, []);
 
   private subscription = new Subscription();
 
-  constructor(
-    public thunderstore: ThunderstoreService,
-  ) {}
+  constructor(public thunderstore: ThunderstoreService) {}
 
   ngAfterViewInit() {
     // FIXME this is a band-aid and we should really solve this in a smarter way
@@ -53,6 +52,18 @@ export class PackageTableComponent implements AfterViewInit, OnDestroy {
         })
       );
     });
+
+    // update selected status for datasource sorting feature
+    this.subscription.add(
+      this.selection.changed.subscribe(changed => {
+        changed.added.forEach(pkg => {
+          pkg.selected = true;
+        });
+        changed.removed.forEach(pkg => {
+          pkg.selected = false;
+        });
+      })
+    );
   }
 
   ngOnDestroy() {
@@ -60,12 +71,13 @@ export class PackageTableComponent implements AfterViewInit, OnDestroy {
   }
 
   checkboxLabel(row: Package): string {
-    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row`;
+    return `${this.selection.isSelected(row) ? 'Uninstall' : 'Install'} ${
+      row.name
+    }`;
   }
 
-  showDetailsSafe(pkg: Package) {
-    if (this.showDetails) {
-      this.showDetails(pkg);
-    }
+  showDetails(pkg: Package) {
+    console.log(pkg);
+    this.showPackageDetails.emit(pkg);
   }
 }

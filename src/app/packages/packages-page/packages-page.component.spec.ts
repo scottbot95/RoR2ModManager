@@ -16,13 +16,25 @@ class MockPackageTableComponent {
   @Input() showDetails: (pkg: Package) => void;
 }
 
+@Component({
+  selector: 'app-package-details',
+  template: '<p>Mock Package Details Component</p>'
+})
+class MockPackageDetailsComponent {
+  @Input() package: Package;
+}
+
 describe('PackagesPageComponent', () => {
   let component: PackagesPageComponent;
   let fixture: ComponentFixture<PackagesPageComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [PackagesPageComponent, MockPackageTableComponent],
+      declarations: [
+        PackagesPageComponent,
+        MockPackageTableComponent,
+        MockPackageDetailsComponent
+      ],
       providers: [{ provide: PackageService, useClass: MockPackageService }]
     }).compileComponents();
   }));

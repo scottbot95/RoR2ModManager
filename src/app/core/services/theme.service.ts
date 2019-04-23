@@ -3,6 +3,7 @@ import { BehaviorSubject } from 'rxjs';
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { UserPreferences } from '../../../electron/preferences.model';
 import { PreferencesService } from './preferences.service';
+import { distinctUntilChanged } from 'rxjs/operators';
 
 @Injectable()
 export class ThemeService {
@@ -14,7 +15,9 @@ export class ThemeService {
   private isDarkModeSource = new BehaviorSubject<boolean>(
     !!(<UserPreferences['darkMode']>this.prefs.get('darkMode'))
   );
-  public isDarkMode$ = this.isDarkModeSource.asObservable();
+  public isDarkMode$ = this.isDarkModeSource
+    .asObservable()
+    .pipe(distinctUntilChanged());
 
   constructor(
     private overlay: OverlayContainer,

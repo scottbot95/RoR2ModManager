@@ -1,3 +1,48 @@
-<p>
-  package-details works!
-</p>
+<!-- Available directions -->
+<!--
+  <mat-card-content>
+  <img mat-card-image>
+  <mat-card-actions>
+  <mat-card-footer>
+   -->
+<mat-card>
+  <mat-card-header>
+    <mat-card-title
+      >{{ package.name }}<small> by {{ package.owner }}</small></mat-card-title
+    >
+    <mat-card-subtitle>{{
+      package.latest_version.description
+    }}</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <table class="details">
+      <tr>
+        <td>Latests Updated:</td>
+        <td>
+          {{ package.date_updated | date: 'MMM d, y, h:mm a ' }}
+        </td>
+      </tr>
+      <tr>
+        <td>Latest Version:</td>
+        <td>
+          {{ package.latest_version.version_number }}
+        </td>
+      </tr>
+      <tr>
+        <td>Total Downloads:</td>
+        <td>
+          {{ package.total_downloads }}
+        </td>
+      </tr>
+    </table>
+
+    <mat-card *ngIf="package.latest_version.readme">
+      <mat-card-title>README</mat-card-title>
+      <mat-card-content>
+        <markdown>
+          {{ package.latest_version.readme }}
+        </markdown>
+      </mat-card-content>
+    </mat-card>
+  </mat-card-content>
+</mat-card>

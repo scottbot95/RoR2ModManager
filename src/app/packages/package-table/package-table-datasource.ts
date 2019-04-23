@@ -106,6 +106,12 @@ export class PackageTableDataSource extends DataSource<Package> {
           return compare(a.name, b.name, isAsc);
         case 'id':
           return compare(a.uuid4, b.uuid4, isAsc);
+        case 'author':
+          return compare(a.owner, b.owner, isAsc);
+        case 'updated':
+          return compare(a.date_updated, b.date_updated, isAsc);
+        case 'select':
+          return compare(!!a.selected, !!b.selected, !isAsc);
         default:
           return 0;
       }

@@ -15,7 +15,11 @@ export interface Package extends PackageBase {
   date_updated: Date;
   is_pinned: boolean;
   versions: PackageVersion[];
+
+  // add on after getting result from api
   latest_version?: PackageVersion;
+  total_downloads?: number;
+  selected?: boolean;
 }
 
 export interface PackageVersion extends PackageBase {
@@ -25,8 +29,8 @@ export interface PackageVersion extends PackageBase {
   version_number: string;
   website_url: string;
   description: string;
-  readme: string;
   icon: string;
+  readme?: string;
 }
 
 export type PackageList = Package[];

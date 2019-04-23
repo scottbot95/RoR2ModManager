@@ -10,12 +10,18 @@ import {
   MatTableModule
 } from '@angular/material';
 import { PackageDetailsComponent } from './package-details/package-details.component';
+import { MarkdownModule } from 'ngx-markdown';
 
 @NgModule({
-  declarations: [PackageTableComponent, PackagesPageComponent, PackageDetailsComponent],
+  declarations: [
+    PackageTableComponent,
+    PackagesPageComponent,
+    PackageDetailsComponent
+  ],
   imports: [
     PackagesRoutingModule,
     SharedModule,
+    MarkdownModule.forChild(),
     MatSortModule,
     MatPaginatorModule,
     MatTableModule

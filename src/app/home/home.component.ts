@@ -1,21 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { ThunderstoreService } from '../core/services/thunderstore.service';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
-  // tslint:disable-next-line: use-host-property-decorator
   host: {
-    class: 'flex col grow'
+    style: 'display:flex;flex-direction:column;flex-grow:1;'
   }
 })
 export class HomeComponent implements OnInit {
-  constructor(private thunderstore: ThunderstoreService) {}
+  constructor() {}
 
-  ngOnInit() {
-    this.thunderstore.allPackages$.subscribe(packages => {
-      console.log(packages);
-    });
-  }
+  ngOnInit() {}
 }
