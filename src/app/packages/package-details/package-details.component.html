@@ -36,11 +36,11 @@
       </tr>
     </table>
 
-    <mat-card *ngIf="package.readme">
+    <mat-card *ngIf="package.latest_version.readme">
       <mat-card-title>README</mat-card-title>
       <mat-card-content>
         <markdown>
-          {{ package.readme }}
+          {{ package.latest_version.readme }}
         </markdown>
       </mat-card-content>
     </mat-card>

@@ -1,7 +1,9 @@
 {
   "productName": "RoR2 Mod Manager",
+  "appId": "com.electron.ror2modmanager",
   "directories": {
-    "output": "release/"
+    "output": "release/",
+    "buildResources": "build"
   },
   "files": [
     "**/*",
@@ -32,6 +34,7 @@
     "target": ["AppImage"]
   },
   "nsis": {
-    "oneClick": false
+    "oneClick": false,
+    "include": "build/installer.nsh"
   }
 }
