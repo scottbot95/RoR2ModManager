@@ -8,17 +8,6 @@ const regKey = new Registry({
   key: `\\SOFTWARE\\${productName}`
 });
 
-regKey.values((err, items) => {
-  if (err) {
-    console.error('Failed to read registry');
-    console.error(err);
-  } else {
-    items.forEach(item => {
-      console.log(`ITEM:${item.name}\t${item.type}\t${item.value}`);
-    });
-  }
-});
-
 export const prefs = new Store({
   name: 'user-preferences',
   defaults: defaultConfig,
