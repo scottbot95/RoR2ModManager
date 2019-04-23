@@ -9,12 +9,13 @@ import { SelectionModel } from '@angular/cdk/collections';
   templateUrl: './packages-page.component.html',
   styleUrls: ['./packages-page.component.scss'],
   host: {
-    class: 'flex col grow'
+    style: 'display:flex;flex-direction:column;flex-grow:1;'
   }
 })
 export class PackagesPageComponent implements OnInit, OnDestroy {
   private subscription = new Subscription();
   installedPackages = new Set<Package>();
+  selectedPackage: Package;
 
   constructor(private service: PackageService) {}
 

@@ -1,4 +1,14 @@
-<app-package-table
-  [applyChanges]="applyChanges"
-  [installedPackages]="installedPackages"
-></app-package-table>
+<div fxLayout="column" fxLayout.gt-md="row">
+  <app-package-table
+    [applyChanges]="applyChanges"
+    [installedPackages]="installedPackages"
+    (showPackageDetails)="selectedPackage = $event"
+    fxFlex
+  ></app-package-table>
+
+  <app-package-details
+    *ngIf="selectedPackage"
+    [package]="selectedPackage"
+    fxFlex
+  ></app-package-details>
+</div>

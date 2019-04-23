@@ -16,6 +16,7 @@ import { HomeComponent } from './home/home.component';
 import { CoreModule } from './core/core.module';
 import { NavMenuModule } from './nav-menu/nav-menu.module';
 import { PackagesModule } from './packages/packages.module';
+import { SharedModule } from './shared/shared.module';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -27,6 +28,7 @@ export function HttpLoaderFactory(http: HttpClient) {
   imports: [
     BrowserAnimationsModule,
     CoreModule,
+    SharedModule,
     AppRoutingModule,
     HttpClientModule,
     NavMenuModule,

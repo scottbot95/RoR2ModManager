@@ -1,3 +1,14 @@
-<p>
-  package-details works!
-</p>
+<!-- Available directions -->
+<!--
+  <mat-card-content>
+  <img mat-card-image>
+  <mat-card-actions>
+  <mat-card-footer>
+   -->
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>{{ package?.name }}</mat-card-title>
+    <mat-card-subtitle>{{ package?.owner }}</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>{{ package?.latest_version.description }}</mat-card-content>
+</mat-card>

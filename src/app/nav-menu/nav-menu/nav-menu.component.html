@@ -22,7 +22,7 @@
       >
     </mat-nav-list>
   </mat-sidenav>
-  <mat-sidenav-content>
+  <mat-sidenav-content fxLayout="column">
     <mat-toolbar color="primary">
       <button
         type="button"
@@ -34,7 +34,7 @@
         <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
       </button>
       <span>RoR2 Mod Manager</span>
-      <span class="grow"></span>
+      <span fxFlex></span>
       <button mat-icon-button (click)="theme.toggleDarkMode()">
         <mat-icon *ngIf="(theme.isDarkMode$ | async)" matTooltip="Light Mode"
           >brightness_7</mat-icon
@@ -44,7 +44,7 @@
         >
       </button>
     </mat-toolbar>
-    <div class="flex col grow page-content">
+    <div fxLayout="column" fxFlex class="grow page-content">
       <ng-content></ng-content>
     </div>
   </mat-sidenav-content>

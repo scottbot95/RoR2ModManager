@@ -1,4 +1,4 @@
-<div class="mat-elevation-z8">
+<div class="mat-elevation-z1">
   <table
     mat-table
     class="full-width-table"
@@ -92,7 +92,7 @@
       *matRowDef="let row; columns: displayedColumns"
       [hidden]="isLoading"
       [class.dirty]="selection.isSelected(row) !== installedPackages.has(row)"
-      (click)="showDetailsSafe(row)"
+      (click)="showDetails(row)"
     ></tr>
     <tr mat-footer-row *matFooterRowDef="['apply']"></tr>
   </table>
