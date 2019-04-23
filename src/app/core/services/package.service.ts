@@ -46,6 +46,7 @@ export class PackageService {
   public updatePackage(pkg: Package, version: PackageVersion) {}
 
   public applyChanges(changeset: PackageChangeset) {
+    console.log('Applying package changeset', changeset);
     // Add packages that have an old version installed to remove list
     changeset.updated.forEach(update => {
       const existing = this.installedPackagesSource.value.find(

@@ -3,8 +3,9 @@ import {
   PackageService,
   PackageChangeset
 } from '../../core/services/package.service';
-import { Subscription } from 'rxjs';
-import { Package, InstalledPackageList } from '../../core/models/package.model';
+import { Subscription, Observable } from 'rxjs';
+import { Package, PackageList } from '../../core/models/package.model';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-packages-page',
@@ -16,15 +17,18 @@ import { Package, InstalledPackageList } from '../../core/models/package.model';
 })
 export class PackagesPageComponent implements OnInit, OnDestroy {
   private subscription = new Subscription();
-  installedPackages: InstalledPackageList = [];
   selectedPackage: Package;
+  installedPackages$: Observable<
+    PackageList
+  > = this.service.installedPackages$.pipe(
+    map(pkgs => pkgs.map(pkg => pkg.installed_version.pkg))
+  );
 
   constructor(private service: PackageService) {}
 
   ngOnInit() {
     this.subscription.add(
       this.service.installedPackages$.subscribe(pkgs => {
-        this.installedPackages = pkgs;
         console.log(pkgs);
       })
     );
