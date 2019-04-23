@@ -15,7 +15,10 @@ export interface Package extends PackageBase {
   date_updated: Date;
   is_pinned: boolean;
   versions: PackageVersion[];
+
+  // add on after getting result from api
   latest_version?: PackageVersion;
+  total_downloads?: number;
 }
 
 export interface PackageVersion extends PackageBase {

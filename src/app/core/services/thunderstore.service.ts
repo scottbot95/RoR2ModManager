@@ -32,6 +32,10 @@ export class ThunderstoreService {
           pkg.versions.forEach(version => {
             version.date_created = new Date(version.date_created);
           });
+          pkg.total_downloads = pkg.versions.reduce(
+            (acc, ver) => acc + ver.downloads,
+            0
+          );
           pkg.latest_version = pkg.versions[0]; // versions are ordered from api
           // pkg.latest_version = pkg.versions.reduce(
           //   (latest, version) =>
