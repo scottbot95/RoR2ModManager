@@ -14,12 +14,12 @@ class WebPrefsStore {
     }
     localStorage.setItem(key, JSON.stringify(value));
   }
-  onDidChange(key: string, cb: cb) {
+  onDidChange(key: string, callback: cb) {
     if (!Array.isArray(this.watchers[key])) {
       this.watchers[key] = [];
     }
 
-    this.watchers[key].push(cb);
+    this.watchers[key].push(callback);
   }
 }
 
