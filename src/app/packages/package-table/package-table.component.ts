@@ -13,7 +13,6 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Package } from '../../core/models/package.model';
 import { ThunderstoreService } from '../../core/services/thunderstore.service';
 import { Subscription } from 'rxjs';
-import { PackageService } from '../../core/services/package.service';
 import { delay } from 'rxjs/operators';
 
 @Component({
@@ -53,6 +52,18 @@ export class PackageTableComponent implements AfterViewInit, OnDestroy {
         })
       );
     });
+
+    // update selected status for datasource sorting feature
+    this.subscription.add(
+      this.selection.changed.subscribe(changed => {
+        changed.added.forEach(pkg => {
+          pkg.selected = true;
+        });
+        changed.removed.forEach(pkg => {
+          pkg.selected = false;
+        });
+      })
+    );
   }
 
   ngOnDestroy() {
@@ -60,10 +71,13 @@ export class PackageTableComponent implements AfterViewInit, OnDestroy {
   }
 
   checkboxLabel(row: Package): string {
-    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row`;
+    return `${this.selection.isSelected(row) ? 'Uninstall' : 'Install'} ${
+      row.name
+    }`;
   }
 
   showDetails(pkg: Package) {
+    console.log(pkg);
     this.showPackageDetails.emit(pkg);
   }
 }

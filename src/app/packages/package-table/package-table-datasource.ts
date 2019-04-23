@@ -110,6 +110,8 @@ export class PackageTableDataSource extends DataSource<Package> {
           return compare(a.owner, b.owner, isAsc);
         case 'updated':
           return compare(a.date_updated, b.date_updated, isAsc);
+        case 'select':
+          return compare(!!a.selected, !!b.selected, !isAsc);
         default:
           return 0;
       }

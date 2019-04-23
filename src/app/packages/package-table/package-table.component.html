@@ -26,7 +26,7 @@
 
     <!-- Checkbox column -->
     <ng-container matColumnDef="select">
-      <th mat-header-cell *matHeaderCellDef>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
         Install
       </th>
       <td mat-cell *matCellDef="let row">
@@ -35,6 +35,7 @@
           (change)="$event ? selection.toggle(row) : null"
           [checked]="selection.isSelected(row)"
           [aria-label]="checkboxLabel(row)"
+          [matTooltip]="checkboxLabel(row)"
         ></mat-checkbox>
       </td>
     </ng-container>
@@ -77,6 +78,14 @@
       </td>
     </ng-container>
 
+    <!-- Total Downloads Column -->
+    <ng-container matColumnDef="downloads">
+      <th mat-header-cell *matHeaderCellDef>Total Downloads</th>
+      <td mat-cell *matCellDef="let row">
+        {{ row.total_downloads }}
+      </td>
+    </ng-container>
+
     <!-- Apply Column -->
     <ng-container matColumnDef="apply">
       <td
@@ -85,7 +94,11 @@
         [attr.colspan]="displayedColumns.length"
         class="align-right"
       >
-        <button mat-raised-button (click)="applyChanges(selection)">
+        <button
+          mat-raised-button
+          (click)="applyChanges(selection)"
+          matTooltip="Apply Changes"
+        >
           Apply
         </button>
       </td>

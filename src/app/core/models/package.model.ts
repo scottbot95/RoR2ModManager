@@ -19,6 +19,7 @@ export interface Package extends PackageBase {
   // add on after getting result from api
   latest_version?: PackageVersion;
   total_downloads?: number;
+  selected?: boolean;
 }
 
 export interface PackageVersion extends PackageBase {
