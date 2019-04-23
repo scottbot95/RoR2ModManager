@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "angular-electron": {
+    "ror2-mod-manager": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
@@ -61,27 +61,38 @@
                   "with": "src/environments/environment.prod.ts"
                 }
               ]
+            },
+            "web": {
+              "fileReplacements": [
+                {
+                  "replace": "src/electron/prefs.ts",
+                  "with": "src/electron/prefs.web.ts"
+                }
+              ]
             }
           }
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "angular-electron:build"
+            "browserTarget": "ror2-mod-manager:build"
           },
           "configurations": {
             "dev": {
-              "browserTarget": "angular-electron:build:dev"
+              "browserTarget": "ror2-mod-manager:build:dev"
             },
             "production": {
-              "browserTarget": "angular-electron:build:production"
+              "browserTarget": "ror2-mod-manager:build:production"
+            },
+            "web": {
+              "browserTarget": "ror2-mod-manager:build:web"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "angular-electron:build"
+            "browserTarget": "ror2-mod-manager:build"
           }
         },
         "test": {
@@ -104,7 +115,7 @@
             "fileReplacements": [
               {
                 "replace": "src/electron/prefs.ts",
-                "with": "src/electron/prefs.test.ts"
+                "with": "src/electron/prefs.web.ts"
               }
             ]
           }
@@ -118,7 +129,7 @@
         }
       }
     },
-    "angular-electron-e2e": {
+    "ror2-mod-manager-e2e": {
       "root": "e2e",
       "projectType": "application",
       "architect": {
@@ -132,7 +143,7 @@
       }
     }
   },
-  "defaultProject": "angular-electron",
+  "defaultProject": "ror2-mod-manager",
   "schematics": {
     "@schematics/angular:component": {
       "prefix": "app",

@@ -1,9 +1,11 @@
 import { app, BrowserWindow, autoUpdater } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
+import * as Registry from 'winreg';
 
 import { UserPreferences } from './src/electron/preferences.model';
 import { prefs } from './src/electron/prefs';
+import { productName } from './electron-builder.json';
 
 const server = 'https://hazel.scottbot95.now.sh';
 const feed = `${server}/update/${process.platform}/${app.getVersion()}`;
@@ -13,6 +15,28 @@ autoUpdater.setFeedURL({ url: feed });
 let win: BrowserWindow, serve: boolean;
 const args = process.argv.slice(1);
 serve = args.some(val => val === '--serve');
+
+const regKey = new Registry({
+  hive: Registry.HKCU,
+  key: `\\SOFTWARE\\${productName}`
+});
+
+// Grab value out of registry
+regKey.get('RoR2Dir', (err, result) => {
+  if (!err) {
+    // save it to prefs
+    prefs.set('ror2_path', result.value);
+
+    // remove it from registry as we'll use the pref from here on out
+    regKey.destroy(err2 => {
+      if (err2) {
+        console.error(
+          `Failed to remove registry key ${regKey.hive}${regKey.key}`
+        );
+      }
+    });
+  }
+});
 
 function createWindow() {
   const { height, width, x, y } = <UserPreferences['windowBounds']>(

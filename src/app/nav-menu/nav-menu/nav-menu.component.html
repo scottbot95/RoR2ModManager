@@ -20,6 +20,9 @@
       <a mat-list-item routerLinkActive="active" routerLink="/packages"
         >Packages</a
       >
+      <a mat-list-item routerLinkActive="active" routerLink="/preferences"
+        >Preferences</a
+      >
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content fxLayout="column">
@@ -35,6 +38,13 @@
       </button>
       <span>RoR2 Mod Manager</span>
       <span fxFlex></span>
+      <button
+        mat-icon-button
+        routerLink="/preferences"
+        matTooltip="Preferences"
+      >
+        <mat-icon>settings</mat-icon>
+      </button>
       <button mat-icon-button (click)="theme.toggleDarkMode()">
         <mat-icon *ngIf="(theme.isDarkMode$ | async)" matTooltip="Light Mode"
           >brightness_7</mat-icon

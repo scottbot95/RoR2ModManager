@@ -3,7 +3,7 @@ import {SpectronClient} from 'spectron';
 
 import commonSetup from './common-setup';
 
-describe('angular-electron App', function () {
+describe('ror2-mod-manager App', function () {
   commonSetup.apply(this);
 
   let browser: any;

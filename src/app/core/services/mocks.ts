@@ -61,3 +61,15 @@ export class MockPackageService {
 
   public updatePackage(pkg: Package, version: PackageVersion) {}
 }
+
+export class MockElectronService {
+  ipcRenderer = { on: () => {}, send: () => {} };
+  remote = {
+    dialog: {
+      showOpenDialog: (options: object) => {
+        return ['C:\\fakepath'];
+      }
+    },
+    require: (module: string) => ({})
+  };
+}

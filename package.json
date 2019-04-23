@@ -30,7 +30,7 @@
     "build:dev": "npm run build -- -c dev",
     "build:prod": "npm run build -- -c production",
     "ng:serve": "ng serve",
-    "ng:serve:web": "npm run postinstall:web && ng serve -o",
+    "ng:serve:web": "npm run postinstall:web && ng serve -c web -o",
     "electron:serve-tsc": "tsc -p tsconfig-serve.json",
     "electron:serve": "wait-on http-get://localhost:4200/ main.js && electron . --serve",
     "electron:local": "npm run build:prod && electron .",
