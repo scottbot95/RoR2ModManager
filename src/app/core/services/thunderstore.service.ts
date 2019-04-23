@@ -27,6 +27,11 @@ export class ThunderstoreService {
     const result = this.http.get<PackageList>(url).pipe(
       tap(packages => {
         packages.forEach(pkg => {
+          pkg.date_created = new Date(pkg.date_created);
+          pkg.date_updated = new Date(pkg.date_updated);
+          pkg.versions.forEach(version => {
+            version.date_created = new Date(version.date_created);
+          });
           pkg.latest_version = pkg.versions[0]; // versions are ordered from api
           // pkg.latest_version = pkg.versions.reduce(
           //   (latest, version) =>
