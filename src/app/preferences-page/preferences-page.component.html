@@ -4,8 +4,11 @@
     <mat-card>
       <mat-list>
         <mat-list-item
-          ><mat-slide-toggle class="fullWidthToggle" labelPosition="before"
-            >Slide Me</mat-slide-toggle
+          ><mat-slide-toggle
+            class="fullWidthToggle"
+            labelPosition="before"
+            [formControl]="darkMode"
+            >Dark Mode</mat-slide-toggle
           >
         </mat-list-item>
       </mat-list>
@@ -20,7 +23,11 @@
           <label fxLayoutAlign="space-between" fxLayout="row" fxFlex
             >RoR2 Install Path:
 
-            <button mat-raised-button matTooltip="Choose RoR2 Install Path">
+            <button
+              mat-raised-button
+              type="button"
+              matTooltip="Choose RoR2 Install Path"
+            >
               Browse
             </button>
           </label>
