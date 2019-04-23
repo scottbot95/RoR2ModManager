@@ -29,8 +29,8 @@ export interface PackageVersion extends PackageBase {
   version_number: string;
   website_url: string;
   description: string;
-  readme: string;
   icon: string;
+  readme?: string;
 }
 
 export type PackageList = Package[];
