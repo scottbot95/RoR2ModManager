@@ -4,10 +4,7 @@ import { PackageService } from './package.service';
 import { ElectronService } from './electron.service';
 import { MockElectronService, MockDownloadService } from './mocks';
 import { DownloadService } from './download.service';
-import {
-  testPackage,
-  testInstalledPackage
-} from '../models/package.model.spec';
+import { testPackage } from '../models/package.model.spec';
 
 describe('PackageService', () => {
   let service: PackageService;

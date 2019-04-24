@@ -1,5 +1,4 @@
 import { SelectionChangesetModel } from './selection-changeset';
-import { IterableChangeRecord_ } from '@angular/core/src/change_detection/differs/default_iterable_differ';
 
 interface FakeData {
   data: number;
