@@ -1,6 +1,7 @@
 [![Angular Logo](https://www.vectorlogo.zone/logos/angular/angular-icon.svg)](https://angular.io/) [![Electron Logo](https://www.vectorlogo.zone/logos/electronjs/electronjs-icon.svg)](https://electronjs.org/)
 
 [![Travis Build Status][build-badge]][build]
+[![Code Coverage Status][codecov-badge]][codecov]
 [![Make a pull request][prs-badge]][prs]
 [![License](http://img.shields.io/badge/Licence-MIT-brightgreen.svg)](LICENSE.md)
 
@@ -89,3 +90,5 @@ Note that you can't use Electron or NodeJS native libraries in this case. Please
 [github-watch]: https://github.com/scottbot95/RoR2ModManager/watchers
 [github-star-badge]: https://img.shields.io/github/stars/scottbot95/RoR2ModManager.svg?style=social
 [github-star]: https://github.com/scottbot95/RoR2ModManager/stargazers
+[codecov-badge]: https://codecov.io/gh/scottbot95/RoR2ModManager/branch/master/graph/badge.svg
+[codecov]: https://codecov.io/gh/scottbot95/RoR2ModManager
