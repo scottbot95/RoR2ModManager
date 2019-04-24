@@ -45,7 +45,7 @@ export class PreferencesPageComponent implements OnInit, OnDestroy {
     });
     if (result) {
       const path = result[0];
-      const { join } = this.electron.remote.require('path');
+      const { join } = this.electron.path;
       this.electron.fs.access(join(path, 'Risk of Rain 2.exe'), err => {
         if (err) {
           this.electron.remote.dialog.showMessageBox(
