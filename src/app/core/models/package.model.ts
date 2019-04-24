@@ -20,6 +20,7 @@ export interface Package extends PackageBase {
   latest_version?: PackageVersion;
   total_downloads?: number;
   selected?: boolean;
+  requiredBy?: Set<PackageVersion>;
 }
 
 export interface PackageVersion extends PackageBase {

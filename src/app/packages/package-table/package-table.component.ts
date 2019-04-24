@@ -10,7 +10,12 @@ import {
 } from '@angular/core';
 import { MatPaginator, MatSort } from '@angular/material';
 import { PackageTableDataSource } from './package-table-datasource';
-import { Package, PackageList } from '../../core/models/package.model';
+import {
+  Package,
+  PackageList,
+  PackageVersion,
+  PackageVersionList
+} from '../../core/models/package.model';
 import { ThunderstoreService } from '../../core/services/thunderstore.service';
 import { Subscription, Observable } from 'rxjs';
 import { delay } from 'rxjs/operators';
@@ -54,9 +59,11 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.selection.changed.subscribe(changed => {
         changed.added.forEach(pkg => {
           pkg.selected = true;
+          this.selectAllDependencies(pkg.latest_version);
         });
         changed.removed.forEach(pkg => {
           pkg.selected = false;
+          this.deselectAvailDependencies(pkg.latest_version);
         });
       })
     );
@@ -120,5 +127,48 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
       Array.from(changeset.added).map(pkg => pkg.latest_version)
     );
     this.applyChanges(changes);
+  }
+
+  private selectAllDependencies(pkg: PackageVersion) {
+    console.log('Selecting deps for', pkg);
+    const toSelect: PackageVersionList = [];
+    pkg.dependencies.forEach(dep => {
+      const depVer = this.getDependecyFromString(dep);
+      if (this.selection.isSelected(depVer.pkg)) return;
+      toSelect.push(depVer);
+
+      depVer.pkg.requiredBy.add(pkg);
+      console.log(`found dep from string ${dep}`, depVer);
+    });
+
+    if (toSelect.length) this.selection.select(...toSelect.map(p => p.pkg));
+  }
+
+  private deselectAvailDependencies(pkg: PackageVersion) {
+    const toDeselct: PackageVersionList = [];
+    console.log('Deselecting dependenices for', pkg);
+
+    pkg.dependencies.forEach(dep => {
+      const depVer = this.getDependecyFromString(dep);
+      const depPkg = depVer.pkg;
+
+      depPkg.requiredBy.delete(pkg);
+      if (depPkg.requiredBy.size === 0) {
+        if (!this.selection.isSelected(depPkg)) return;
+        toDeselct.push(depVer);
+        console.log(`found dep from string ${dep}`, depVer);
+      }
+    });
+
+    if (toDeselct.length) this.selection.deselect(...toDeselct.map(p => p.pkg));
+  }
+
+  private getDependecyFromString(dep: string) {
+    const [author, name, version] = dep.split('-');
+    const depPkg = this.dataSource.data.find(
+      p => p.owner === author && p.name === name
+    );
+    const depVer = depPkg.versions.find(v => v.version_number === version);
+    return depVer;
   }
 }

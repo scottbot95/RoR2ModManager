@@ -37,6 +37,7 @@ export class ThunderstoreService {
             0
           );
           pkg.latest_version = pkg.versions[0]; // versions are ordered from api
+          pkg.requiredBy = new Set();
           // pkg.latest_version = pkg.versions.reduce(
           //   (latest, version) =>
           //     semver.gt(version.version_number, latest.version_number)
