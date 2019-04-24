@@ -13,7 +13,6 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { MarkdownModule } from 'ngx-markdown';
 
 import { AppComponent } from './app.component';
-import { HomeComponent } from './home/home.component';
 import { CoreModule } from './core/core.module';
 import { NavMenuModule } from './nav-menu/nav-menu.module';
 import { PackagesModule } from './packages/packages.module';
@@ -26,7 +25,7 @@ export function HttpLoaderFactory(http: HttpClient) {
 }
 
 @NgModule({
-  declarations: [AppComponent, HomeComponent, PreferencesPageComponent],
+  declarations: [AppComponent, PreferencesPageComponent],
   imports: [
     BrowserAnimationsModule,
     CoreModule,
