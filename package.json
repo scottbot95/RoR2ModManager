@@ -74,6 +74,7 @@
     "core-js": "2.6.1",
     "electron": "4.0.0",
     "electron-builder": "20.36.2",
+    "electron-dl": "^1.14.0",
     "electron-reload": "1.3.0",
     "electron-store": "^3.2.0",
     "hammerjs": "^2.0.8",

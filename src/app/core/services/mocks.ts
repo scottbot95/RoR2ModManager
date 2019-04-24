@@ -7,6 +7,7 @@ import { Observable, of } from 'rxjs';
 import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PackageList, Package, PackageVersion } from '../models/package.model';
+import { DownloadItem } from 'electron';
 
 export class MockPreferencesService {
   private data: UserPreferences = defaultConfig;
@@ -72,4 +73,11 @@ export class MockElectronService {
     },
     require: (module: string) => ({})
   };
+}
+
+export class MockDownloadService {
+  async download(): Promise<object> {
+    const mockResult = {};
+    return mockResult;
+  }
 }
