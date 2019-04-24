@@ -19,3 +19,5 @@ script:
   - npm run test:ci -- --code-coverage
   - npm run e2e:ci
   # - npm run build:ci
+after_success:
+  - codecov
