@@ -3,8 +3,9 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { PackageDetailsComponent } from './package-details.component';
 import { MaterialModule } from '../../shared/material.module';
 import { Component } from '@angular/core';
-import { Package, PackageVersion } from '../../core/models/package.model';
+import { Package } from '../../core/models/package.model';
 import { By } from '@angular/platform-browser';
+import { testPackage } from '../../core/models/package.model.spec';
 
 @Component({
   // tslint:disable-next-line: component-selector
@@ -13,40 +14,13 @@ import { By } from '@angular/platform-browser';
 })
 class MockMarkdownComponent {}
 
-const testPackageVersion: PackageVersion = {
-  date_created: new Date(),
-  dependencies: [],
-  description: '',
-  download_url: '',
-  downloads: 0,
-  icon: '',
-  is_active: true,
-  name: 'testPackage',
-  uuid4: '',
-  version_number: '1.0.0',
-  website_url: '',
-  full_name: 'author-testPackage-1.0.0'
-};
-
 @Component({
   selector: 'app-host-component',
   template:
     '<app-package-details [package]="testPackage"></app-package-details>'
 })
 class TestHostComponent {
-  testPackage: Package = {
-    date_created: new Date(),
-    date_updated: new Date(),
-    is_active: true,
-    is_pinned: false,
-    maintainers: [],
-    name: 'TestPackage',
-    owner: 'author',
-    uuid4: '',
-    full_name: ``,
-    latest_version: testPackageVersion,
-    versions: [testPackageVersion]
-  };
+  testPackage: Package = testPackage;
 }
 
 describe('PackageDetailsComponent', () => {

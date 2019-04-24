@@ -41,4 +41,9 @@ export class SelectionChangesetModel<T> extends SelectionModel<T> {
     const changes = this.getChangeset();
     return changes.added.size !== 0 || changes.removed.size !== 0;
   }
+
+  public reset(): void {
+    this.clear();
+    this.select(...Array.from(this._initialValues.values()));
+  }
 }
