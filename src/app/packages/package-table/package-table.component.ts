@@ -134,10 +134,11 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
     const toSelect: PackageVersionList = [];
     pkg.dependencies.forEach(dep => {
       const depVer = this.getDependecyFromString(dep);
+      depVer.pkg.requiredBy.add(pkg);
+
       if (this.selection.isSelected(depVer.pkg)) return;
       toSelect.push(depVer);
 
-      depVer.pkg.requiredBy.add(pkg);
       console.log(`found dep from string ${dep}`, depVer);
     });
 
