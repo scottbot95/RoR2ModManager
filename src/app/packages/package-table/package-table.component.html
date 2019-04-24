@@ -27,7 +27,12 @@
         [attr.colspan]="displayedColumns.length - 1"
       >
         <mat-form-field floatLabel="never" style="width: 100%">
-          <input matInput placeholder="Filter" [formControl]="filter" />
+          <input
+            matInput
+            placeholder="Filter"
+            [formControl]="filter"
+            [appFocusOnKeys]="['command+f', 'ctrl+f']"
+          />
         </mat-form-field>
       </th>
     </ng-container>

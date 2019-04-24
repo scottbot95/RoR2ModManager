@@ -26,7 +26,6 @@ import { FormControl } from '@angular/forms';
 export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  // @ViewChild('filter') filterInput: ElementRef;
   @Input() applyChanges: (selection: PackageChangeset) => void;
   @Input() installedPackages: Observable<PackageList>;
   @Output() showPackageDetails = new EventEmitter<Package>();
