@@ -10,16 +10,13 @@ import {
 } from '@angular/core';
 import { MatPaginator, MatSort } from '@angular/material';
 import { PackageTableDataSource } from './package-table-datasource';
-import {
-  Package,
-  InstalledPackageList,
-  PackageList
-} from '../../core/models/package.model';
+import { Package, PackageList } from '../../core/models/package.model';
 import { ThunderstoreService } from '../../core/services/thunderstore.service';
 import { Subscription, Observable } from 'rxjs';
 import { delay } from 'rxjs/operators';
 import { PackageChangeset } from '../../core/services/package.service';
 import { SelectionChangesetModel } from '../../shared/selection-changeset';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-package-table',
@@ -29,6 +26,7 @@ import { SelectionChangesetModel } from '../../shared/selection-changeset';
 export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
+  // @ViewChild('filter') filterInput: ElementRef;
   @Input() applyChanges: (selection: PackageChangeset) => void;
   @Input() installedPackages: Observable<PackageList>;
   @Output() showPackageDetails = new EventEmitter<Package>();
@@ -38,6 +36,8 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
   displayedColumns = ['select', 'name', 'author', 'updated', 'latest'];
   selection: SelectionChangesetModel<Package>;
+
+  filter = new FormControl('');
 
   private subscription = new Subscription();
   private _installedPackages: PackageList;
@@ -75,6 +75,7 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.dataSource = new PackageTableDataSource(
         this.paginator,
         this.sort,
+        this.filter,
         this.thunderstore
       );
 

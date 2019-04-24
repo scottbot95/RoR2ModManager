@@ -6,7 +6,6 @@ import { ElectronService } from './core/services/electron.service';
 import { Component } from '@angular/core';
 import { ThemeService } from './core/services/theme.service';
 import { MockThemeService } from './core/services/mocks';
-import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-nav-menu',

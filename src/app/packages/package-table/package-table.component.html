@@ -8,12 +8,7 @@
   >
     <!-- Refresh Button "column" -->
     <ng-container matColumnDef="refresh">
-      <th
-        mat-header-cell
-        *matHeaderCellDef
-        [attr.colspan]="displayedColumns.length"
-        class="align-right"
-      >
+      <th mat-header-cell *matHeaderCellDef>
         <button
           mat-icon-button
           (click)="thunderstore.loadAllPackages()"
@@ -21,6 +16,19 @@
         >
           <mat-icon>refresh</mat-icon>
         </button>
+      </th>
+    </ng-container>
+
+    <!-- Filter Column -->
+    <ng-container matColumnDef="filter">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        [attr.colspan]="displayedColumns.length - 1"
+      >
+        <mat-form-field floatLabel="never" style="width: 100%">
+          <input matInput placeholder="Filter" [formControl]="filter" />
+        </mat-form-field>
       </th>
     </ng-container>
 
@@ -104,7 +112,7 @@
       </td>
     </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="['refresh']"></tr>
+    <tr mat-header-row *matHeaderRowDef="['filter', 'refresh']"></tr>
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr
       mat-row

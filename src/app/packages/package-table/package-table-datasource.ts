@@ -1,15 +1,10 @@
 import { DataSource } from '@angular/cdk/collections';
 import { MatPaginator, MatSort } from '@angular/material';
 import { map, distinctUntilChanged } from 'rxjs/operators';
-import {
-  Observable,
-  of as observableOf,
-  merge,
-  Subscription,
-  BehaviorSubject
-} from 'rxjs';
+import { Observable, merge, Subscription, BehaviorSubject } from 'rxjs';
 import { PackageList, Package } from '../../core/models/package.model';
 import { ThunderstoreService } from '../../core/services/thunderstore.service';
+import { FormControl } from '@angular/forms';
 
 /**
  * Data source for the PackageTable view. This class should
@@ -19,8 +14,7 @@ import { ThunderstoreService } from '../../core/services/thunderstore.service';
 export class PackageTableDataSource extends DataSource<Package> {
   private dataSource = new BehaviorSubject<PackageList>([]);
   data: PackageList;
-
-  public filteredData$: Observable<PackageList>;
+  filteredData: PackageList;
 
   private loadingSource = new BehaviorSubject<boolean>(false);
   public loading$ = this.loadingSource
@@ -32,11 +26,13 @@ export class PackageTableDataSource extends DataSource<Package> {
   constructor(
     private paginator: MatPaginator,
     private sort: MatSort,
+    private filter: FormControl,
     private thunderstore: ThunderstoreService
   ) {
     super();
     this.dataSource.subscribe(data => {
       this.data = data;
+      this.filteredData = this.getFilteredData(data);
     });
   }
 
@@ -51,7 +47,8 @@ export class PackageTableDataSource extends DataSource<Package> {
     const dataMutations = [
       this.dataSource,
       this.paginator.page,
-      this.sort.sortChange
+      this.sort.sortChange,
+      this.filter.valueChanges.pipe(distinctUntilChanged())
     ];
 
     // Set the paginator's length
@@ -68,9 +65,15 @@ export class PackageTableDataSource extends DataSource<Package> {
       })
     );
 
+    this.subscription.add(
+      this.filter.valueChanges.subscribe(() => {
+        this.filteredData = this.getFilteredData(this.data);
+      })
+    );
+
     return merge(...dataMutations).pipe(
       map(() => {
-        return this.getPagedData(this.getSortedData([...this.data]));
+        return this.getPagedData(this.getSortedData([...this.filteredData]));
       })
     );
   }
@@ -79,13 +82,15 @@ export class PackageTableDataSource extends DataSource<Package> {
    *  Called when the table is being destroyed. Use this function, to clean up
    * any open connections or free any held resources that were set up during connect.
    */
-  disconnect() {}
+  disconnect() {
+    this.subscription.unsubscribe();
+  }
 
   /**
    * Paginate the data (client-side). If you're using server-side pagination,
    * this would be replaced by requesting the appropriate data from the server.
    */
-  private getPagedData(data: PackageList) {
+  private getPagedData(data: PackageList): PackageList {
     const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
     return data.splice(startIndex, this.paginator.pageSize);
   }
@@ -94,7 +99,7 @@ export class PackageTableDataSource extends DataSource<Package> {
    * Sort the data (client-side). If you're using server-side sorting,
    * this would be replaced by requesting the appropriate data from the server.
    */
-  private getSortedData(data: PackageList) {
+  private getSortedData(data: PackageList): PackageList {
     if (!this.sort.active || this.sort.direction === '') {
       return data;
     }
@@ -116,6 +121,15 @@ export class PackageTableDataSource extends DataSource<Package> {
           return 0;
       }
     });
+  }
+
+  private getFilteredData(data: PackageList): PackageList {
+    const filterText = (this.filter.value as string).toLowerCase();
+    if (filterText && filterText.length > 0) {
+      return data.filter(pkg => pkg.name.toLowerCase().includes(filterText));
+    } else {
+      return data;
+    }
   }
 }
 
