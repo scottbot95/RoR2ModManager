@@ -1,6 +1,6 @@
 import { DataSource } from '@angular/cdk/collections';
 import { MatPaginator, MatSort } from '@angular/material';
-import { map, distinctUntilChanged } from 'rxjs/operators';
+import { map, distinctUntilChanged, debounceTime } from 'rxjs/operators';
 import { Observable, merge, Subscription, BehaviorSubject } from 'rxjs';
 import { PackageList, Package } from '../../core/models/package.model';
 import { ThunderstoreService } from '../../core/services/thunderstore.service';
@@ -49,7 +49,10 @@ export class PackageTableDataSource extends DataSource<Package> {
       this.dataSource,
       this.paginator.page,
       this.sort.sortChange,
-      this.filter.valueChanges.pipe(distinctUntilChanged())
+      this.filter.valueChanges.pipe(
+        distinctUntilChanged(),
+        debounceTime(100)
+      )
     ];
 
     this.subscription.add(
@@ -125,7 +128,14 @@ export class PackageTableDataSource extends DataSource<Package> {
   private getFilteredData(data: PackageList): PackageList {
     const filterText = (this.filter.value as string).toLowerCase();
     if (filterText && filterText.length > 0) {
-      return data.filter(pkg => pkg.name.toLowerCase().includes(filterText));
+      return data.filter(
+        pkg =>
+          pkg.name.toLowerCase().includes(filterText) ||
+          pkg.owner.toLowerCase().includes(filterText) ||
+          pkg.latest_version.description
+            .toLocaleLowerCase()
+            .includes(filterText)
+      );
     } else {
       return data;
     }
