@@ -33,6 +33,7 @@ export class PackageTableDataSource extends DataSource<Package> {
     this.dataSource.subscribe(data => {
       this.data = data;
       this.filteredData = this.getFilteredData(data);
+      this.paginator.length = this.filteredData.length;
     });
   }
 
@@ -51,9 +52,6 @@ export class PackageTableDataSource extends DataSource<Package> {
       this.filter.valueChanges.pipe(distinctUntilChanged())
     ];
 
-    // Set the paginator's length
-    this.paginator.length = this.data.length;
-
     this.subscription.add(
       this.thunderstore.allPackages$.subscribe(packages => {
         if (packages) {
@@ -68,6 +66,7 @@ export class PackageTableDataSource extends DataSource<Package> {
     this.subscription.add(
       this.filter.valueChanges.subscribe(() => {
         this.filteredData = this.getFilteredData(this.data);
+        this.paginator.length = this.filteredData.length;
       })
     );
 
