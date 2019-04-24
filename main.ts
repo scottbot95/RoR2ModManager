@@ -1,7 +1,8 @@
 import { app, BrowserWindow, autoUpdater } from 'electron';
 import * as path from 'path';
-import * as url from 'url';
+import { format as formatUrl } from 'url';
 import * as Registry from 'winreg';
+import * as electronDl from 'electron-dl';
 
 import { UserPreferences } from './src/electron/preferences.model';
 import { prefs } from './src/electron/prefs';
@@ -11,6 +12,8 @@ const server = 'https://hazel.scottbot95.now.sh';
 const feed = `${server}/update/${process.platform}/${app.getVersion()}`;
 
 autoUpdater.setFeedURL({ url: feed });
+
+electronDl();
 
 let win: BrowserWindow, serve: boolean;
 const args = process.argv.slice(1);
@@ -88,7 +91,7 @@ function createWindow() {
     win.loadURL('http://localhost:4200');
   } else {
     win.loadURL(
-      url.format({
+      formatUrl({
         pathname: path.join(__dirname, 'dist/index.html'),
         protocol: 'file:',
         slashes: true

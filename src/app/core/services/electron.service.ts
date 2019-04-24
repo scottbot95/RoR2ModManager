@@ -8,7 +8,6 @@ import * as fs from 'fs';
 
 @Injectable()
 export class ElectronService {
-
   ipcRenderer: typeof ipcRenderer;
   webFrame: typeof webFrame;
   remote: typeof remote;
@@ -24,11 +23,17 @@ export class ElectronService {
 
       this.childProcess = window.require('child_process');
       this.fs = window.require('fs');
+      this.configureIpc();
     }
   }
 
   isElectron = () => {
     return window && window.process && window.process.type;
-  }
+  };
 
+  private configureIpc() {
+    this.ipcRenderer.on('print', (event, ...args) => {
+      console.log('Main Process:', ...args);
+    });
+  }
 }

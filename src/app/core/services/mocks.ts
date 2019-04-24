@@ -73,3 +73,10 @@ export class MockElectronService {
     require: (module: string) => ({})
   };
 }
+
+export class MockDownloadService {
+  async download(): Promise<object> {
+    const mockResult = {};
+    return mockResult;
+  }
+}

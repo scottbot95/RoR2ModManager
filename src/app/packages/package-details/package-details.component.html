@@ -44,5 +44,11 @@
         </markdown>
       </mat-card-content>
     </mat-card>
+    <strong>Versions:</strong>
+    <mat-list dense>
+      <mat-list-item *ngFor="let version of package.versions">{{
+        version.version_number
+      }}</mat-list-item>
+    </mat-list>
   </mat-card-content>
 </mat-card>
