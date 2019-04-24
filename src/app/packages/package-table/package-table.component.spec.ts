@@ -13,7 +13,7 @@ import { ThunderstoreService } from '../../core/services/thunderstore.service';
 import { of } from 'rxjs';
 import { ElectronService } from '../../core/services/electron.service';
 import { MockHttpClient } from '../../core/services/mocks';
-import { Component } from '@angular/core';
+import { Component, Directive, Input } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { ReactiveFormsModule } from '@angular/forms';
 
@@ -26,6 +26,13 @@ class TestHostComponent {
   installedPackages = of([]);
 }
 
+@Directive({
+  selector: '[appFocusOnKeys]'
+})
+class MockFocusOnKeysDirective {
+  @Input('appFocusOnKeys') key: any;
+}
+
 describe('PackageTableComponent', () => {
   let testHostComponent: TestHostComponent;
   let testHostFixture: ComponentFixture<TestHostComponent>;
@@ -33,7 +40,11 @@ describe('PackageTableComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [PackageTableComponent, TestHostComponent],
+      declarations: [
+        PackageTableComponent,
+        TestHostComponent,
+        MockFocusOnKeysDirective
+      ],
       imports: [
         NoopAnimationsModule,
         MaterialModule,
