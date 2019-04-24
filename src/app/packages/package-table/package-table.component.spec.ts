@@ -11,17 +11,28 @@ import { PackageTableComponent } from './package-table.component';
 import { MaterialModule } from '../../shared/material.module';
 import { ThunderstoreService } from '../../core/services/thunderstore.service';
 import { of } from 'rxjs';
-import { PackageService } from '../../core/services/package.service';
 import { ElectronService } from '../../core/services/electron.service';
 import { MockHttpClient } from '../../core/services/mocks';
+import { Component } from '@angular/core';
+import { By } from '@angular/platform-browser';
+
+@Component({
+  selector: 'app-test-host',
+  template:
+    '<app-package-table [installedPackages]="installedPackages"></app-package-table>'
+})
+class TestHostComponent {
+  installedPackages = of([]);
+}
 
 describe('PackageTableComponent', () => {
+  let testHostComponent: TestHostComponent;
+  let testHostFixture: ComponentFixture<TestHostComponent>;
   let component: PackageTableComponent;
-  let fixture: ComponentFixture<PackageTableComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [PackageTableComponent],
+      declarations: [PackageTableComponent, TestHostComponent],
       imports: [
         NoopAnimationsModule,
         MaterialModule,
@@ -41,9 +52,12 @@ describe('PackageTableComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(PackageTableComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    testHostFixture = TestBed.createComponent(TestHostComponent);
+    testHostComponent = testHostFixture.componentInstance;
+    testHostFixture.detectChanges();
+    component = testHostFixture.debugElement.query(
+      By.directive(PackageTableComponent)
+    ).componentInstance;
   });
 
   it('should compile', () => {
