@@ -8,6 +8,7 @@ import {
   PackageList,
   PackageVersionList
 } from '../models/package.model';
+import { DownloadService } from './download.service';
 
 export interface PackageChangeset {
   updated: Set<PackageVersion>;
@@ -26,13 +27,17 @@ export class PackageService {
   );
   public installedPackages$ = this.installedPackagesSource.asObservable();
 
-  constructor(private electron: ElectronService) {}
+  constructor(
+    private electron: ElectronService,
+    private download: DownloadService
+  ) {}
 
   public installPackage(pkg: PackageVersion) {
     this.installedPackagesSource.next([
       ...this.installedPackagesSource.value,
       { ...pkg.pkg, installed_version: pkg }
     ]);
+    this.download.download(pkg);
   }
 
   public uninstallPackage(pkg: Package) {

@@ -1,7 +1,8 @@
-import { app, BrowserWindow, autoUpdater } from 'electron';
+import { app, BrowserWindow, autoUpdater, ipcMain } from 'electron';
 import * as path from 'path';
-import * as url from 'url';
+import { format as formatUrl } from 'url';
 import * as Registry from 'winreg';
+import * as electronDl from 'electron-dl';
 
 import { UserPreferences } from './src/electron/preferences.model';
 import { prefs } from './src/electron/prefs';
@@ -12,6 +13,8 @@ const feed = `${server}/update/${process.platform}/${app.getVersion()}`;
 
 autoUpdater.setFeedURL({ url: feed });
 
+electronDl();
+
 let win: BrowserWindow, serve: boolean;
 const args = process.argv.slice(1);
 serve = args.some(val => val === '--serve');
@@ -20,6 +23,19 @@ const regKey = new Registry({
   hive: Registry.HKCU,
   key: `\\SOFTWARE\\${productName}`
 });
+
+ipcMain.on(
+  'download',
+  async (event: Electron.IpcMessageEvent, { url, ...opts }) => {
+    const dlItem = await electronDl.download(win, url, opts);
+    event.sender.send('print', 'I can print things!');
+    const handler = (evt, state) => {
+      event.sender.send('print', state);
+    };
+    dlItem.on('done', handler);
+    dlItem.on('updated', handler);
+  }
+);
 
 // Grab value out of registry
 regKey.get('RoR2Dir', (err, result) => {
@@ -88,7 +104,7 @@ function createWindow() {
     win.loadURL('http://localhost:4200');
   } else {
     win.loadURL(
-      url.format({
+      formatUrl({
         pathname: path.join(__dirname, 'dist/index.html'),
         protocol: 'file:',
         slashes: true

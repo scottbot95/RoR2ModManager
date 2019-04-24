@@ -73,3 +73,5 @@ export class MockElectronService {
     require: (module: string) => ({})
   };
 }
+
+export class MockDownloadService {}
