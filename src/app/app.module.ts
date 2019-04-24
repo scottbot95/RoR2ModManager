@@ -18,7 +18,6 @@ import { NavMenuModule } from './nav-menu/nav-menu.module';
 import { PackagesModule } from './packages/packages.module';
 import { SharedModule } from './shared/shared.module';
 import { PreferencesPageComponent } from './preferences-page/preferences-page.component';
-import { ReactiveFormsModule } from '@angular/forms';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -35,7 +34,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     HttpClientModule,
     NavMenuModule,
     PackagesModule,
-    ReactiveFormsModule,
     MarkdownModule.forRoot(),
     TranslateModule.forRoot({
       loader: {

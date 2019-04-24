@@ -1,12 +1,9 @@
 import { Injectable } from '@angular/core';
-import { ElectronService } from './electron.service';
 import { BehaviorSubject } from 'rxjs';
 import {
   PackageVersion,
   Package,
-  InstalledPackageList,
-  PackageList,
-  PackageVersionList
+  InstalledPackageList
 } from '../models/package.model';
 import { DownloadService } from './download.service';
 
@@ -27,10 +24,7 @@ export class PackageService {
   );
   public installedPackages$ = this.installedPackagesSource.asObservable();
 
-  constructor(
-    private electron: ElectronService,
-    private download: DownloadService
-  ) {}
+  constructor(private download: DownloadService) {}
 
   public installPackage(pkg: PackageVersion) {
     this.installedPackagesSource.next([

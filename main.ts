@@ -1,4 +1,4 @@
-import { app, BrowserWindow, autoUpdater, ipcMain } from 'electron';
+import { app, BrowserWindow, autoUpdater } from 'electron';
 import * as path from 'path';
 import { format as formatUrl } from 'url';
 import * as Registry from 'winreg';
