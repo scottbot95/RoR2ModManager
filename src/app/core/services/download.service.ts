@@ -1,19 +1,26 @@
 import { Injectable } from '@angular/core';
 import { ElectronService } from './electron.service';
 import { PackageVersion } from '../models/package.model';
+import { download } from 'electron-dl';
 
 @Injectable()
 export class DownloadService {
+  private downloader: typeof download;
+
   constructor(private electron: ElectronService) {
-    this.electron.ipcRenderer.on('print', (event, ...args) => {
-      console.log(...args);
-    });
+    this.downloader = this.electron.remote.require('electron-dl').download;
   }
 
-  download(pkg: PackageVersion) {
-    this.electron.ipcRenderer.send('download', {
-      url: pkg.download_url,
-      directory: this.electron.remote.app.getPath('downloads')
-    });
+  async download(pkg: PackageVersion) {
+    const result = await this.downloader(
+      this.electron.remote.getCurrentWindow(),
+      pkg.download_url,
+      {
+        directory: this.electron.remote.app.getPath('downloads'),
+        onProgress: percent => {
+          console.log(percent);
+        }
+      }
+    );
   }
 }

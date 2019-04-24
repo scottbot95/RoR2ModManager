@@ -24,19 +24,6 @@ const regKey = new Registry({
   key: `\\SOFTWARE\\${productName}`
 });
 
-ipcMain.on(
-  'download',
-  async (event: Electron.IpcMessageEvent, { url, ...opts }) => {
-    const dlItem = await electronDl.download(win, url, opts);
-    event.sender.send('print', 'I can print things!');
-    const handler = (evt, state) => {
-      event.sender.send('print', state);
-    };
-    dlItem.on('done', handler);
-    dlItem.on('updated', handler);
-  }
-);
-
 // Grab value out of registry
 regKey.get('RoR2Dir', (err, result) => {
   if (!err) {
