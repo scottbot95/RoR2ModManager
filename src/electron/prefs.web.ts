@@ -1,5 +1,7 @@
 type cb = (newValue: any, oldValue: any) => void;
 
+console.warn('WARNING: Using web prefs. (Ignore this if running specs).');
+
 class WebPrefsStore {
   private watchers: { [key: string]: cb[] } = {};
 
