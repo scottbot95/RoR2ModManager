@@ -13,8 +13,9 @@ before_script:
 install:
   - npm set progress=false
   - npm ci # install from package-lock.json
+  - npm i -g codecov
 script:
   - ng lint
-  - npm run test:ci
+  - npm run test:ci -- --code-coverage
   - npm run e2e:ci
   # - npm run build:ci
