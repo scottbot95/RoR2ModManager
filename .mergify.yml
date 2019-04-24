@@ -1,5 +1,5 @@
 pull_request_rules:
-  - name: automatic merge on CI success
+  - name: Automatic merge on CI success
     conditions:
       - status-success=continuous-integration/travis-ci/push
     actions:
