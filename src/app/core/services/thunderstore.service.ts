@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { distinctUntilChanged, tap } from 'rxjs/operators';
-import * as semver from 'semver';
 import { PackageList } from '../models/package.model';
 
 @Injectable()
@@ -31,6 +30,7 @@ export class ThunderstoreService {
           pkg.date_updated = new Date(pkg.date_updated);
           pkg.versions.forEach(version => {
             version.date_created = new Date(version.date_created);
+            version.pkg = pkg;
           });
           pkg.total_downloads = pkg.versions.reduce(
             (acc, ver) => acc + ver.downloads,

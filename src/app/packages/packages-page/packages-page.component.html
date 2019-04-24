@@ -1,7 +1,7 @@
 <div fxLayout="column" fxLayout.gt-md="row">
   <app-package-table
     [applyChanges]="applyChanges"
-    [installedPackages]="installedPackages"
+    [installedPackages]="installedPackages$"
     (showPackageDetails)="selectedPackage = $event"
     fxFlex
   ></app-package-table>

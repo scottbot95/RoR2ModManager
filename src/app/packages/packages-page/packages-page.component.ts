@@ -1,8 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { PackageService } from '../../core/services/package.service';
-import { Subscription } from 'rxjs';
-import { Package } from '../../core/models/package.model';
-import { SelectionModel } from '@angular/cdk/collections';
+import {
+  PackageService,
+  PackageChangeset
+} from '../../core/services/package.service';
+import { Subscription, Observable } from 'rxjs';
+import { Package, PackageList } from '../../core/models/package.model';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-packages-page',
@@ -14,15 +17,19 @@ import { SelectionModel } from '@angular/cdk/collections';
 })
 export class PackagesPageComponent implements OnInit, OnDestroy {
   private subscription = new Subscription();
-  installedPackages = new Set<Package>();
   selectedPackage: Package;
+  installedPackages$: Observable<
+    PackageList
+  > = this.service.installedPackages$.pipe(
+    map(pkgs => pkgs.map(pkg => pkg.installed_version.pkg))
+  );
 
   constructor(private service: PackageService) {}
 
   ngOnInit() {
     this.subscription.add(
       this.service.installedPackages$.subscribe(pkgs => {
-        this.installedPackages = new Set(pkgs);
+        console.log(pkgs);
       })
     );
   }
@@ -31,19 +38,8 @@ export class PackagesPageComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
-  applyChanges(selection: SelectionModel<Package>) {
+  applyChanges = (changes: PackageChangeset) => {
     // install new packages
-    selection.selected.forEach(pkg => {
-      if (!this.installedPackages.has(pkg)) {
-        this.service.installPackage(pkg, pkg.latest_version);
-      }
-    });
-
-    // remove unwatned packages
-    this.installedPackages.forEach(pkg => {
-      if (!selection.isSelected(pkg)) {
-        this.service.uninstallPackage(pkg);
-      }
-    });
-  }
+    this.service.applyChanges(changes);
+  };
 }

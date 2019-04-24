@@ -14,7 +14,7 @@ export interface Package extends PackageBase {
   maintainers: string[];
   date_updated: Date;
   is_pinned: boolean;
-  versions: PackageVersion[];
+  versions: PackageVersionList;
 
   // add on after getting result from api
   latest_version?: PackageVersion;
@@ -31,6 +31,14 @@ export interface PackageVersion extends PackageBase {
   description: string;
   icon: string;
   readme?: string;
+  pkg?: Package;
+}
+
+export interface InstalledPackage extends Package {
+  // undefined if no version is installed
+  installed_version: PackageVersion | undefined;
 }
 
 export type PackageList = Package[];
+export type PackageVersionList = PackageVersion[];
+export type InstalledPackageList = InstalledPackage[];

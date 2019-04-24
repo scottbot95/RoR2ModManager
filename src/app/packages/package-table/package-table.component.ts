@@ -5,37 +5,69 @@ import {
   OnDestroy,
   Input,
   Output,
-  EventEmitter
+  EventEmitter,
+  OnInit
 } from '@angular/core';
 import { MatPaginator, MatSort } from '@angular/material';
 import { PackageTableDataSource } from './package-table-datasource';
-import { SelectionModel } from '@angular/cdk/collections';
-import { Package } from '../../core/models/package.model';
+import {
+  Package,
+  InstalledPackageList,
+  PackageList
+} from '../../core/models/package.model';
 import { ThunderstoreService } from '../../core/services/thunderstore.service';
-import { Subscription } from 'rxjs';
+import { Subscription, Observable } from 'rxjs';
 import { delay } from 'rxjs/operators';
+import { PackageChangeset } from '../../core/services/package.service';
+import { SelectionChangesetModel } from '../../shared/selection-changeset';
 
 @Component({
   selector: 'app-package-table',
   templateUrl: './package-table.component.html',
   styleUrls: ['./package-table.component.scss']
 })
-export class PackageTableComponent implements AfterViewInit, OnDestroy {
+export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  @Input() applyChanges: (selection: SelectionModel<Package>) => void;
-  @Input() installedPackages: Set<Package>;
+  @Input() applyChanges: (selection: PackageChangeset) => void;
+  @Input() installedPackages: Observable<PackageList>;
   @Output() showPackageDetails = new EventEmitter<Package>();
   dataSource: PackageTableDataSource;
   isLoading: boolean;
 
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
   displayedColumns = ['select', 'name', 'author', 'updated', 'latest'];
-  selection = new SelectionModel<Package>(true, []);
+  selection: SelectionChangesetModel<Package>;
 
   private subscription = new Subscription();
+  private _installedPackages: PackageList;
 
   constructor(public thunderstore: ThunderstoreService) {}
+
+  ngOnInit() {
+    this.selection = new SelectionChangesetModel<Package>(
+      true,
+      this.installedPackages
+    );
+
+    // update selected status for datasource sorting feature
+    this.subscription.add(
+      this.selection.changed.subscribe(changed => {
+        changed.added.forEach(pkg => {
+          pkg.selected = true;
+        });
+        changed.removed.forEach(pkg => {
+          pkg.selected = false;
+        });
+      })
+    );
+
+    this.subscription.add(
+      this.installedPackages.subscribe(pkgs => {
+        this._installedPackages = pkgs;
+      })
+    );
+  }
 
   ngAfterViewInit() {
     // FIXME this is a band-aid and we should really solve this in a smarter way
@@ -52,18 +84,6 @@ export class PackageTableComponent implements AfterViewInit, OnDestroy {
         })
       );
     });
-
-    // update selected status for datasource sorting feature
-    this.subscription.add(
-      this.selection.changed.subscribe(changed => {
-        changed.added.forEach(pkg => {
-          pkg.selected = true;
-        });
-        changed.removed.forEach(pkg => {
-          pkg.selected = false;
-        });
-      })
-    );
   }
 
   ngOnDestroy() {
@@ -77,7 +97,28 @@ export class PackageTableComponent implements AfterViewInit, OnDestroy {
   }
 
   showDetails(pkg: Package) {
-    console.log(pkg);
     this.showPackageDetails.emit(pkg);
+  }
+
+  isRowDirty(pkg: Package) {
+    const installed = this._installedPackages.find(p => p.uuid4 === pkg.uuid4);
+
+    let dirty: boolean;
+    if (installed !== undefined) {
+      dirty = !this.selection.isSelected(pkg);
+    } else {
+      dirty = this.selection.isSelected(pkg);
+    }
+    return dirty;
+  }
+
+  handleApplyChanges() {
+    const changeset = this.selection.getChangeset();
+    const changes = new PackageChangeset();
+    changes.removed = changeset.removed;
+    changes.updated = new Set(
+      Array.from(changeset.added).map(pkg => pkg.latest_version)
+    );
+    this.applyChanges(changes);
   }
 }
