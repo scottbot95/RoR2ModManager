@@ -56,7 +56,7 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // update selected status for datasource sorting feature
     this.subscription.add(
-      this.selection.changed.subscribe(changed => {
+      this.selection.changed.pipe(delay(0)).subscribe(changed => {
         changed.added.forEach(pkg => {
           pkg.selected = true;
           this.selectAllDependencies(pkg.latest_version);
@@ -130,16 +130,12 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private selectAllDependencies(pkg: PackageVersion) {
-    console.log('Selecting deps for', pkg);
     const toSelect: PackageVersionList = [];
     pkg.dependencies.forEach(dep => {
       const depVer = this.getDependecyFromString(dep);
       depVer.pkg.requiredBy.add(pkg);
 
-      if (this.selection.isSelected(depVer.pkg)) return;
       toSelect.push(depVer);
-
-      console.log(`found dep from string ${dep}`, depVer);
     });
 
     if (toSelect.length) this.selection.select(...toSelect.map(p => p.pkg));
@@ -147,7 +143,6 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private deselectAvailDependencies(pkg: PackageVersion) {
     const toDeselct: PackageVersionList = [];
-    console.log('Deselecting dependenices for', pkg);
 
     pkg.dependencies.forEach(dep => {
       const depVer = this.getDependecyFromString(dep);
@@ -155,9 +150,7 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
       depPkg.requiredBy.delete(pkg);
       if (depPkg.requiredBy.size === 0) {
-        if (!this.selection.isSelected(depPkg)) return;
         toDeselct.push(depVer);
-        console.log(`found dep from string ${dep}`, depVer);
       }
     });
 
