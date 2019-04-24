@@ -49,6 +49,7 @@
           [checked]="selection.isSelected(row)"
           [aria-label]="checkboxLabel(row)"
           [matTooltip]="checkboxLabel(row)"
+          [disabled]="row.requiredBy.size > 0"
         ></mat-checkbox>
       </td>
     </ng-container>
@@ -124,6 +125,7 @@
       *matRowDef="let row; columns: displayedColumns"
       [hidden]="isLoading"
       [class.dirty]="isRowDirty(row)"
+      [class.dependency]="row.requiredBy.size === 1"
       (click)="showDetails(row)"
     ></tr>
     <tr mat-footer-row *matFooterRowDef="['apply']"></tr>
