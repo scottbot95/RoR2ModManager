@@ -9,10 +9,11 @@ export class DownloadService {
   private downloader: typeof download;
 
   constructor(private electron: ElectronService) {
-    this.downloader = this.electron.remote.require('electron-dl').download;
+    this.downloader = this.electron.download;
   }
 
   async download(pkg: PackageVersion): Promise<DownloadItem> {
+    // check if file exists in cache already
     const result = await this.downloader(
       this.electron.remote.getCurrentWindow(),
       pkg.download_url,

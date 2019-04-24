@@ -5,6 +5,8 @@ import { Injectable } from '@angular/core';
 import { ipcRenderer, webFrame, remote } from 'electron';
 import * as childProcess from 'child_process';
 import * as fs from 'fs';
+import { download } from 'electron-dl';
+import * as path from 'path';
 
 @Injectable()
 export class ElectronService {
@@ -13,6 +15,8 @@ export class ElectronService {
   remote: typeof remote;
   childProcess: typeof childProcess;
   fs: typeof fs;
+  download: typeof download;
+  path: typeof path;
 
   constructor() {
     // Conditional imports
@@ -23,6 +27,10 @@ export class ElectronService {
 
       this.childProcess = window.require('child_process');
       this.fs = window.require('fs');
+
+      this.download = this.remote.require('electron-dl');
+      this.path = this.remote.require('path');
+
       this.configureIpc();
     }
   }
