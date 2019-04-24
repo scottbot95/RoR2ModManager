@@ -4,9 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 import {
   PackageVersion,
   Package,
-  InstalledPackageList,
-  PackageList,
-  PackageVersionList
+  InstalledPackageList
 } from '../models/package.model';
 
 export interface PackageChangeset {

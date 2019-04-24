@@ -15,6 +15,7 @@ import { ElectronService } from '../../core/services/electron.service';
 import { MockHttpClient } from '../../core/services/mocks';
 import { Component } from '@angular/core';
 import { By } from '@angular/platform-browser';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-test-host',
@@ -38,7 +39,8 @@ describe('PackageTableComponent', () => {
         MaterialModule,
         MatPaginatorModule,
         MatSortModule,
-        MatTableModule
+        MatTableModule,
+        ReactiveFormsModule
       ],
       providers: [
         ThunderstoreService,

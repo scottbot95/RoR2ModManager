@@ -1,5 +1,5 @@
-import { SelectionModel, SelectionChange } from '@angular/cdk/collections';
-import { Observable, Subscription, BehaviorSubject } from 'rxjs';
+import { SelectionModel } from '@angular/cdk/collections';
+import { Observable } from 'rxjs';
 
 export interface Changeset<T> {
   added: Set<T>;
