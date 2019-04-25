@@ -46,9 +46,10 @@
     </mat-card>
     <strong>Versions:</strong>
     <mat-list dense>
-      <mat-list-item *ngFor="let version of package.versions">{{
-        version.versionNumber.version
-      }}</mat-list-item>
+      <ng-container *ngFor="let version of package.versions; last as isLast">
+        <mat-list-item>{{ version.versionNumber.version }}</mat-list-item>
+        <mat-divider *ngIf="!isLast"></mat-divider>
+      </ng-container>
     </mat-list>
   </mat-card-content>
 </mat-card>

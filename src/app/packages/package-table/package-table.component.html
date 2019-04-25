@@ -126,6 +126,7 @@
       [hidden]="isLoading"
       [class.dirty]="isRowDirty(row)"
       [class.dependency]="row.requiredBy.size === 1"
+      class="clickable"
       (click)="showDetails(row)"
     ></tr>
     <tr mat-footer-row *matFooterRowDef="['apply']"></tr>
