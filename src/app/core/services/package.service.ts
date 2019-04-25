@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import {
+  InstalledPackageList,
   PackageVersion,
-  Package,
-  InstalledPackageList
+  Package
 } from '../models/package.model';
 import { DownloadService } from './download.service';
 
@@ -29,7 +29,7 @@ export class PackageService {
   public installPackage(pkg: PackageVersion) {
     this.installedPackagesSource.next([
       ...this.installedPackagesSource.value,
-      { ...pkg.pkg, installed_version: pkg }
+      { ...pkg.pkg, installedVersion: pkg }
     ]);
     this.download.download(pkg);
   }

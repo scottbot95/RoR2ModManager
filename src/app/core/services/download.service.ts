@@ -16,7 +16,7 @@ export class DownloadService {
     // check if file exists in cache already
     const result = await this.downloader(
       this.electron.remote.getCurrentWindow(),
-      pkg.download_url,
+      pkg.downloadUrl,
       {
         directory: this.electron.remote.app.getPath('downloads'),
         onProgress: percent => {

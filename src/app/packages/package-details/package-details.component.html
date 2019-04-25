@@ -11,7 +11,7 @@
       >{{ package.name }}<small> by {{ package.owner }}</small></mat-card-title
     >
     <mat-card-subtitle>{{
-      package.latest_version.description
+      package.latestVersion.description
     }}</mat-card-subtitle>
   </mat-card-header>
   <mat-card-content>
@@ -19,35 +19,35 @@
       <tr>
         <td>Latests Updated:</td>
         <td>
-          {{ package.date_updated | date: 'MMM d, y, h:mm a ' }}
+          {{ package.dateUpdated | date: 'MMM d, y, h:mm a ' }}
         </td>
       </tr>
       <tr>
         <td>Latest Version:</td>
         <td>
-          {{ package.latest_version.version_number }}
+          {{ package.latestVersion.versionNumber }}
         </td>
       </tr>
       <tr>
         <td>Total Downloads:</td>
         <td>
-          {{ package.total_downloads }}
+          {{ package.totalDownloads }}
         </td>
       </tr>
     </table>
 
-    <mat-card *ngIf="package.latest_version.readme">
+    <mat-card *ngIf="package.latestVersion.readme">
       <mat-card-title>README</mat-card-title>
       <mat-card-content>
         <markdown>
-          {{ package.latest_version.readme }}
+          {{ package.latestVersion.readme }}
         </markdown>
       </mat-card-content>
     </mat-card>
     <strong>Versions:</strong>
     <mat-list dense>
       <mat-list-item *ngFor="let version of package.versions">{{
-        version.version_number
+        version.versionNumber.version
       }}</mat-list-item>
     </mat-list>
   </mat-card-content>

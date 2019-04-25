@@ -38,7 +38,7 @@
     "electron:windows": "npm run build:prod && electron-builder build --windows",
     "electron:mac": "npm run build:prod && electron-builder build --mac",
     "test": "npm run postinstall:web && ng test",
-    "test:ci": "npm run postinstall:web && ng test --progress=false",
+    "test:ci": "npm run postinstall:web && ng test --progress=false --code-coverage",
     "test:dev": "npm run postinstall:web && ng test --watch",
     "e2e": "npm run build:prod && mocha --timeout 300000 --require ts-node/register e2e/**/*.spec.ts",
     "e2e:ci": "npm run build:prod -- --progress=false && mocha --timeout 300000 --require ts-node/register e2e/**/*.spec.ts",

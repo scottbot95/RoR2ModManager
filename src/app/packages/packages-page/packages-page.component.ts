@@ -21,7 +21,7 @@ export class PackagesPageComponent implements OnInit, OnDestroy {
   installedPackages$: Observable<
     PackageList
   > = this.service.installedPackages$.pipe(
-    map(pkgs => pkgs.map(pkg => pkg.installed_version.pkg))
+    map(pkgs => pkgs.map(pkg => pkg.installedVersion.pkg))
   );
 
   constructor(private service: PackageService) {}

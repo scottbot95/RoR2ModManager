@@ -116,7 +116,7 @@ export class PackageTableDataSource extends DataSource<Package> {
         case 'author':
           return compare(a.owner, b.owner, isAsc);
         case 'updated':
-          return compare(a.date_updated, b.date_updated, isAsc);
+          return compare(a.dateUpdated, b.dateUpdated, isAsc);
         case 'select':
           return compare(!!a.selected, !!b.selected, !isAsc);
         default:
@@ -132,9 +132,7 @@ export class PackageTableDataSource extends DataSource<Package> {
         pkg =>
           pkg.name.toLowerCase().includes(filterText) ||
           pkg.owner.toLowerCase().includes(filterText) ||
-          pkg.latest_version.description
-            .toLocaleLowerCase()
-            .includes(filterText)
+          pkg.latestVersion.description.toLocaleLowerCase().includes(filterText)
       );
     } else {
       return data;

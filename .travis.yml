@@ -16,7 +16,7 @@ install:
   - npm i -g codecov
 script:
   - ng lint
-  - npm run test:ci -- --code-coverage
+  - npm run test:ci
   - npm run e2e:ci
   # - npm run build:ci
 after_success:

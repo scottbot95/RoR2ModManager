@@ -59,11 +59,11 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.selection.changed.pipe(delay(0)).subscribe(changed => {
         changed.added.forEach(pkg => {
           pkg.selected = true;
-          this.selectAllDependencies(pkg.latest_version);
+          this.selectAllDependencies(pkg.latestVersion);
         });
         changed.removed.forEach(pkg => {
           pkg.selected = false;
-          this.deselectAvailDependencies(pkg.latest_version);
+          this.deselectAvailDependencies(pkg.latestVersion);
         });
       })
     );
@@ -124,7 +124,7 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
     const changes = new PackageChangeset();
     changes.removed = changeset.removed;
     changes.updated = new Set(
-      Array.from(changeset.added).map(pkg => pkg.latest_version)
+      Array.from(changeset.added).map(pkg => pkg.latestVersion)
     );
     this.applyChanges(changes);
   }
@@ -132,10 +132,9 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
   private selectAllDependencies(pkg: PackageVersion) {
     const toSelect: PackageVersionList = [];
     pkg.dependencies.forEach(dep => {
-      const depVer = this.getDependecyFromString(dep);
-      depVer.pkg.requiredBy.add(pkg);
+      dep.pkg.requiredBy.add(pkg);
 
-      toSelect.push(depVer);
+      toSelect.push(dep);
     });
 
     if (toSelect.length) this.selection.select(...toSelect.map(p => p.pkg));
@@ -145,24 +144,14 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
     const toDeselct: PackageVersionList = [];
 
     pkg.dependencies.forEach(dep => {
-      const depVer = this.getDependecyFromString(dep);
-      const depPkg = depVer.pkg;
+      const { requiredBy } = dep.pkg;
 
-      depPkg.requiredBy.delete(pkg);
-      if (depPkg.requiredBy.size === 0) {
-        toDeselct.push(depVer);
+      requiredBy.delete(pkg);
+      if (requiredBy.size === 0) {
+        toDeselct.push(dep);
       }
     });
 
     if (toDeselct.length) this.selection.deselect(...toDeselct.map(p => p.pkg));
-  }
-
-  private getDependecyFromString(dep: string) {
-    const [author, name, version] = dep.split('-');
-    const depPkg = this.dataSource.data.find(
-      p => p.owner === author && p.name === name
-    );
-    const depVer = depPkg.versions.find(v => v.version_number === version);
-    return depVer;
   }
 }
