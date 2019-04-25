@@ -23,7 +23,7 @@
   ],
   "win": {
     "icon": "dist",
-    "target": ["nsis"]
+    "target": ["nsis", "portable"]
   },
   "mac": {
     "icon": "dist",
