@@ -2,9 +2,14 @@ import { TestBed } from '@angular/core/testing';
 
 import { PackageService } from './package.service';
 import { ElectronService } from './electron.service';
-import { MockElectronService, MockDownloadService } from './mocks';
+import {
+  MockElectronService,
+  MockDownloadService,
+  MockPreferencesService
+} from './mocks';
 import { DownloadService } from './download.service';
 import { testPackage } from '../models/package.model.spec';
+import { PreferencesService } from './preferences.service';
 
 describe('PackageService', () => {
   let service: PackageService;
@@ -14,7 +19,8 @@ describe('PackageService', () => {
       providers: [
         PackageService,
         { provide: ElectronService, useClass: MockElectronService },
-        { provide: DownloadService, useClass: MockDownloadService }
+        { provide: DownloadService, useClass: MockDownloadService },
+        { provide: PreferencesService, useClass: MockPreferencesService }
       ]
     });
 
@@ -33,8 +39,8 @@ describe('PackageService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should install a package', () => {
-    service.installPackage(testPackage.latestVersion);
+  it('should install a package', async () => {
+    await service.installPackage(testPackage.latestVersion);
     service.installedPackages$.subscribe(packages => {
       expect(packages.length).toBe(1);
     });

@@ -7,6 +7,7 @@ import * as childProcess from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as DownloadManager from 'electron-download-manager';
+import * as unzipper from 'unzipper';
 
 @Injectable()
 export class ElectronService {
@@ -17,6 +18,7 @@ export class ElectronService {
   fs: typeof fs;
   path: typeof path;
   downloadManager: typeof DownloadManager;
+  unzipper: typeof unzipper;
 
   constructor() {
     // Conditional imports
@@ -30,6 +32,7 @@ export class ElectronService {
 
       this.path = this.remote.require('path');
       this.downloadManager = this.remote.require('electron-download-manager');
+      this.unzipper = this.remote.require('unzipper');
 
       this.configureIpc();
     }

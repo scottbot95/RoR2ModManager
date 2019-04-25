@@ -68,9 +68,11 @@ export class MockElectronService {
     dialog: {
       showOpenDialog: (options: object) => {
         return ['C:\\fakepath'];
-      }
+      },
+      showMessageBox: () => {}
     },
-    require: (module: string) => ({})
+    require: (module: string) => ({}),
+    getCurrentWindow: () => {}
   };
 }
 
