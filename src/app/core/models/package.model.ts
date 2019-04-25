@@ -15,7 +15,7 @@ export interface SerializablePackage extends SerializablePackageBase {
   maintainers: string[];
   date_updated: string;
   is_pinned: boolean;
-  versions: ApiPackageVersionList;
+  versions: SerializablePackageVersionList;
 }
 
 export interface SerializablePackageVersion extends SerializablePackageBase {
@@ -31,7 +31,7 @@ export interface SerializablePackageVersion extends SerializablePackageBase {
 
 // eventually might have changes so leave this empty interface here
 // tslint:disable-next-line: no-empty-interface
-interface PackageBase {
+class PackageBase {
   name: string;
   fullName: string;
   isActive: boolean;
@@ -39,7 +39,7 @@ interface PackageBase {
   uuid4: string;
 }
 
-export interface Package extends PackageBase {
+export class Package extends PackageBase {
   owner: string;
   maintainers: string[];
   dateUpdated: Date;
@@ -52,7 +52,7 @@ export interface Package extends PackageBase {
   selected?: boolean;
 }
 
-export interface PackageVersion extends PackageBase {
+export class PackageVersion extends PackageBase {
   downloadUrl: string;
   dependencies: PackageVersionList;
   downloads: number;
@@ -64,13 +64,13 @@ export interface PackageVersion extends PackageBase {
   readme?: string; // this used to be in thunderstore API. Hoping they bring it back
 }
 
-export interface InstalledPackage extends Package {
+export class InstalledPackage extends Package {
   // undefined if no version is installed
   installedVersion: PackageVersion | undefined;
 }
 
-export type ApiPackageList = SerializablePackage[];
-export type ApiPackageVersionList = SerializablePackageVersion[];
+export type SerializablePackageList = SerializablePackage[];
+export type SerializablePackageVersionList = SerializablePackageVersion[];
 export type PackageList = Package[];
 export type PackageVersionList = PackageVersion[];
 export type InstalledPackageList = InstalledPackage[];

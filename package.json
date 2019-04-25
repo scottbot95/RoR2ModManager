@@ -24,6 +24,7 @@
     "postinstall:web": "node postinstall-web",
     "postinstall:electron": "node postinstall",
     "ng": "ng",
+    "lint": "ng lint",
     "start": "npm run postinstall:electron && npm-run-all -p ng:serve electron:serve \"electron:serve-tsc -- -w\"",
     "build": "npm run postinstall:electron && npm run electron:serve-tsc && ng build",
     "build:ci": "npm run postinstall:electron && npm run electron:serve-tsc && ng build --progress=false",
@@ -40,6 +41,7 @@
     "test": "npm run postinstall:web && ng test",
     "test:ci": "npm run postinstall:web && ng test --progress=false --code-coverage",
     "test:dev": "npm run postinstall:web && ng test --watch",
+    "test:dev:coverage": "npm run postinstall:web && ng test --watch --code-coverage",
     "e2e": "npm run build:prod && mocha --timeout 300000 --require ts-node/register e2e/**/*.spec.ts",
     "e2e:ci": "npm run build:prod -- --progress=false && mocha --timeout 300000 --require ts-node/register e2e/**/*.spec.ts",
     "version": "conventional-changelog -i CHANGELOG.md -s -r 0 && git add CHANGELOG.md"
@@ -74,6 +76,7 @@
     "codelyzer": "4.5.0",
     "conventional-changelog-cli": "2.0.11",
     "core-js": "2.6.1",
+    "dexie": "^2.0.4",
     "electron": "4.0.0",
     "electron-builder": "20.36.2",
     "electron-dl": "^1.14.0",

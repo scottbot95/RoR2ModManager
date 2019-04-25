@@ -12,10 +12,11 @@ import { MaterialModule } from '../../shared/material.module';
 import { ThunderstoreService } from '../../core/services/thunderstore.service';
 import { of } from 'rxjs';
 import { ElectronService } from '../../core/services/electron.service';
-import { MockHttpClient } from '../../core/services/mocks';
+import { MockHttpClient, MockElectronService } from '../../core/services/mocks';
 import { Component, Directive, Input } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { ReactiveFormsModule } from '@angular/forms';
+import { DatabaseService } from '../../core/services/database.service';
 
 @Component({
   selector: 'app-test-host',
@@ -55,7 +56,8 @@ describe('PackageTableComponent', () => {
       ],
       providers: [
         ThunderstoreService,
-        ElectronService,
+        DatabaseService,
+        { provide: ElectronService, useClass: MockElectronService },
         { provide: HttpClient, useClass: MockHttpClient }
       ]
     }).compileComponents();

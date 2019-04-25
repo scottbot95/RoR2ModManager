@@ -3,12 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { distinctUntilChanged, map } from 'rxjs/operators';
 import {
-  ApiPackageList,
+  SerializablePackageList,
   PackageList,
   Package,
   PackageVersion
 } from '../models/package.model';
 import { SemVer, satisfies } from 'semver';
+import { DatabaseService } from './database.service';
 
 @Injectable()
 export class ThunderstoreService {
@@ -19,7 +20,7 @@ export class ThunderstoreService {
     .asObservable()
     .pipe(distinctUntilChanged()); // prevents update spam
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private db: DatabaseService) {
     this.loadAllPackages();
   }
 
@@ -28,8 +29,11 @@ export class ThunderstoreService {
     const oldPackages = this.allPackagesSource.value;
     this.allPackagesSource.next(null);
 
+    // also clear out indexeddb
+    this.db.clearPackages();
+
     const url = `${this.baseUrl}/package`;
-    const result = this.http.get<ApiPackageList>(url).pipe(
+    const result = this.http.get<SerializablePackageList>(url).pipe(
       map(apiPackages => {
         const packages = apiPackages.map(apiPkg => {
           let totalDownloads = 0;
@@ -91,6 +95,7 @@ export class ThunderstoreService {
               }
             );
           });
+          this.db.savePackage(pkg);
         });
 
         return packages;
