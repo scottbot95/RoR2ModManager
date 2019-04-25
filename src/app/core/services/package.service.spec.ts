@@ -34,7 +34,7 @@ describe('PackageService', () => {
   });
 
   it('should install a package', () => {
-    service.installPackage(testPackage.latest_version);
+    service.installPackage(testPackage.latestVersion);
     service.installedPackages$.subscribe(packages => {
       expect(packages.length).toBe(1);
     });

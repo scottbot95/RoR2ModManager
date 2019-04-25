@@ -3,9 +3,10 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { PackageDetailsComponent } from './package-details.component';
 import { MaterialModule } from '../../shared/material.module';
 import { Component } from '@angular/core';
-import { ApiPackage } from '../../core/models/package.model';
+import { Package } from '../../core/models/package.model';
 import { By } from '@angular/platform-browser';
 import { testPackage } from '../../core/models/package.model.spec';
+import { SemVer } from 'semver';
 
 @Component({
   // tslint:disable-next-line: component-selector
@@ -20,7 +21,7 @@ class MockMarkdownComponent {}
     '<app-package-details [package]="testPackage"></app-package-details>'
 })
 class TestHostComponent {
-  testPackage: ApiPackage = testPackage;
+  testPackage: Package = testPackage;
 }
 
 describe('PackageDetailsComponent', () => {

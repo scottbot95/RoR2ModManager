@@ -78,9 +78,9 @@
       <td
         mat-cell
         *matCellDef="let row"
-        [matTooltip]="row.date_updated.toLocaleTimeString('en-us')"
+        [matTooltip]="row.dateUpdated.toLocaleTimeString('en-us')"
       >
-        {{ row.date_updated | date }}
+        {{ row.dateUpdated | date }}
       </td>
     </ng-container>
 
@@ -88,7 +88,7 @@
     <ng-container matColumnDef="latest">
       <th mat-header-cell *matHeaderCellDef>Latest Version</th>
       <td mat-cell *matCellDef="let row">
-        {{ row.latest_version.version_number }}
+        {{ row.latestVersion.versionNumber }}
       </td>
     </ng-container>
 
@@ -96,7 +96,7 @@
     <ng-container matColumnDef="downloads">
       <th mat-header-cell *matHeaderCellDef>Total Downloads</th>
       <td mat-cell *matCellDef="let row">
-        {{ row.total_downloads }}
+        {{ row.totalDownloads }}
       </td>
     </ng-container>
 

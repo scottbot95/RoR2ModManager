@@ -1,42 +1,39 @@
-import {
-  ApiPackageVersion,
-  ApiPackage,
-  InstalledPackage
-} from './package.model';
+import { PackageVersion, Package, InstalledPackage } from './package.model';
+import { SemVer } from 'semver';
 
-export const testPackageVersion: ApiPackageVersion = {
-  date_created: new Date(),
+export const testPackageVersion: PackageVersion = {
+  dateCreated: new Date(),
   dependencies: [],
   description: '',
-  download_url: '',
+  downloadUrl: '',
   downloads: 0,
   icon: '',
-  is_active: true,
+  isActive: true,
   name: 'testPackage',
   uuid4: '',
-  version_number: '1.0.0',
-  website_url: '',
-  full_name: 'author-testPackage-1.0.0'
+  versionNumber: new SemVer('1.0.0'),
+  websiteUrl: '',
+  fullName: 'author-testPackage-1.0.0',
+  pkg: undefined
 };
 
-const _testPackage = {
-  date_created: new Date(),
-  date_updated: new Date(),
-  is_active: true,
-  is_pinned: false,
+export const testPackage: Package = {
+  dateCreated: new Date(),
+  dateUpdated: new Date(),
+  isActive: true,
+  isPinned: false,
   maintainers: [],
   name: 'TestPackage',
   owner: 'author',
   uuid4: '',
-  full_name: ``,
-  latest_version: testPackageVersion,
-  versions: [testPackageVersion]
+  fullName: 'author-TestPackage',
+  latestVersion: testPackageVersion,
+  versions: [testPackageVersion],
+  totalDownloads: 0,
+  requiredBy: new Set()
 };
 
-export const testPackage: ApiPackage = _testPackage;
-
-export const testInstalledPackage: InstalledPackage = Object.assign(
-  {},
-  _testPackage,
-  { latest_version: testPackageVersion }
-) as InstalledPackage;
+export const testInstalledPackage: InstalledPackage = {
+  ...testPackage,
+  installedVersion: testPackageVersion
+};

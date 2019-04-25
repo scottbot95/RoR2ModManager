@@ -6,11 +6,7 @@ import { ChangeEvent } from './preferences.service';
 import { Observable, of } from 'rxjs';
 import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
-import {
-  PackageList,
-  ApiPackage,
-  ApiPackageVersion
-} from '../models/package.model';
+import { PackageList, Package, PackageVersion } from '../models/package.model';
 
 export class MockPreferencesService {
   private data: UserPreferences = defaultConfig;
@@ -51,11 +47,11 @@ export class MockThemeService {
 export class MockPackageService {
   installedPackages$ = new BehaviorSubject<PackageList>([]);
 
-  installPackage(pkg: ApiPackage, version: ApiPackageVersion) {
+  installPackage(pkg: Package, version: PackageVersion) {
     this.installedPackages$.next([...this.installedPackages$.value, pkg]);
   }
 
-  public uninstallPackage(pkg: ApiPackage) {
+  public uninstallPackage(pkg: Package) {
     this.installedPackages$.next(
       this.installedPackages$.value.filter(
         installed => installed.uuid4 !== pkg.uuid4
@@ -63,7 +59,7 @@ export class MockPackageService {
     );
   }
 
-  public updatePackage(pkg: ApiPackage, version: ApiPackageVersion) {}
+  public updatePackage(pkg: Package, version: PackageVersion) {}
 }
 
 export class MockElectronService {

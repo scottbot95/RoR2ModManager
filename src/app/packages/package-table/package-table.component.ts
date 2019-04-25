@@ -11,9 +11,9 @@ import {
 import { MatPaginator, MatSort } from '@angular/material';
 import { PackageTableDataSource } from './package-table-datasource';
 import {
-  ApiPackage,
+  Package,
   PackageList,
-  ApiPackageVersion,
+  PackageVersion,
   PackageVersionList
 } from '../../core/models/package.model';
 import { ThunderstoreService } from '../../core/services/thunderstore.service';
@@ -33,13 +33,13 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatSort) sort: MatSort;
   @Input() applyChanges: (selection: PackageChangeset) => void;
   @Input() installedPackages: Observable<PackageList>;
-  @Output() showPackageDetails = new EventEmitter<ApiPackage>();
+  @Output() showPackageDetails = new EventEmitter<Package>();
   dataSource: PackageTableDataSource;
   isLoading: boolean;
 
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
   displayedColumns = ['select', 'name', 'author', 'updated', 'latest'];
-  selection: SelectionChangesetModel<ApiPackage>;
+  selection: SelectionChangesetModel<Package>;
 
   filter = new FormControl('');
 
@@ -49,7 +49,7 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(public thunderstore: ThunderstoreService) {}
 
   ngOnInit() {
-    this.selection = new SelectionChangesetModel<ApiPackage>(
+    this.selection = new SelectionChangesetModel<Package>(
       true,
       this.installedPackages
     );
@@ -59,11 +59,11 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.selection.changed.pipe(delay(0)).subscribe(changed => {
         changed.added.forEach(pkg => {
           pkg.selected = true;
-          this.selectAllDependencies(pkg.latest_version);
+          this.selectAllDependencies(pkg.latestVersion);
         });
         changed.removed.forEach(pkg => {
           pkg.selected = false;
-          this.deselectAvailDependencies(pkg.latest_version);
+          this.deselectAvailDependencies(pkg.latestVersion);
         });
       })
     );
@@ -97,17 +97,17 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
-  checkboxLabel(row: ApiPackage): string {
+  checkboxLabel(row: Package): string {
     return `${this.selection.isSelected(row) ? 'Uninstall' : 'Install'} ${
       row.name
     }`;
   }
 
-  showDetails(pkg: ApiPackage) {
+  showDetails(pkg: Package) {
     this.showPackageDetails.emit(pkg);
   }
 
-  isRowDirty(pkg: ApiPackage) {
+  isRowDirty(pkg: Package) {
     const installed = this._installedPackages.find(p => p.uuid4 === pkg.uuid4);
 
     let dirty: boolean;
@@ -124,45 +124,34 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
     const changes = new PackageChangeset();
     changes.removed = changeset.removed;
     changes.updated = new Set(
-      Array.from(changeset.added).map(pkg => pkg.latest_version)
+      Array.from(changeset.added).map(pkg => pkg.latestVersion)
     );
     this.applyChanges(changes);
   }
 
-  private selectAllDependencies(pkg: ApiPackageVersion) {
+  private selectAllDependencies(pkg: PackageVersion) {
     const toSelect: PackageVersionList = [];
     pkg.dependencies.forEach(dep => {
-      const depVer = this.getDependecyFromString(dep);
-      depVer.pkg.requiredBy.add(pkg);
+      dep.pkg.requiredBy.add(pkg);
 
-      toSelect.push(depVer);
+      toSelect.push(dep);
     });
 
     if (toSelect.length) this.selection.select(...toSelect.map(p => p.pkg));
   }
 
-  private deselectAvailDependencies(pkg: ApiPackageVersion) {
+  private deselectAvailDependencies(pkg: PackageVersion) {
     const toDeselct: PackageVersionList = [];
 
     pkg.dependencies.forEach(dep => {
-      const depVer = this.getDependecyFromString(dep);
-      const depPkg = depVer.pkg;
+      const { requiredBy } = dep.pkg;
 
-      depPkg.requiredBy.delete(pkg);
-      if (depPkg.requiredBy.size === 0) {
-        toDeselct.push(depVer);
+      requiredBy.delete(pkg);
+      if (requiredBy.size === 0) {
+        toDeselct.push(dep);
       }
     });
 
     if (toDeselct.length) this.selection.deselect(...toDeselct.map(p => p.pkg));
-  }
-
-  private getDependecyFromString(dep: string) {
-    const [author, name, version] = dep.split('-');
-    const depPkg = this.dataSource.data.find(
-      p => p.owner === author && p.name === name
-    );
-    const depVer = depPkg.versions.find(v => v.version_number === version);
-    return depVer;
   }
 }

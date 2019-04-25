@@ -4,7 +4,7 @@ import {
   ChangeDetectionStrategy,
   Input
 } from '@angular/core';
-import { ApiPackage } from '../../core/models/package.model';
+import { Package } from '../../core/models/package.model';
 
 @Component({
   selector: 'app-package-details',
@@ -13,7 +13,7 @@ import { ApiPackage } from '../../core/models/package.model';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PackageDetailsComponent implements OnInit {
-  @Input() package: ApiPackage;
+  @Input() package: Package;
 
   constructor() {}
 

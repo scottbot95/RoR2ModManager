@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PackagesPageComponent } from './packages-page.component';
 import { Component, Input } from '@angular/core';
-import { ApiPackage } from '../../core/models/package.model';
+import { Package } from '../../core/models/package.model';
 import { PackageService } from '../../core/services/package.service';
 import { MockPackageService } from '../../core/services/mocks';
 
@@ -12,8 +12,8 @@ import { MockPackageService } from '../../core/services/mocks';
 })
 class MockPackageTableComponent {
   @Input() applyChanges: (...args: any[]) => void;
-  @Input() installedPackages: Set<ApiPackage>;
-  @Input() showDetails: (pkg: ApiPackage) => void;
+  @Input() installedPackages: Set<Package>;
+  @Input() showDetails: (pkg: Package) => void;
 }
 
 @Component({
@@ -21,7 +21,7 @@ class MockPackageTableComponent {
   template: '<p>Mock Package Details Component</p>'
 })
 class MockPackageDetailsComponent {
-  @Input() package: ApiPackage;
+  @Input() package: Package;
 }
 
 describe('PackagesPageComponent', () => {

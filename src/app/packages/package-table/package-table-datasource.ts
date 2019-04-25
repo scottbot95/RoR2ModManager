@@ -2,7 +2,7 @@ import { DataSource } from '@angular/cdk/collections';
 import { MatPaginator, MatSort } from '@angular/material';
 import { map, distinctUntilChanged, debounceTime } from 'rxjs/operators';
 import { Observable, merge, Subscription, BehaviorSubject } from 'rxjs';
-import { PackageList, ApiPackage } from '../../core/models/package.model';
+import { PackageList, Package } from '../../core/models/package.model';
 import { ThunderstoreService } from '../../core/services/thunderstore.service';
 import { FormControl } from '@angular/forms';
 
@@ -11,7 +11,7 @@ import { FormControl } from '@angular/forms';
  * encapsulate all logic for fetching and manipulating the displayed data
  * (including sorting, pagination, and filtering).
  */
-export class PackageTableDataSource extends DataSource<ApiPackage> {
+export class PackageTableDataSource extends DataSource<Package> {
   private dataSource = new BehaviorSubject<PackageList>([]);
   data: PackageList;
   filteredData: PackageList;
@@ -116,7 +116,7 @@ export class PackageTableDataSource extends DataSource<ApiPackage> {
         case 'author':
           return compare(a.owner, b.owner, isAsc);
         case 'updated':
-          return compare(a.date_updated, b.date_updated, isAsc);
+          return compare(a.dateUpdated, b.dateUpdated, isAsc);
         case 'select':
           return compare(!!a.selected, !!b.selected, !isAsc);
         default:
@@ -132,9 +132,7 @@ export class PackageTableDataSource extends DataSource<ApiPackage> {
         pkg =>
           pkg.name.toLowerCase().includes(filterText) ||
           pkg.owner.toLowerCase().includes(filterText) ||
-          pkg.latest_version.description
-            .toLocaleLowerCase()
-            .includes(filterText)
+          pkg.latestVersion.description.toLocaleLowerCase().includes(filterText)
       );
     } else {
       return data;
