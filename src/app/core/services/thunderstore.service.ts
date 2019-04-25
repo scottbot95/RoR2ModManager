@@ -8,7 +8,7 @@ import {
   Package,
   PackageVersion
 } from '../models/package.model';
-import { SemVer } from 'semver';
+import { SemVer, satisfies } from 'semver';
 
 @Injectable()
 export class ThunderstoreService {
@@ -30,8 +30,8 @@ export class ThunderstoreService {
 
     const url = `${this.baseUrl}/package`;
     const result = this.http.get<ApiPackageList>(url).pipe(
-      map(packages =>
-        packages.map(apiPkg => {
+      map(apiPackages => {
+        const packages = apiPackages.map(apiPkg => {
           let totalDownloads = 0;
           const pkg: Package = {
             dateCreated: new Date(apiPkg.date_created),
@@ -55,7 +55,7 @@ export class ThunderstoreService {
                 fullName: v.full_name,
                 icon: v.icon,
                 isActive: v.is_active,
-                pkg,
+                pkg: undefined,
                 uuid4: v.uuid4,
                 versionNumber: new SemVer(v.version_number),
                 websiteUrl: v.website_url,
@@ -72,8 +72,29 @@ export class ThunderstoreService {
           pkg.totalDownloads = totalDownloads;
 
           return pkg;
-        })
-      )
+        });
+
+        packages.forEach((pkg, pkgIdx) => {
+          pkg.versions.forEach((ver, verIdx) => {
+            ver.pkg = pkg;
+            apiPackages[pkgIdx].versions[verIdx].dependencies.forEach(
+              depString => {
+                const [owner, name, versionString] = depString.split('-');
+                const depPkg = packages.find(
+                  p => p.owner === owner && p.name === name
+                );
+                const depVer = depPkg.versions.find(v =>
+                  satisfies(v.versionNumber, `~${versionString}`)
+                );
+
+                ver.dependencies.push(depVer);
+              }
+            );
+          });
+        });
+
+        return packages;
+      })
     );
     result.subscribe(
       packages => {
