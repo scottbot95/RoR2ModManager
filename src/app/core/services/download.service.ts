@@ -36,7 +36,8 @@ export class DownloadService {
       this.electron.remote.getCurrentWindow(),
       pkg.downloadUrl,
       {
-        directory
+        saveAs: false,
+        directory // this seems to be bugged see https://github.com/sindresorhus/electron-dl/issues/78
       }
     );
 

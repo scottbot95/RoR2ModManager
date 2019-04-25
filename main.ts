@@ -13,7 +13,9 @@ const feed = `${server}/update/${process.platform}/${app.getVersion()}`;
 
 autoUpdater.setFeedURL({ url: feed });
 
-electronDl();
+electronDl({
+  directory: path.join(app.getPath('userData'), 'downloadCache')
+});
 
 let win: BrowserWindow, serve: boolean;
 const args = process.argv.slice(1);
