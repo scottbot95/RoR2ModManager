@@ -1,30 +1,25 @@
 import { Injectable } from '@angular/core';
 import { ElectronService } from './electron.service';
 import { PackageVersion } from '../models/package.model';
-import { download } from 'electron-dl';
-import { DownloadItem } from 'electron';
+import * as DownloadManger from 'electron-download-manager';
+
+// TODO do something better than this eventually
+export type DownloadResult = string;
 
 @Injectable()
 export class DownloadService {
-  private downloader: typeof download;
+  private downloadManger: typeof DownloadManger;
 
   constructor(private electron: ElectronService) {
-    this.downloader = this.electron.download;
+    this.downloadManger = this.electron.downloadManager;
   }
 
-  async download(pkg: PackageVersion): Promise<DownloadItem> {
-    // check if file exists in cache already
-    const result = await this.downloader(
-      this.electron.remote.getCurrentWindow(),
-      pkg.downloadUrl,
-      {
-        directory: this.electron.remote.app.getPath('downloads'),
-        onProgress: percent => {
-          console.log(percent);
-        }
-      }
-    );
-
-    return result;
+  download(pkg: PackageVersion): Promise<DownloadResult> {
+    return new Promise((resolve, reject) => {
+      this.downloadManger.download({ url: pkg.downloadUrl }, (err, info) => {
+        if (err) reject(err);
+        else resolve(info.filePath);
+      });
+    });
   }
 }

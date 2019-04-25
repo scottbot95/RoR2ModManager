@@ -5,6 +5,7 @@ import { ThunderstoreService } from './services/thunderstore.service';
 import { PreferencesService } from './services/preferences.service';
 import { PackageService } from './services/package.service';
 import { DownloadService } from './services/download.service';
+import { DatabaseService } from './services/database.service';
 
 @NgModule({
   declarations: [],
@@ -15,7 +16,8 @@ import { DownloadService } from './services/download.service';
     ThunderstoreService,
     PreferencesService,
     PackageService,
-    DownloadService
+    DownloadService,
+    DatabaseService
   ]
 })
 export class CoreModule {}

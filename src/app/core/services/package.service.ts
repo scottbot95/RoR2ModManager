@@ -26,12 +26,12 @@ export class PackageService {
 
   constructor(private download: DownloadService) {}
 
-  public installPackage(pkg: PackageVersion) {
+  public async installPackage(pkg: PackageVersion) {
     this.installedPackagesSource.next([
       ...this.installedPackagesSource.value,
       { ...pkg.pkg, installedVersion: pkg }
     ]);
-    this.download.download(pkg);
+    await this.download.download(pkg);
   }
 
   public uninstallPackage(pkg: Package) {

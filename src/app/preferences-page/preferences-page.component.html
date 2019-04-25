@@ -36,4 +36,20 @@
       </mat-list>
     </mat-card>
   </section>
+  <section section="packageList">
+    <h2>Package List</h2>
+    <mat-card>
+      <mat-list>
+        <mat-list-item>
+          <mat-slide-toggle
+            class="fullWidthToggle"
+            labelPosition="before"
+            [formControl]="respectPinned"
+            matTooltip="Whether or not to respect the `is_pinned` flag from thunderstore.io"
+            >Respect Pinned Flag</mat-slide-toggle
+          >
+        </mat-list-item>
+      </mat-list>
+    </mat-card>
+  </section>
 </div>

@@ -17,6 +17,7 @@ export class PreferencesPageComponent implements OnInit, OnDestroy {
   ) {}
 
   darkMode = this.fb.control(this.prefs.get('darkMode'));
+  respectPinned = this.fb.control(this.prefs.get('respectPinned'));
   ror2Path = this.prefs.get('ror2_path');
 
   private subscription = new Subscription();
@@ -31,6 +32,12 @@ export class PreferencesPageComponent implements OnInit, OnDestroy {
     this.subscription.add(
       this.darkMode.valueChanges.subscribe(newValue => {
         this.prefs.set('darkMode', newValue);
+      })
+    );
+
+    this.subscription.add(
+      this.respectPinned.valueChanges.subscribe(newValue => {
+        this.prefs.set('respectPinned', newValue);
       })
     );
   }

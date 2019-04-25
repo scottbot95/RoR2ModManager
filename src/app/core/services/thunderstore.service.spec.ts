@@ -4,12 +4,14 @@ import { ThunderstoreService } from './thunderstore.service';
 import { HttpClient } from '@angular/common/http';
 import { of } from 'rxjs';
 import { MockHttpClient } from './mocks';
+import { DatabaseService } from './database.service';
 
 describe('ThunderstoreService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
         ThunderstoreService,
+        DatabaseService,
         { provide: HttpClient, useClass: MockHttpClient }
       ]
     });

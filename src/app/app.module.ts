@@ -15,9 +15,9 @@ import { MarkdownModule } from 'ngx-markdown';
 import { AppComponent } from './app.component';
 import { CoreModule } from './core/core.module';
 import { NavMenuModule } from './nav-menu/nav-menu.module';
-import { PackagesModule } from './packages/packages.module';
 import { SharedModule } from './shared/shared.module';
 import { PreferencesPageComponent } from './preferences-page/preferences-page.component';
+import { PackageSelectionModule } from './package-selection/package-selection.module';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -33,7 +33,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     AppRoutingModule,
     HttpClientModule,
     NavMenuModule,
-    PackagesModule,
+    PackageSelectionModule,
     MarkdownModule.forRoot(),
     TranslateModule.forRoot({
       loader: {

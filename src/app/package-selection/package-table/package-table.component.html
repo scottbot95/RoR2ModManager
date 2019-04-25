@@ -88,7 +88,7 @@
     <ng-container matColumnDef="latest">
       <th mat-header-cell *matHeaderCellDef>Latest Version</th>
       <td mat-cell *matCellDef="let row">
-        {{ row.latestVersion.versionNumber }}
+        {{ row.latestVersion.versionNumber.version }}
       </td>
     </ng-container>
 
@@ -110,6 +110,7 @@
       >
         <button
           mat-raised-button
+          [disabled]="!selection.isDirty()"
           (click)="handleApplyChanges()"
           matTooltip="Apply Changes"
         >
@@ -126,6 +127,8 @@
       [hidden]="isLoading"
       [class.dirty]="isRowDirty(row)"
       [class.dependency]="row.requiredBy.size === 1"
+      [class.pinned]="row.isPinned"
+      class="clickable"
       (click)="showDetails(row)"
     ></tr>
     <tr mat-footer-row *matFooterRowDef="['apply']"></tr>
