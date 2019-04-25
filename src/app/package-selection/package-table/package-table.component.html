@@ -110,6 +110,7 @@
       >
         <button
           mat-raised-button
+          [disabled]="!selection.isDirty()"
           (click)="handleApplyChanges()"
           matTooltip="Apply Changes"
         >
