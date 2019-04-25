@@ -5,11 +5,8 @@ import { distinctUntilChanged, map } from 'rxjs/operators';
 import {
   SerializablePackageList,
   PackageList,
-  Package,
-  PackageVersion,
   parseSerializablePackageList
 } from '../models/package.model';
-import { SemVer, satisfies } from 'semver';
 import { DatabaseService } from './database.service';
 
 @Injectable()
