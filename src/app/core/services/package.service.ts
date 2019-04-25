@@ -9,6 +9,7 @@ import {
 import { DownloadService } from './download.service';
 import { ElectronService } from './electron.service';
 import { PreferencesService } from './preferences.service';
+import { ReadStream } from 'fs';
 
 export interface PackageChangeset {
   updated: Set<PackageVersion>;
@@ -57,10 +58,11 @@ export class PackageService {
       return;
     }
     const zipPath = await this.download.download(pkg);
-    // const zip = new this.elecron.AdmZip(zipPath);
+    const fileStream = this.elecron.fs.createReadStream(zipPath);
+    const zipStream = fileStream.pipe(this.elecron.unzipper.Parse());
 
-    if (pkg.pkg.uuid4 === BEPIN_UUID4) await this.installBepin(zipPath);
-    // else this.installZip(zip);
+    if (pkg.pkg.uuid4 === BEPIN_UUID4) await this.installBepin(zipStream);
+    else this.installZip(fileStream, pkg.pkg.fullName);
 
     this.installedPackagesSource.next([
       ...this.installedPackagesSource.value,
@@ -97,13 +99,17 @@ export class PackageService {
     changeset.updated.forEach(toInstall => this.installPackage(toInstall));
   }
 
-  // private installZip(zip: AdmZip) {
-  //   zip.getEntries().forEach(zipEntry => {
-  //     console.log(zipEntry);
-  //   });
-  // }
+  private installZip(fileStream: ReadStream, path: string): Promise<void> {
+    const install_dir = this.elecron.path.join(
+      this.prefs.get('ror2_path'),
+      'BepInEx',
+      'plugins',
+      path
+    );
+    return fileStream.pipe(unzipper.Extract({ path: install_dir })).promise();
+  }
 
-  private async installBepin(zipFile: string) {
+  private installBepin(zipStream: unzipper.ParseStream): Promise<void> {
     // this.elecron.ipcRenderer.send('installBepin', zipFile);
     // return new Promise((resolve, reject) => {
     //   this.elecron.ipcRenderer.on('bepinInstalled', (event, err) => {
@@ -112,9 +118,7 @@ export class PackageService {
     //   });
     // });
     const install_dir = this.prefs.get('ror2_path');
-    this.elecron.fs
-      .createReadStream(zipFile)
-      .pipe(this.elecron.unzipper.Parse())
+    return zipStream
       .on('entry', (entry: unzipper.Entry) => {
         const path = this.elecron.path;
         if (path.dirname(entry.path).startsWith('BepInExPack')) {
@@ -135,8 +139,7 @@ export class PackageService {
         } else {
           entry.autodrain();
         }
-      });
-    // zip.extractEntryTo('BepinExPack', install_dir);
-    // zip.extractEntryTo('BepinExPack/winhttp.dll', install_dir, false, true);
+      })
+      .promise();
   }
 }
