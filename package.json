@@ -20,7 +20,7 @@
   "main": "main.js",
   "private": true,
   "scripts": {
-    "postinstall": "npm run postinstall:electron && electron-builder install-app-deps",
+    "postinstall": "patch-package && npm run postinstall:electron && electron-builder install-app-deps",
     "postinstall:web": "node postinstall-web",
     "postinstall:electron": "node postinstall",
     "ng": "ng",
@@ -95,6 +95,7 @@
     "ngx-markdown": "^7.1.5",
     "node-sass": "^4.11.0",
     "npm-run-all": "4.1.5",
+    "patch-package": "^6.1.2",
     "rxjs": "6.4.0",
     "semver": "^6.0.0",
     "spectron": "5.0.0",
