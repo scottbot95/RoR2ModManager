@@ -5,6 +5,7 @@ export interface UserPreferences {
   windowMaximized?: boolean;
   darkMode?: boolean;
   ror2_path?: string;
+  respectPinned: boolean;
 }
 
 interface SchemaItem {
@@ -46,5 +47,6 @@ export const preferencesSchema = <Schema>{
 };
 
 export const defaultConfig: UserPreferences = {
-  windowBounds: { width: 800, height: 600, x: 0, y: 0 }
+  windowBounds: { width: 800, height: 600, x: 0, y: 0 },
+  respectPinned: true
 };

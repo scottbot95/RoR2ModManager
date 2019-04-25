@@ -24,7 +24,6 @@ export class ThunderstoreService {
   constructor(private http: HttpClient, private db: DatabaseService) {
     this.loadPackagesFromCache()
       .then(packages => {
-        console.log('Loaded from cache');
         if (!Array.isArray(packages) || packages.length === 0) {
           this.loadAllPackages();
         }

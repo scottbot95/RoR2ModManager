@@ -127,6 +127,7 @@
       [hidden]="isLoading"
       [class.dirty]="isRowDirty(row)"
       [class.dependency]="row.requiredBy.size === 1"
+      [class.pinned]="row.isPinned"
       class="clickable"
       (click)="showDetails(row)"
     ></tr>

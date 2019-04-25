@@ -5,6 +5,7 @@ import { Observable, merge, Subscription, BehaviorSubject } from 'rxjs';
 import { PackageList, Package } from '../../core/models/package.model';
 import { ThunderstoreService } from '../../core/services/thunderstore.service';
 import { FormControl } from '@angular/forms';
+import { PreferencesService } from '../../core/services/preferences.service';
 
 /**
  * Data source for the PackageTable view. This class should
@@ -27,12 +28,18 @@ export class PackageTableDataSource extends DataSource<Package> {
     private paginator: MatPaginator,
     private sort: MatSort,
     private filter: FormControl,
-    private thunderstore: ThunderstoreService
+    private thunderstore: ThunderstoreService,
+    private prefs: PreferencesService
   ) {
     super();
     this.dataSource.subscribe(data => {
       this.data = data;
-      this.filteredData = this.getFilteredData(data);
+      this.filteredData = sortPackages(
+        this.getFilteredData(data),
+        this.sort.active || 'updated',
+        false,
+        this.prefs.get('respectPinned')
+      );
       this.paginator.length = this.filteredData.length;
     });
   }
@@ -68,7 +75,12 @@ export class PackageTableDataSource extends DataSource<Package> {
 
     this.subscription.add(
       this.filter.valueChanges.subscribe(() => {
-        this.filteredData = this.getFilteredData(this.data);
+        this.filteredData = sortPackages(
+          this.getFilteredData(this.data),
+          this.sort.active || 'updated',
+          false,
+          this.prefs.get('respectPinned')
+        );
         this.paginator.length = this.filteredData.length;
       })
     );
@@ -106,23 +118,13 @@ export class PackageTableDataSource extends DataSource<Package> {
       return data;
     }
 
-    return data.sort((a, b) => {
-      const isAsc = this.sort.direction === 'asc';
-      switch (this.sort.active) {
-        case 'name':
-          return compare(a.name, b.name, isAsc);
-        case 'id':
-          return compare(a.uuid4, b.uuid4, isAsc);
-        case 'author':
-          return compare(a.owner, b.owner, isAsc);
-        case 'updated':
-          return compare(a.dateUpdated, b.dateUpdated, isAsc);
-        case 'select':
-          return compare(!!a.selected, !!b.selected, !isAsc);
-        default:
-          return 0;
-      }
-    });
+    const isAsc = this.sort.direction === 'asc';
+    return sortPackages(
+      data,
+      this.sort.active,
+      isAsc,
+      this.prefs.get('respectPinned')
+    );
   }
 
   private getFilteredData(data: PackageList): PackageList {
@@ -138,6 +140,38 @@ export class PackageTableDataSource extends DataSource<Package> {
       return data;
     }
   }
+}
+
+function sortPackages(
+  data: PackageList,
+  by: string,
+  isAsc: boolean,
+  respectPinned: boolean
+): PackageList {
+  return data.sort((a, b) => {
+    // todo put preference check here
+    if (respectPinned) {
+      // if at least on is pinned and they aren't both pinned
+      // too bad js doesn't have an XOR
+      if ((a.isPinned || b.isPinned) && a.isPinned !== b.isPinned) {
+        return a.isPinned ? -1 : 1;
+      }
+    }
+    switch (by) {
+      case 'name':
+        return compare(a.name, b.name, isAsc);
+      case 'id':
+        return compare(a.uuid4, b.uuid4, isAsc);
+      case 'author':
+        return compare(a.owner, b.owner, isAsc);
+      case 'updated':
+        return compare(a.dateUpdated, b.dateUpdated, isAsc);
+      case 'select':
+        return compare(!!a.selected, !!b.selected, !isAsc);
+      default:
+        return 0;
+    }
+  });
 }
 
 /** Simple sort comparator for example ID/Name columns (for client-side sorting). */

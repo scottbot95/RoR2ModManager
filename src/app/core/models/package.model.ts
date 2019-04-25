@@ -80,7 +80,6 @@ export const parseSerializablePackageList = (
 ) => {
   const packages = serializedPackages.map(serializedPkg => {
     let totalDownloads = 0;
-    console.log(serializedPkg.versions);
     const pkg: Package = {
       dateCreated: new Date(serializedPkg.date_created),
       dateUpdated: new Date(serializedPkg.date_updated),

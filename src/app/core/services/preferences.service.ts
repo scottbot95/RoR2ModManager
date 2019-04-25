@@ -16,8 +16,8 @@ export class PreferencesService {
     prefs.set(key, value);
   }
 
-  get<K extends keyof UserPreferences>(key: K) {
-    return prefs.get(key);
+  get<K extends keyof UserPreferences>(key: K): UserPreferences[K] {
+    return prefs.get(key) as UserPreferences[K];
   }
 
   onChange<K extends keyof UserPreferences>(

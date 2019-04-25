@@ -22,6 +22,7 @@ import { delay } from 'rxjs/operators';
 import { PackageChangeset } from '../../core/services/package.service';
 import { SelectionChangesetModel } from '../../shared/selection-changeset';
 import { FormControl } from '@angular/forms';
+import { PreferencesService } from '../../core/services/preferences.service';
 
 @Component({
   selector: 'app-package-table',
@@ -46,7 +47,10 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
   private subscription = new Subscription();
   private _installedPackages: PackageList;
 
-  constructor(public thunderstore: ThunderstoreService) {}
+  constructor(
+    public thunderstore: ThunderstoreService,
+    private prefs: PreferencesService
+  ) {}
 
   ngOnInit() {
     this.selection = new SelectionChangesetModel<Package>(
@@ -82,7 +86,8 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
         this.paginator,
         this.sort,
         this.filter,
-        this.thunderstore
+        this.thunderstore,
+        this.prefs
       );
 
       this.subscription.add(
