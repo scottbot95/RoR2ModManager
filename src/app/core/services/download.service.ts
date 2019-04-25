@@ -4,6 +4,10 @@ import { PackageVersion } from '../models/package.model';
 import { download } from 'electron-dl';
 import { DownloadItem } from 'electron';
 
+export class DownloadResult {
+  savePath: string;
+}
+
 @Injectable()
 export class DownloadService {
   private downloader: typeof download;
@@ -12,19 +16,30 @@ export class DownloadService {
     this.downloader = this.electron.download;
   }
 
-  async download(pkg: PackageVersion): Promise<DownloadItem> {
+  async download(pkg: PackageVersion): Promise<DownloadResult> {
     // check if file exists in cache already
-    const result = await this.downloader(
+    const directory = this.electron.path.join(
+      this.electron.remote.app.getPath('userData'),
+      'downloadCache'
+    );
+    console.log(directory);
+
+    const savePath = this.electron.path.join(directory, `${pkg.fullName}.zip`);
+    try {
+      await this.electron.fs.promises.access(savePath);
+      console.log(`Found file in cache, using it`);
+      return { savePath };
+    } catch (err) {}
+
+    console.log('File not in cache, downloading', pkg.downloadUrl, directory);
+    await this.downloader(
       this.electron.remote.getCurrentWindow(),
       pkg.downloadUrl,
       {
-        directory: this.electron.remote.app.getPath('downloads'),
-        onProgress: percent => {
-          console.log(percent);
-        }
+        directory
       }
     );
 
-    return result;
+    return { savePath };
   }
 }

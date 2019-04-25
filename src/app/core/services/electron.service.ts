@@ -28,7 +28,7 @@ export class ElectronService {
       this.childProcess = window.require('child_process');
       this.fs = window.require('fs');
 
-      this.download = this.remote.require('electron-dl');
+      this.download = this.remote.require('electron-dl').download;
       this.path = this.remote.require('path');
 
       this.configureIpc();
