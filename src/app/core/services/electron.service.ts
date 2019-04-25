@@ -20,6 +20,11 @@ export class ElectronService {
   downloadManager: typeof DownloadManager;
   unzipper: typeof unzipper;
 
+  fsExtras: {
+    deleteFile: (dir: string, file: string) => Promise<void>;
+    deleteDirectory: (dir: string) => Promise<void>;
+  };
+
   constructor() {
     // Conditional imports
     if (this.isElectron()) {
@@ -35,6 +40,11 @@ export class ElectronService {
       this.unzipper = this.remote.require('unzipper');
 
       this.configureIpc();
+
+      this.fsExtras = {
+        deleteDirectory: this.deleteDirectory.bind(this),
+        deleteFile: this.deleteFile.bind(this)
+      };
     }
   }
 
@@ -43,8 +53,57 @@ export class ElectronService {
   };
 
   private configureIpc() {
-    this.ipcRenderer.on('print', (event, ...args) => {
+    this.ipcRenderer.on('print', (event: any, ...args: any) => {
       console.log('Main Process:', ...args);
+    });
+  }
+
+  private deleteFile(filePath: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.fs.lstat(filePath, (err, stats) => {
+        if (err) {
+          return reject(err);
+        }
+        if (stats.isDirectory()) {
+          resolve(this.deleteDirectory(filePath));
+        } else {
+          this.fs.unlink(filePath, err2 => {
+            if (err2) {
+              return reject(err2);
+            }
+            resolve();
+          });
+        }
+      });
+    });
+  }
+
+  private deleteDirectory(dir: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.fs.access(dir, err => {
+        if (err) {
+          return reject(err);
+        }
+        this.fs.readdir(dir, (err2, files) => {
+          if (err2) {
+            return reject(err2);
+          }
+          Promise.all(
+            files.map(file => {
+              return this.deleteFile(this.path.join(dir, file));
+            })
+          )
+            .then(() => {
+              this.fs.rmdir(dir, err3 => {
+                if (err3) {
+                  return reject(err3);
+                }
+                resolve();
+              });
+            })
+            .catch(reject);
+        });
+      });
     });
   }
 }

@@ -62,7 +62,7 @@ export class PackageService {
     const zipStream = fileStream.pipe(this.elecron.unzipper.Parse());
 
     if (pkg.pkg.uuid4 === BEPIN_UUID4) await this.installBepin(zipStream);
-    else this.installZip(fileStream, pkg.pkg.fullName);
+    else await this.installZip(fileStream, pkg.pkg.fullName);
 
     this.installedPackagesSource.next([
       ...this.installedPackagesSource.value,
@@ -70,7 +70,14 @@ export class PackageService {
     ]);
   }
 
-  public uninstallPackage(pkg: Package) {
+  // TODO use InstalledPackage here and add installedPath to InstalledPackage
+  public async uninstallPackage(pkg: Package) {
+    const installedPath = this.elecron.path.join(
+      this.getBepInExPluginPath(),
+      pkg.fullName
+    );
+
+    await this.elecron.fsExtras.deleteDirectory(installedPath);
     this.installedPackagesSource.next(
       this.installedPackagesSource.value.filter(
         installed => installed.uuid4 !== pkg.uuid4
@@ -101,9 +108,7 @@ export class PackageService {
 
   private installZip(fileStream: ReadStream, path: string): Promise<void> {
     const install_dir = this.elecron.path.join(
-      this.prefs.get('ror2_path'),
-      'BepInEx',
-      'plugins',
+      this.getBepInExPluginPath(),
       path
     );
     return fileStream.pipe(unzipper.Extract({ path: install_dir })).promise();
@@ -141,5 +146,13 @@ export class PackageService {
         }
       })
       .promise();
+  }
+
+  private getBepInExPluginPath() {
+    return this.elecron.path.join(
+      this.prefs.get('ror2_path'),
+      'BepInEx',
+      'plugins'
+    );
   }
 }
