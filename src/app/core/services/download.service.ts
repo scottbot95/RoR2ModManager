@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { ElectronService } from './electron.service';
 import { PackageVersion } from '../models/package.model';
 import { download } from 'electron-dl';
-import { DownloadItem } from 'electron';
 
 export class DownloadResult {
   savePath: string;
