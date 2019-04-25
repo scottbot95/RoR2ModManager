@@ -1,6 +1,10 @@
-import { PackageVersion, Package, InstalledPackage } from './package.model';
+import {
+  ApiPackageVersion,
+  ApiPackage,
+  InstalledPackage
+} from './package.model';
 
-export const testPackageVersion: PackageVersion = {
+export const testPackageVersion: ApiPackageVersion = {
   date_created: new Date(),
   dependencies: [],
   description: '',
@@ -29,7 +33,7 @@ const _testPackage = {
   versions: [testPackageVersion]
 };
 
-export const testPackage: Package = _testPackage;
+export const testPackage: ApiPackage = _testPackage;
 
 export const testInstalledPackage: InstalledPackage = Object.assign(
   {},

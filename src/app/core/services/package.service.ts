@@ -1,20 +1,20 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import {
-  PackageVersion,
-  Package,
+  ApiPackageVersion,
+  ApiPackage,
   InstalledPackageList
 } from '../models/package.model';
 import { DownloadService } from './download.service';
 
 export interface PackageChangeset {
-  updated: Set<PackageVersion>;
-  removed: Set<Package>;
+  updated: Set<ApiPackageVersion>;
+  removed: Set<ApiPackage>;
 }
 
 export class PackageChangeset {
-  updated = new Set<PackageVersion>();
-  removed = new Set<Package>();
+  updated = new Set<ApiPackageVersion>();
+  removed = new Set<ApiPackage>();
 }
 
 @Injectable()
@@ -26,7 +26,7 @@ export class PackageService {
 
   constructor(private download: DownloadService) {}
 
-  public installPackage(pkg: PackageVersion) {
+  public installPackage(pkg: ApiPackageVersion) {
     this.installedPackagesSource.next([
       ...this.installedPackagesSource.value,
       { ...pkg.pkg, installed_version: pkg }
@@ -34,7 +34,7 @@ export class PackageService {
     this.download.download(pkg);
   }
 
-  public uninstallPackage(pkg: Package) {
+  public uninstallPackage(pkg: ApiPackage) {
     this.installedPackagesSource.next(
       this.installedPackagesSource.value.filter(
         installed => installed.uuid4 !== pkg.uuid4
@@ -42,7 +42,7 @@ export class PackageService {
     );
   }
 
-  public updatePackage(pkg: Package, version: PackageVersion) {}
+  public updatePackage(pkg: ApiPackage, version: ApiPackageVersion) {}
 
   public applyChanges(changeset: PackageChangeset) {
     console.log('Applying package changeset', changeset);

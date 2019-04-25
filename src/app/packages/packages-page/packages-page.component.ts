@@ -4,7 +4,7 @@ import {
   PackageChangeset
 } from '../../core/services/package.service';
 import { Subscription, Observable } from 'rxjs';
-import { Package, PackageList } from '../../core/models/package.model';
+import { ApiPackage, PackageList } from '../../core/models/package.model';
 import { map } from 'rxjs/operators';
 
 @Component({
@@ -17,7 +17,7 @@ import { map } from 'rxjs/operators';
 })
 export class PackagesPageComponent implements OnInit, OnDestroy {
   private subscription = new Subscription();
-  selectedPackage: Package;
+  selectedPackage: ApiPackage;
   installedPackages$: Observable<
     PackageList
   > = this.service.installedPackages$.pipe(

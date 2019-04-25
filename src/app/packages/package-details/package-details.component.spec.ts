@@ -3,7 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { PackageDetailsComponent } from './package-details.component';
 import { MaterialModule } from '../../shared/material.module';
 import { Component } from '@angular/core';
-import { Package } from '../../core/models/package.model';
+import { ApiPackage } from '../../core/models/package.model';
 import { By } from '@angular/platform-browser';
 import { testPackage } from '../../core/models/package.model.spec';
 
@@ -20,7 +20,7 @@ class MockMarkdownComponent {}
     '<app-package-details [package]="testPackage"></app-package-details>'
 })
 class TestHostComponent {
-  testPackage: Package = testPackage;
+  testPackage: ApiPackage = testPackage;
 }
 
 describe('PackageDetailsComponent', () => {

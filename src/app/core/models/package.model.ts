@@ -1,7 +1,7 @@
 // formattated like {author}-{packagename}-{version}
 type PackageNameVersion = string;
 
-interface PackageBase {
+interface ApiPackageBase {
   name: string;
   full_name: PackageNameVersion;
   is_active: boolean;
@@ -9,7 +9,7 @@ interface PackageBase {
   uuid4: string;
 }
 
-export interface Package extends PackageBase {
+export interface ApiPackage extends ApiPackageBase {
   owner: string;
   maintainers: string[];
   date_updated: Date;
@@ -17,13 +17,13 @@ export interface Package extends PackageBase {
   versions: PackageVersionList;
 
   // add on after getting result from api
-  latest_version?: PackageVersion;
+  latest_version?: ApiPackageVersion;
   total_downloads?: number;
   selected?: boolean;
-  requiredBy?: Set<PackageVersion>;
+  requiredBy?: Set<ApiPackageVersion>;
 }
 
-export interface PackageVersion extends PackageBase {
+export interface ApiPackageVersion extends ApiPackageBase {
   download_url: string;
   dependencies: PackageNameVersion[];
   downloads: number;
@@ -32,14 +32,14 @@ export interface PackageVersion extends PackageBase {
   description: string;
   icon: string;
   readme?: string;
-  pkg?: Package;
+  pkg?: ApiPackage;
 }
 
-export interface InstalledPackage extends Package {
+export interface InstalledPackage extends ApiPackage {
   // undefined if no version is installed
-  installed_version: PackageVersion | undefined;
+  installed_version: ApiPackageVersion | undefined;
 }
 
-export type PackageList = Package[];
-export type PackageVersionList = PackageVersion[];
+export type PackageList = ApiPackage[];
+export type PackageVersionList = ApiPackageVersion[];
 export type InstalledPackageList = InstalledPackage[];

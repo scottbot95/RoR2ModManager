@@ -11,9 +11,9 @@ import {
 import { MatPaginator, MatSort } from '@angular/material';
 import { PackageTableDataSource } from './package-table-datasource';
 import {
-  Package,
+  ApiPackage,
   PackageList,
-  PackageVersion,
+  ApiPackageVersion,
   PackageVersionList
 } from '../../core/models/package.model';
 import { ThunderstoreService } from '../../core/services/thunderstore.service';
@@ -33,13 +33,13 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatSort) sort: MatSort;
   @Input() applyChanges: (selection: PackageChangeset) => void;
   @Input() installedPackages: Observable<PackageList>;
-  @Output() showPackageDetails = new EventEmitter<Package>();
+  @Output() showPackageDetails = new EventEmitter<ApiPackage>();
   dataSource: PackageTableDataSource;
   isLoading: boolean;
 
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
   displayedColumns = ['select', 'name', 'author', 'updated', 'latest'];
-  selection: SelectionChangesetModel<Package>;
+  selection: SelectionChangesetModel<ApiPackage>;
 
   filter = new FormControl('');
 
@@ -49,7 +49,7 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(public thunderstore: ThunderstoreService) {}
 
   ngOnInit() {
-    this.selection = new SelectionChangesetModel<Package>(
+    this.selection = new SelectionChangesetModel<ApiPackage>(
       true,
       this.installedPackages
     );
@@ -97,17 +97,17 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
-  checkboxLabel(row: Package): string {
+  checkboxLabel(row: ApiPackage): string {
     return `${this.selection.isSelected(row) ? 'Uninstall' : 'Install'} ${
       row.name
     }`;
   }
 
-  showDetails(pkg: Package) {
+  showDetails(pkg: ApiPackage) {
     this.showPackageDetails.emit(pkg);
   }
 
-  isRowDirty(pkg: Package) {
+  isRowDirty(pkg: ApiPackage) {
     const installed = this._installedPackages.find(p => p.uuid4 === pkg.uuid4);
 
     let dirty: boolean;
@@ -129,7 +129,7 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.applyChanges(changes);
   }
 
-  private selectAllDependencies(pkg: PackageVersion) {
+  private selectAllDependencies(pkg: ApiPackageVersion) {
     const toSelect: PackageVersionList = [];
     pkg.dependencies.forEach(dep => {
       const depVer = this.getDependecyFromString(dep);
@@ -141,7 +141,7 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
     if (toSelect.length) this.selection.select(...toSelect.map(p => p.pkg));
   }
 
-  private deselectAvailDependencies(pkg: PackageVersion) {
+  private deselectAvailDependencies(pkg: ApiPackageVersion) {
     const toDeselct: PackageVersionList = [];
 
     pkg.dependencies.forEach(dep => {
