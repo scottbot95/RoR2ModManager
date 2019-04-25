@@ -5,8 +5,8 @@ import { Injectable } from '@angular/core';
 import { ipcRenderer, webFrame, remote } from 'electron';
 import * as childProcess from 'child_process';
 import * as fs from 'fs';
-import { download } from 'electron-dl';
 import * as path from 'path';
+import * as DownloadManager from 'electron-download-manager';
 
 @Injectable()
 export class ElectronService {
@@ -16,7 +16,7 @@ export class ElectronService {
   childProcess: typeof childProcess;
   fs: typeof fs;
   path: typeof path;
-  download: typeof download; // This may cause problems as API is unintended
+  downloadManager: typeof DownloadManager;
 
   constructor() {
     // Conditional imports
@@ -28,8 +28,8 @@ export class ElectronService {
       this.childProcess = window.require('child_process');
       this.fs = window.require('fs');
 
-      this.download = this.remote.require('electron-dl').download;
       this.path = this.remote.require('path');
+      this.downloadManager = this.remote.require('electron-download-manager');
 
       this.configureIpc();
     }

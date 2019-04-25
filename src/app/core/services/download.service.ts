@@ -1,53 +1,25 @@
 import { Injectable } from '@angular/core';
-import * as nodeFs from 'fs';
 import { ElectronService } from './electron.service';
 import { PackageVersion } from '../models/package.model';
-import { download } from 'electron-dl';
+import * as DownloadManger from 'electron-download-manager';
 
-// make our own function to avoid the error print in console from node
-// fs.promises is 'experimental'
-const accessP = (fs: typeof nodeFs, path: string) => {
-  return new Promise<void>((resolve, reject) => {
-    fs.access(path, err => {
-      if (err) reject(err);
-      else resolve();
-    });
-  });
-};
-export class DownloadResult {
-  savePath: string;
-}
+// TODO do something better than this eventually
+export type DownloadResult = string;
 
 @Injectable()
 export class DownloadService {
-  private downloader: typeof download;
+  private downloadManger: typeof DownloadManger;
 
   constructor(private electron: ElectronService) {
-    this.downloader = this.electron.download;
+    this.downloadManger = this.electron.downloadManager;
   }
 
-  async download(pkg: PackageVersion): Promise<DownloadResult> {
-    // check if file exists in cache already
-    const directory = this.electron.path.join(
-      this.electron.remote.app.getPath('userData'),
-      'downloadCache'
-    );
-
-    const savePath = this.electron.path.join(directory, `${pkg.fullName}.zip`);
-    try {
-      await accessP(this.electron.fs, savePath);
-      return { savePath };
-    } catch (err) {}
-
-    await this.downloader(
-      this.electron.remote.getCurrentWindow(),
-      pkg.downloadUrl,
-      {
-        saveAs: false,
-        directory // this seems to be bugged see https://github.com/sindresorhus/electron-dl/issues/78
-      }
-    );
-
-    return { savePath };
+  download(pkg: PackageVersion): Promise<DownloadResult> {
+    return new Promise((resolve, reject) => {
+      this.downloadManger.download({ url: pkg.downloadUrl }, (err, info) => {
+        if (err) reject(err);
+        else resolve(info.filePath);
+      });
+    });
   }
 }
