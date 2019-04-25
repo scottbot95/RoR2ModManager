@@ -6,7 +6,6 @@ import { Component } from '@angular/core';
 import { Package } from '../../core/models/package.model';
 import { By } from '@angular/platform-browser';
 import { testPackage } from '../../core/models/package.model.spec';
-import { SemVer } from 'semver';
 
 @Component({
   // tslint:disable-next-line: component-selector

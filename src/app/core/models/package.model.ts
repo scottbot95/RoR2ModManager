@@ -2,7 +2,7 @@ import { SemVer } from 'semver';
 // formattated like {author}-{packagename}-{version}
 type PackageNameVersion = string;
 
-interface ApiPackageBase {
+interface SerializablePackageBase {
   name: string;
   full_name: PackageNameVersion;
   is_active: boolean;
@@ -10,21 +10,15 @@ interface ApiPackageBase {
   uuid4: string;
 }
 
-export interface ApiPackage extends ApiPackageBase {
+export interface SerializablePackage extends SerializablePackageBase {
   owner: string;
   maintainers: string[];
   date_updated: string;
   is_pinned: boolean;
   versions: ApiPackageVersionList;
-
-  // add on after getting result from api
-  latest_version?: ApiPackageVersion;
-  total_downloads?: number;
-  selected?: boolean;
-  requiredBy?: Set<ApiPackageVersion>;
 }
 
-export interface ApiPackageVersion extends ApiPackageBase {
+export interface SerializablePackageVersion extends SerializablePackageBase {
   download_url: string;
   dependencies: PackageNameVersion[];
   downloads: number;
@@ -33,7 +27,6 @@ export interface ApiPackageVersion extends ApiPackageBase {
   description: string;
   icon: string;
   readme?: string;
-  pkg?: ApiPackage;
 }
 
 // eventually might have changes so leave this empty interface here
@@ -76,8 +69,8 @@ export interface InstalledPackage extends Package {
   installedVersion: PackageVersion | undefined;
 }
 
-export type ApiPackageList = ApiPackage[];
-export type ApiPackageVersionList = ApiPackageVersion[];
+export type ApiPackageList = SerializablePackage[];
+export type ApiPackageVersionList = SerializablePackageVersion[];
 export type PackageList = Package[];
 export type PackageVersionList = PackageVersion[];
 export type InstalledPackageList = InstalledPackage[];

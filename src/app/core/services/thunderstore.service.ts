@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { distinctUntilChanged, tap, map } from 'rxjs/operators';
+import { distinctUntilChanged, map } from 'rxjs/operators';
 import {
   ApiPackageList,
   PackageList,
