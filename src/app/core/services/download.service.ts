@@ -1,8 +1,19 @@
 import { Injectable } from '@angular/core';
+import * as nodeFs from 'fs';
 import { ElectronService } from './electron.service';
 import { PackageVersion } from '../models/package.model';
 import { download } from 'electron-dl';
 
+// make our own function to avoid the error print in console from node
+// fs.promises is 'experimental'
+const accessP = (fs: typeof nodeFs, path: string) => {
+  return new Promise<void>((resolve, reject) => {
+    fs.access(path, err => {
+      if (err) reject(err);
+      else resolve();
+    });
+  });
+};
 export class DownloadResult {
   savePath: string;
 }
@@ -21,16 +32,13 @@ export class DownloadService {
       this.electron.remote.app.getPath('userData'),
       'downloadCache'
     );
-    console.log(directory);
 
     const savePath = this.electron.path.join(directory, `${pkg.fullName}.zip`);
     try {
-      await this.electron.fs.promises.access(savePath);
-      console.log(`Found file in cache, using it`);
+      await accessP(this.electron.fs, savePath);
       return { savePath };
     } catch (err) {}
 
-    console.log('File not in cache, downloading', pkg.downloadUrl, directory);
     await this.downloader(
       this.electron.remote.getCurrentWindow(),
       pkg.downloadUrl,

@@ -15,8 +15,8 @@ export class ElectronService {
   remote: typeof remote;
   childProcess: typeof childProcess;
   fs: typeof fs;
-  download: typeof download;
   path: typeof path;
+  download: typeof download; // This may cause problems as API is unintended
 
   constructor() {
     // Conditional imports
