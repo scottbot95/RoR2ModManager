@@ -36,15 +36,24 @@ Function OnBrowseForDir
   Pop $0
   ${If} $0 == error
   ${Else}
-    StrCpy $DirText $0
-    ${NSD_SetText} $RoR2Dir $DirText
+    ${If} ${FileExists} "$DirText\Risk of Rain 2.exe"
+      StrCpy $DirText $0
+      ${NSD_SetText} $RoR2Dir $DirText
+    ${Else}
+      MessageBox MB_OK|MB_ICONEXCLAMATION "Selected folder must contain 'Risk of Rain 2.exe'"
+    ${EndIf}
   ${EndIf}
 FunctionEnd
 
 Function LeaveCallback
   ${NSD_GetText} $RoR2Dir $DirText
+  ${If} ${FileExists} "$DirText\Risk of Rain 2.exe"
 
-  WriteRegStr HKCU "Software\${PRODUCT_NAME}" "RoR2Dir" $DirText
+    WriteRegStr HKCU "Software\${PRODUCT_NAME}" "RoR2Dir" $DirText
+  ${Else}
+    MessageBox MB_OK|MB_ICONEXCLAMATION "Selected folder must contain 'Risk of Rain 2.exe'"
+    Abort
+  ${EndIf}
 FunctionEnd
 
 Section
