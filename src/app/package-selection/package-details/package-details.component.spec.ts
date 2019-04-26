@@ -6,6 +6,9 @@ import { Component } from '@angular/core';
 import { Package } from '../../core/models/package.model';
 import { By } from '@angular/platform-browser';
 import { testPackage } from '../../core/models/package.model.spec';
+import { HumanizePipe } from '../../shared/humanize.pipe';
+import { PreferencesService } from '../../core/services/preferences.service';
+import { MockPreferencesService } from '../../core/services/mocks';
 
 @Component({
   // tslint:disable-next-line: component-selector
@@ -33,9 +36,13 @@ describe('PackageDetailsComponent', () => {
       declarations: [
         PackageDetailsComponent,
         MockMarkdownComponent,
-        TestHostComponent
+        TestHostComponent,
+        HumanizePipe
       ],
-      imports: [MaterialModule]
+      imports: [MaterialModule],
+      providers: [
+        { provide: PreferencesService, useClass: MockPreferencesService }
+      ]
     }).compileComponents();
   }));
 
