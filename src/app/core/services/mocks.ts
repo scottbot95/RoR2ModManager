@@ -3,8 +3,7 @@ import {
   defaultConfig
 } from '../../../electron/preferences.model';
 import { ChangeEvent } from './preferences.service';
-import { Observable, of } from 'rxjs';
-import { BehaviorSubject } from 'rxjs';
+import { Observable, of, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PackageList, Package, PackageVersion } from '../models/package.model';
 
@@ -27,7 +26,9 @@ export class MockPreferencesService {
 }
 
 export class MockHttpClient {
-  get() {}
+  get() {
+    return of();
+  }
   post() {}
   delete() {}
   put() {}
@@ -68,10 +69,19 @@ export class MockElectronService {
     dialog: {
       showOpenDialog: (options: object) => {
         return ['C:\\fakepath'];
-      }
+      },
+      showMessageBox: () => {}
     },
-    require: (module: string) => ({})
+    require: (module: string) => ({}),
+    getCurrentWindow: () => {}
   };
+  fs = {
+    createWriteStream: () => {},
+    createReadStream: () => {}
+  };
+  isElectron() {
+    return false;
+  }
 }
 
 export class MockDownloadService {

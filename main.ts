@@ -1,8 +1,9 @@
-import { app, BrowserWindow, autoUpdater } from 'electron';
+import { app, BrowserWindow, autoUpdater, ipcMain } from 'electron';
 import * as path from 'path';
 import { format as formatUrl } from 'url';
 import * as Registry from 'winreg';
 import { register } from 'electron-download-manager';
+import * as AdmZip from 'adm-zip';
 
 import { UserPreferences } from './src/electron/preferences.model';
 import { prefs } from './src/electron/prefs';
@@ -140,3 +141,22 @@ try {
   // Catch Error
   // throw e;
 }
+
+ipcMain.on('installBepin', (event, zipPath) => {
+  try {
+    const installDir = prefs.get('ror2_path') as string;
+    const zip = new AdmZip(zipPath);
+    // for (const entry of zip.getEntries()) {
+    //   if (path.dirname(entry.entryName) === 'BepInExPack') {
+    //     win.webContents.send('print', entry);
+    //     zip.extractEntryTo(entry, installDir);
+    //   }
+    // }
+    zip.extractEntryTo('BepInExPack/winhttp.dll', installDir);
+    zip.extractEntryTo('BepInExPack/BepInEx/', installDir, false);
+
+    win.webContents.send('bepinInstalled');
+  } catch (err) {
+    win.webContents.send('bepinInstalled', err);
+  }
+});
