@@ -1,15 +1,18 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { ParseStream, Entry as ZipEntry } from 'unzipper';
 import {
-  InstalledPackageList,
+  PackageList,
   PackageVersion,
-  Package
+  Package,
+  parseSerializablePackageList
 } from '../models/package.model';
 import { DownloadService } from './download.service';
 import { ElectronService } from './electron.service';
 import { PreferencesService } from './preferences.service';
 import { ReadStream } from 'fs';
+import { ThunderstoreService } from './thunderstore.service';
+import { DatabaseService } from './database.service';
 
 export interface PackageChangeset {
   updated: Set<PackageVersion>;
@@ -25,16 +28,66 @@ const BEPIN_UUID4 = '4c253b36-fd0b-4e6d-b4d8-b227972af4da';
 
 @Injectable()
 export class PackageService {
-  private installedPackagesSource = new BehaviorSubject<InstalledPackageList>(
-    []
-  );
+  private installedPackagesSource = new BehaviorSubject<PackageList>([]);
   public installedPackages$ = this.installedPackagesSource.asObservable();
+
+  private allPackagesSource = new BehaviorSubject<PackageList>([]);
+  public allPackages$ = this.allPackagesSource.asObservable();
 
   constructor(
     private download: DownloadService,
     private elecron: ElectronService,
-    private prefs: PreferencesService
-  ) {}
+    private prefs: PreferencesService,
+    private thunderstore: ThunderstoreService,
+    private db: DatabaseService
+  ) {
+    if (this.prefs.get('checkUpdatesOnStart')) {
+      this.downloadPackageList();
+    } else {
+      this.loadPackagesFromCache()
+        .then(packages => {
+          // if we didn't load any packages, download them
+          console.log('Package cache is empty, downloading list');
+          if (!Array.isArray(packages) || packages.length === 0) {
+            this.downloadPackageList();
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          this.downloadPackageList();
+        });
+    }
+  }
+
+  public async loadPackagesFromCache(): Promise<PackageList> {
+    const serializedPackages = await this.db.packageTable.toArray();
+
+    const packages = parseSerializablePackageList(serializedPackages);
+
+    this.allPackagesSource.next(packages);
+    console.log('Loaded packages from cache', packages);
+    return packages;
+  }
+
+  public downloadPackageList(): Observable<PackageList> {
+    const oldPackages = this.allPackagesSource.value;
+    this.allPackagesSource.next(null);
+
+    this.thunderstore.loadAllPackages().subscribe(
+      packages => {
+        if (packages) {
+          this.db.savePackages(packages, true);
+          this.allPackagesSource.next(packages);
+        }
+      },
+      err => {
+        console.error('Failed to download packages');
+        console.error(err);
+        this.allPackagesSource.next(oldPackages);
+      }
+    );
+    return this.allPackages$;
+  }
 
   public async installPackage(pkg: PackageVersion) {
     if (

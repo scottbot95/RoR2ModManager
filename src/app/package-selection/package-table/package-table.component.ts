@@ -9,6 +9,9 @@ import {
   OnInit
 } from '@angular/core';
 import { MatPaginator, MatSort } from '@angular/material';
+import { Subscription, Observable } from 'rxjs';
+import { delay } from 'rxjs/operators';
+import { FormControl } from '@angular/forms';
 import { PackageTableDataSource } from './package-table-datasource';
 import {
   Package,
@@ -16,12 +19,11 @@ import {
   PackageVersion,
   PackageVersionList
 } from '../../core/models/package.model';
-import { ThunderstoreService } from '../../core/services/thunderstore.service';
-import { Subscription, Observable } from 'rxjs';
-import { delay } from 'rxjs/operators';
-import { PackageChangeset } from '../../core/services/package.service';
+import {
+  PackageChangeset,
+  PackageService
+} from '../../core/services/package.service';
 import { SelectionChangesetModel } from '../../shared/selection-changeset';
-import { FormControl } from '@angular/forms';
 import { PreferencesService } from '../../core/services/preferences.service';
 
 @Component({
@@ -57,7 +59,7 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
   private _installedPackages: PackageList;
 
   constructor(
-    public thunderstore: ThunderstoreService,
+    public packages: PackageService,
     private prefs: PreferencesService
   ) {}
 
@@ -102,7 +104,7 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
         this.paginator,
         this.sort,
         this.filter,
-        this.thunderstore,
+        this.packages,
         this.prefs
       );
 
@@ -148,6 +150,10 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
       Array.from(changeset.added).map(pkg => pkg.latestVersion)
     );
     this.applyChanges(changes);
+  }
+
+  refreshPackages() {
+    this.packages.downloadPackageList();
   }
 
   private selectAllDependencies(pkg: PackageVersion) {

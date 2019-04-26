@@ -15,7 +15,8 @@ import { ElectronService } from '../../core/services/electron.service';
 import {
   MockHttpClient,
   MockElectronService,
-  MockPreferencesService
+  MockPreferencesService,
+  MockThunderstoreService
 } from '../../core/services/mocks';
 import { Component, Directive, Input } from '@angular/core';
 import { By } from '@angular/platform-browser';
@@ -62,8 +63,8 @@ describe('PackageTableComponent', () => {
         ReactiveFormsModule
       ],
       providers: [
-        ThunderstoreService,
         DatabaseService,
+        { provide: ThunderstoreService, useClass: MockThunderstoreService },
         { provide: PreferencesService, useClass: MockPreferencesService },
         { provide: ElectronService, useClass: MockElectronService },
         { provide: HttpClient, useClass: MockHttpClient }

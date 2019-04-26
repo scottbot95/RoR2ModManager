@@ -2,8 +2,10 @@ import { Injectable } from '@angular/core';
 import Dexie from 'dexie';
 import {
   Package,
-  SerializablePackageList,
-  SerializablePackage
+  SerializablePackage,
+  serializePackage,
+  serializePackageList,
+  PackageList
 } from '../models/package.model';
 
 export class Database extends Dexie {
@@ -24,12 +26,22 @@ export class DatabaseService {
 
   constructor() {}
 
-  public savePackage(pkg: SerializablePackage) {
-    this.db.packages.add(pkg);
+  public savePackage(pkg: Package, overwrite = false) {
+    const serialized = serializePackage(pkg);
+    if (overwrite) {
+      this.db.packages.put(serialized);
+    } else {
+      this.db.packages.add(serialized);
+    }
   }
 
-  public savePackages(packages: SerializablePackageList) {
-    this.db.packages.bulkAdd(packages);
+  public savePackages(packages: PackageList, overwrite = false) {
+    const serialized = serializePackageList(packages);
+    if (overwrite) {
+      this.db.packages.bulkPut(serialized);
+    } else {
+      this.db.packages.bulkAdd(serialized);
+    }
   }
 
   public clearPackages() {

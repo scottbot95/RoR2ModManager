@@ -26,7 +26,7 @@
       <tr>
         <td>Latest Version:</td>
         <td>
-          {{ package.latestVersion.versionNumber }}
+          {{ package.latestVersion.version }}
         </td>
       </tr>
       <tr>
@@ -63,7 +63,7 @@
     <strong>Versions:</strong>
     <mat-list dense>
       <ng-container *ngFor="let version of package.versions; last as isLast">
-        <mat-list-item>{{ version.versionNumber.version }}</mat-list-item>
+        <mat-list-item>{{ version.version.version }}</mat-list-item>
         <mat-divider *ngIf="!isLast"></mat-divider>
       </ng-container>
     </mat-list>

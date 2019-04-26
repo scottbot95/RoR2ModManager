@@ -11,7 +11,7 @@
       <th mat-header-cell *matHeaderCellDef>
         <button
           mat-icon-button
-          (click)="thunderstore.loadAllPackages()"
+          (click)="refreshPackages()"
           matTooltip="refresh"
         >
           <mat-icon>refresh</mat-icon>
@@ -101,7 +101,7 @@
     <ng-container matColumnDef="latest">
       <th mat-header-cell *matHeaderCellDef>Latest Version</th>
       <td mat-cell *matCellDef="let row">
-        {{ row.latestVersion.versionNumber.version }}
+        {{ row.latestVersion.version.version }}
       </td>
     </ng-container>
 

@@ -3,9 +3,9 @@ import { MatPaginator, MatSort } from '@angular/material';
 import { map, distinctUntilChanged, debounceTime } from 'rxjs/operators';
 import { Observable, merge, Subscription, BehaviorSubject } from 'rxjs';
 import { PackageList, Package } from '../../core/models/package.model';
-import { ThunderstoreService } from '../../core/services/thunderstore.service';
 import { FormControl } from '@angular/forms';
 import { PreferencesService } from '../../core/services/preferences.service';
+import { PackageService } from '../../core/services/package.service';
 
 /**
  * Data source for the PackageTable view. This class should
@@ -28,7 +28,7 @@ export class PackageTableDataSource extends DataSource<Package> {
     private paginator: MatPaginator,
     private sort: MatSort,
     private filter: FormControl,
-    private thunderstore: ThunderstoreService,
+    private packages: PackageService,
     private prefs: PreferencesService
   ) {
     super();
@@ -63,7 +63,7 @@ export class PackageTableDataSource extends DataSource<Package> {
     ];
 
     this.subscription.add(
-      this.thunderstore.allPackages$.subscribe(packages => {
+      this.packages.allPackages$.subscribe(packages => {
         if (packages) {
           this.dataSource.next(packages);
           this.loadingSource.next(false);

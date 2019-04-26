@@ -6,6 +6,7 @@ import { ChangeEvent } from './preferences.service';
 import { Observable, of, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PackageList, Package, PackageVersion } from '../models/package.model';
+import { testPackage } from '../models/package.model.spec';
 
 export class MockPreferencesService {
   private data: UserPreferences = defaultConfig;
@@ -88,5 +89,13 @@ export class MockDownloadService {
   async download(): Promise<object> {
     const mockResult = {};
     return mockResult;
+  }
+}
+
+export class MockThunderstoreService {
+  public allPackages$ = new BehaviorSubject<PackageList>([]);
+
+  loadAllPackages(): Observable<PackageList> {
+    return this.allPackages$;
   }
 }
