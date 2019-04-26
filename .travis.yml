@@ -18,9 +18,10 @@ script:
   - ng lint
   - npm run test:ci
   - npm run e2e:ci
-  - npm run electron:windows
 after_success:
   - codecov
+before_deploy:
+  - npm run electron:windows
 deploy:
   provider: releases
   api_key:
