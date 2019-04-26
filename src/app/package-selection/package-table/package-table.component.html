@@ -33,6 +33,17 @@
             [formControl]="filter"
             [appFocusOnKeys]="['command+f', 'ctrl+f']"
           />
+          <button
+            mat-icon-button
+            matSuffix
+            *ngIf="filter.value"
+            (click)="filter.setValue('')"
+            matTooltip="Clear filter"
+          >
+            <mat-icon>
+              clear
+            </mat-icon>
+          </button>
         </mat-form-field>
       </th>
     </ng-container>
