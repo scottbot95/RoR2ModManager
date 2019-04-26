@@ -26,6 +26,7 @@ before_deploy:
 deploy:
   provider: releases
   draft: true
+  prerelease: true
   skip_cleanup: true
   name: $TRAVIS_TAG
   api_key:
