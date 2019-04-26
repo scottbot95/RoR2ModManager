@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import * as unzipper from 'unzipper';
+import { ParseStream, Entry as ZipEntry } from 'unzipper';
 import {
   InstalledPackageList,
   PackageVersion,
@@ -57,12 +57,15 @@ export class PackageService {
       );
       return;
     }
-    const zipPath = await this.download.download(pkg);
-    const fileStream = this.elecron.fs.createReadStream(zipPath);
-    const zipStream = fileStream.pipe(this.elecron.unzipper.Parse());
 
-    if (pkg.pkg.uuid4 === BEPIN_UUID4) await this.installBepin(zipStream);
-    else await this.installZip(fileStream, pkg.pkg.fullName);
+    const zipPath = await this.download.download(pkg);
+    if (this.elecron.isElectron()) {
+      const fileStream = this.elecron.fs.createReadStream(zipPath);
+      const zipStream = fileStream.pipe(this.elecron.unzipper.Parse());
+
+      if (pkg.pkg.uuid4 === BEPIN_UUID4) await this.installBepin(zipStream);
+      else await this.installZip(fileStream, pkg.pkg.fullName);
+    }
 
     this.installedPackagesSource.next([
       ...this.installedPackagesSource.value,
@@ -111,10 +114,12 @@ export class PackageService {
       this.getBepInExPluginPath(),
       path
     );
-    return fileStream.pipe(unzipper.Extract({ path: install_dir })).promise();
+    return fileStream
+      .pipe(this.elecron.unzipper.Extract({ path: install_dir }))
+      .promise();
   }
 
-  private installBepin(zipStream: unzipper.ParseStream): Promise<void> {
+  private installBepin(zipStream: ParseStream): Promise<void> {
     // this.elecron.ipcRenderer.send('installBepin', zipFile);
     // return new Promise((resolve, reject) => {
     //   this.elecron.ipcRenderer.on('bepinInstalled', (event, err) => {
@@ -124,7 +129,7 @@ export class PackageService {
     // });
     const install_dir = this.prefs.get('ror2_path');
     return zipStream
-      .on('entry', (entry: unzipper.Entry) => {
+      .on('entry', (entry: ZipEntry) => {
         const path = this.elecron.path;
         if (path.dirname(entry.path).startsWith('BepInExPack')) {
           const destination = path.join(

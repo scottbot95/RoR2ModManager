@@ -1,7 +1,6 @@
 import { PackageVersion, Package, InstalledPackage } from './package.model';
 import { SemVer } from 'semver';
 
-const foo = '4c253b36-fd0b-4e6d-b4d8-b227972af4da';
 export const testBepInExPackPackageVersion: PackageVersion = {
   dateCreated: new Date(),
   dependencies: [],

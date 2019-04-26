@@ -5,7 +5,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ElectronService } from './core/services/electron.service';
 import { Component } from '@angular/core';
 import { ThemeService } from './core/services/theme.service';
-import { MockThemeService } from './core/services/mocks';
+import { MockThemeService, MockElectronService } from './core/services/mocks';
 
 @Component({
   selector: 'app-nav-menu',
@@ -24,7 +24,7 @@ describe('AppComponent', () => {
     TestBed.configureTestingModule({
       declarations: [AppComponent, MockNavMenuComponent],
       providers: [
-        ElectronService,
+        { provide: ElectronService, useClass: MockElectronService },
         { provide: ThemeService, useClass: MockThemeService },
         { provide: TranslateService, useClass: TranslateServiceStub }
       ],
