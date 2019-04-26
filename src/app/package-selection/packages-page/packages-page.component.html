@@ -9,6 +9,7 @@
   <app-package-details
     *ngIf="selectedPackage"
     [package]="selectedPackage"
+    (showPackageDetails)="selectedPackage = $event"
     fxFlex
   ></app-package-details>
 </div>

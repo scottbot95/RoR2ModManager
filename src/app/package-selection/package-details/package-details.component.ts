@@ -2,7 +2,9 @@ import {
   Component,
   OnInit,
   ChangeDetectionStrategy,
-  Input
+  Input,
+  Output,
+  EventEmitter
 } from '@angular/core';
 import { Package } from '../../core/models/package.model';
 
@@ -14,8 +16,13 @@ import { Package } from '../../core/models/package.model';
 })
 export class PackageDetailsComponent implements OnInit {
   @Input() package: Package;
+  @Output() showPackageDetails = new EventEmitter<Package>();
 
   constructor() {}
 
   ngOnInit() {}
+
+  showDetails(pkg: Package) {
+    this.showPackageDetails.emit(pkg);
+  }
 }

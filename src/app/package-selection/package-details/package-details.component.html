@@ -44,6 +44,21 @@
         </markdown>
       </mat-card-content>
     </mat-card>
+    <strong>Dependencies:</strong>
+    <mat-list dense>
+      <ng-container
+        *ngFor="let dep of package.latestVersion.dependencies; last as isLast"
+      >
+        <mat-list-item>
+          <span class="clickable" (click)="showDetails(dep.pkg)">
+            {{ dep.pkg.name }}
+          </span>
+          &#160;
+          <small>by {{ dep.pkg.owner }}</small>
+        </mat-list-item>
+        <mat-divider *ngIf="!isLast"></mat-divider>
+      </ng-container>
+    </mat-list>
     <strong>Versions:</strong>
     <mat-list dense>
       <ng-container *ngFor="let version of package.versions; last as isLast">
