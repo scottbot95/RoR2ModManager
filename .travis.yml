@@ -14,14 +14,13 @@ services:
   - xvfb
 addons:
   chrome: stable
-  apt:
-    sources:
-      - sourceline: 'deb https://dl.winehq.org/wine-builds/ubuntu/ xenial main'
-      key_url: 'https://dl.winehq.org/wine-builds/winehq.key'
-    packages: winehq-stable
 
 before_script:
   - export DISPLAY=:99.0
+  - curl 'https://dl.winehq.org/wine-builds/winehq.key' | sudo apt-key add -
+  - echo 'deb https://dl.winehq.org/wine-builds/ubuntu/ xenial main' | sudo tee -a /etc/apt/sources.list
+  - sudo apt-get update -qq
+  - sudo sudo apt-get install --install-recommends winehq-stable
 install:
   - npm set progress=false
   - npm ci
