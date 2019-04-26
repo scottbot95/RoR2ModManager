@@ -12,15 +12,12 @@ dist: xenial
 sudo: required
 services:
   - xvfb
+  - docker
 addons:
   chrome: stable
 
 before_script:
   - export DISPLAY=:99.0
-  - curl 'https://dl.winehq.org/wine-builds/winehq.key' | sudo apt-key add -
-  - echo 'deb https://dl.winehq.org/wine-builds/ubuntu/ xenial main' | sudo tee -a /etc/apt/sources.list
-  - sudo apt-get update -qq
-  - sudo sudo apt-get install --install-recommends winehq-stable
 install:
   - npm set progress=false
   - npm ci
@@ -29,7 +26,7 @@ script:
   - ng lint
   - npm run test:ci
   - npm run e2e:ci
-  - npm run electron:windows
+  - ./build-docker.sh
 after_success:
   - codecov
 before_deploy:
