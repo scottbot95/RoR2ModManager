@@ -8,6 +8,7 @@ import {
   parseSerializablePackageList
 } from '../models/package.model';
 import { DatabaseService } from './database.service';
+import { PreferencesService } from './preferences.service';
 
 @Injectable()
 export class ThunderstoreService {
@@ -18,17 +19,25 @@ export class ThunderstoreService {
     .asObservable()
     .pipe(distinctUntilChanged()); // prevents update spam
 
-  constructor(private http: HttpClient, private db: DatabaseService) {
-    this.loadPackagesFromCache()
-      .then(packages => {
-        if (!Array.isArray(packages) || packages.length === 0) {
+  constructor(
+    private http: HttpClient,
+    private db: DatabaseService,
+    private prefs: PreferencesService
+  ) {
+    if (this.prefs.get('checkUpdatesOnStart')) {
+      this.loadAllPackages();
+    } else {
+      this.loadPackagesFromCache()
+        .then(packages => {
+          if (!Array.isArray(packages) || packages.length === 0) {
+            this.loadAllPackages();
+          }
+        })
+        .catch(err => {
+          console.error(err);
           this.loadAllPackages();
-        }
-      })
-      .catch(err => {
-        console.error(err);
-        this.loadAllPackages();
-      });
+        });
+    }
   }
 
   public async loadPackagesFromCache(): Promise<PackageList> {

@@ -7,6 +7,7 @@ export interface UserPreferences {
   ror2_path?: string;
   respectPinned: boolean;
   humanizePackageNames: boolean;
+  checkUpdatesOnStart: boolean;
 }
 
 interface SchemaItem {
@@ -50,5 +51,6 @@ export const preferencesSchema = <Schema>{
 export const defaultConfig: UserPreferences = {
   windowBounds: { width: 800, height: 600, x: 0, y: 0 },
   respectPinned: true,
-  humanizePackageNames: true
+  humanizePackageNames: true,
+  checkUpdatesOnStart: true
 };

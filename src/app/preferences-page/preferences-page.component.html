@@ -55,9 +55,19 @@
             class="fullWidthToggle"
             labelPosition="before"
             [formControl]="humanizePackageNames"
-            matTooltip="Convert names like "
+            matTooltip="Convert names like 'ReallyCoolMod' to 'Really Cool Mod'"
           >
             Humanize Package Names
+          </mat-slide-toggle>
+        </mat-list-item>
+        <mat-list-item>
+          <mat-slide-toggle
+            class="fullWidthToggle"
+            labelPosition="before"
+            [formControl]="checkForUpdates"
+            matTooltip="Check for updates on start?"
+          >
+            Check for updates on start
           </mat-slide-toggle>
         </mat-list-item>
       </mat-list>

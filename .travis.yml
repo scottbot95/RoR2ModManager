@@ -12,9 +12,16 @@ dist: xenial
 sudo: required
 services:
   - xvfb
-  - docker
 addons:
   chrome: stable
+  apt:
+    sources:
+      - sourceline:
+      key_url: 'https://dl.winehq.org/wine-builds/winehq.key'
+    packages:
+      winehq-stable
+
+
 before_script:
   - export DISPLAY=:99.0
 install:
@@ -25,17 +32,11 @@ script:
   - ng lint
   - npm run test:ci
   - npm run e2e:ci
+  - npm run electron:windows
 after_success:
   - codecov
 before_deploy:
-  - |
-    docker run --rm \
-        --env-file <(env | grep -iE 'DEBUG|NODE_|ELECTRON_|YARN_|NPM_|CI|CIRCLE|TRAVIS|APPVEYOR_|CSC_|_TOKEN|_KEY|AWS_|STRIP|BUILD_') \
-        -v ${PWD}:/project \
-        -v ~/.cache/electron:/root/.cache/electron \
-        -v ~/.cache/electron-builder:/root/.cache/electron-builder \
-        electronuserland/builder:wine \
-        /bin/bash -c "npm run electron:windows"
+  - echo Hello
 deploy:
   provider: releases
   api_key:

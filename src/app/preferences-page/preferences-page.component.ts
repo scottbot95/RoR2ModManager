@@ -21,6 +21,7 @@ export class PreferencesPageComponent implements OnInit, OnDestroy {
   humanizePackageNames = this.fb.control(
     this.prefs.get('humanizePackageNames')
   );
+  checkForUpdates = this.fb.control(this.prefs.get('checkUpdatesOnStart'));
 
   ror2Path = this.prefs.get('ror2_path');
 
@@ -48,6 +49,12 @@ export class PreferencesPageComponent implements OnInit, OnDestroy {
     this.subscription.add(
       this.humanizePackageNames.valueChanges.subscribe(newValue => {
         this.prefs.set('humanizePackageNames', newValue);
+      })
+    );
+
+    this.subscription.add(
+      this.checkForUpdates.valueChanges.subscribe(newValue => {
+        this.prefs.set('checkUpdatesOnStart', newValue);
       })
     );
   }
