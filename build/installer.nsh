@@ -27,6 +27,8 @@ Function RoR2InstallDirSelect
   Pop $BrowseButton
   ${NSD_OnClick} $BrowseButton OnBrowseForDir
 
+  ${NSD_CreateLabel} 0 26u 100% 12u "NOTE: this can be changed later in the settings"
+
   nsDialogs::Show
 
 FunctionEnd
@@ -37,14 +39,23 @@ Function OnBrowseForDir
   ${If} $0 == error
   ${Else}
     StrCpy $DirText $0
-    ${NSD_SetText} $RoR2Dir $DirText
+    ${If} ${FileExists} "$DirText\Risk of Rain 2.exe"
+      ${NSD_SetText} $RoR2Dir $DirText
+    ${Else}
+      MessageBox MB_OK|MB_ICONEXCLAMATION "Selected folder must contain 'Risk of Rain 2.exe'"
+    ${EndIf}
   ${EndIf}
 FunctionEnd
 
 Function LeaveCallback
   ${NSD_GetText} $RoR2Dir $DirText
+  ${If} ${FileExists} "$DirText\Risk of Rain 2.exe"
 
-  WriteRegStr HKCU "Software\${PRODUCT_NAME}" "RoR2Dir" $DirText
+    WriteRegStr HKCU "Software\${PRODUCT_NAME}" "RoR2Dir" $DirText
+  ${Else}
+    MessageBox MB_OK|MB_ICONEXCLAMATION "Selected folder must contain 'Risk of Rain 2.exe'"
+    Abort
+  ${EndIf}
 FunctionEnd
 
 Section
