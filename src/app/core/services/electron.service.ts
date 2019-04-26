@@ -21,7 +21,7 @@ export class ElectronService {
   unzipper: typeof unzipper;
 
   fsExtras: {
-    deleteFile: (dir: string, file: string) => Promise<void>;
+    deleteFile: (file: string) => Promise<void>;
     deleteDirectory: (dir: string) => Promise<void>;
   };
 
@@ -62,7 +62,8 @@ export class ElectronService {
     return new Promise((resolve, reject) => {
       this.fs.lstat(filePath, (err, stats) => {
         if (err) {
-          return reject(err);
+          if (err.code === 'ENOENT') return resolve();
+          else return reject(err);
         }
         if (stats.isDirectory()) {
           resolve(this.deleteDirectory(filePath));
@@ -82,7 +83,8 @@ export class ElectronService {
     return new Promise((resolve, reject) => {
       this.fs.access(dir, err => {
         if (err) {
-          return reject(err);
+          if (err.code === 'ENOENT') return resolve();
+          else return reject(err);
         }
         this.fs.readdir(dir, (err2, files) => {
           if (err2) {

@@ -75,12 +75,30 @@ export class PackageService {
 
   // TODO use InstalledPackage here and add installedPath to InstalledPackage
   public async uninstallPackage(pkg: Package) {
-    const installedPath = this.elecron.path.join(
-      this.getBepInExPluginPath(),
-      pkg.fullName
-    );
+    if (pkg.uuid4 === BEPIN_UUID4) {
+      await Promise.all([
+        this.elecron.fsExtras.deleteDirectory(
+          this.elecron.path.dirname(this.getBepInExPluginPath())
+        ),
+        this.elecron.fsExtras.deleteFile(
+          this.elecron.path.join(this.prefs.get('ror2_path'), 'winhttp.dll')
+        ),
+        this.elecron.fsExtras.deleteFile(
+          this.elecron.path.join(
+            this.prefs.get('ror2_path'),
+            'doorstop_config.ini'
+          )
+        )
+      ]);
+    } else {
+      const installedPath = this.elecron.path.join(
+        this.getBepInExPluginPath(),
+        pkg.fullName
+      );
 
-    await this.elecron.fsExtras.deleteDirectory(installedPath);
+      await this.elecron.fsExtras.deleteDirectory(installedPath);
+    }
+
     this.installedPackagesSource.next(
       this.installedPackagesSource.value.filter(
         installed => installed.uuid4 !== pkg.uuid4
