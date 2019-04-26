@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { OverlayContainer } from '@angular/cdk/overlay';
-import { UserPreferences } from '../../../electron/preferences.model';
+import { UserPreferences } from '../../../../electron/preferences.model';
 import { PreferencesService } from './preferences.service';
 import { distinctUntilChanged } from 'rxjs/operators';
 
