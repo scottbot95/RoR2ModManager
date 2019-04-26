@@ -3,9 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { distinctUntilChanged, map } from 'rxjs/operators';
 import {
-  SerializablePackageList,
+  SerializedPackageList,
   PackageList,
-  parseSerializablePackageList
+  deserializablePackageList
 } from '../models/package.model';
 
 @Injectable()
@@ -28,9 +28,9 @@ export class ThunderstoreService {
     // this.db.clearPackages();
 
     const url = `${this.baseUrl}/package`;
-    const result = this.http.get<SerializablePackageList>(url).pipe(
+    const result = this.http.get<SerializedPackageList>(url).pipe(
       map(apiPackages => {
-        const packages = parseSerializablePackageList(apiPackages);
+        const packages = deserializablePackageList(apiPackages);
 
         // this.db.savePackages(apiPackages);
         console.log('Downloaded package list', packages);

@@ -2,14 +2,14 @@ import { Injectable } from '@angular/core';
 import Dexie from 'dexie';
 import {
   Package,
-  SerializablePackage,
+  SerializedPackage,
   serializePackage,
   serializePackageList,
   PackageList
 } from '../models/package.model';
 
 export class Database extends Dexie {
-  packages: Dexie.Table<SerializablePackage, string>;
+  packages: Dexie.Table<SerializedPackage, string>;
 
   constructor() {
     super('Database');

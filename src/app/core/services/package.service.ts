@@ -5,7 +5,7 @@ import {
   PackageList,
   PackageVersion,
   Package,
-  parseSerializablePackageList
+  deserializablePackageList
 } from '../models/package.model';
 import { DownloadService } from './download.service';
 import { ElectronService } from './electron.service';
@@ -62,7 +62,7 @@ export class PackageService {
   public async loadPackagesFromCache(): Promise<PackageList> {
     const serializedPackages = await this.db.packageTable.toArray();
 
-    const packages = parseSerializablePackageList(serializedPackages);
+    const packages = deserializablePackageList(serializedPackages);
 
     this.allPackagesSource.next(packages);
     console.log('Loaded packages from cache', packages);
