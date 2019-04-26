@@ -16,7 +16,7 @@ addons:
   chrome: stable
   apt:
     sources:
-      sourceline: 'deb https://dl.winehq.org/wine-builds/ubuntu/ xenial main'
+      - sourceline: 'deb https://dl.winehq.org/wine-builds/ubuntu/ xenial main'
       key_url: 'https://dl.winehq.org/wine-builds/winehq.key'
     packages: winehq-stable
 
