@@ -65,8 +65,8 @@
             "web": {
               "fileReplacements": [
                 {
-                  "replace": "src/electron/prefs.ts",
-                  "with": "src/electron/prefs.web.ts"
+                  "replace": "electron/prefs.ts",
+                  "with": "electron/prefs.web.ts"
                 }
               ]
             }
@@ -114,8 +114,8 @@
             ],
             "fileReplacements": [
               {
-                "replace": "src/electron/prefs.ts",
-                "with": "src/electron/prefs.web.ts"
+                "replace": "electron/prefs.ts",
+                "with": "electron/prefs.web.ts"
               }
             ]
           }
