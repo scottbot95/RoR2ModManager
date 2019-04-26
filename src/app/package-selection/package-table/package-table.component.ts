@@ -39,10 +39,19 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
   isLoading: boolean;
 
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
-  displayedColumns = ['select', 'name', 'author', 'updated', 'latest'];
+  displayedColumns = [
+    'select',
+    'name',
+    'author',
+    'updated',
+    'latest',
+    'downloads'
+  ];
   selection: SelectionChangesetModel<Package>;
 
   filter = new FormControl('');
+
+  shouldHumanize = this.prefs.get('humanizePackageNames');
 
   private subscription = new Subscription();
   private _installedPackages: PackageList;
@@ -56,6 +65,13 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.selection = new SelectionChangesetModel<Package>(
       true,
       this.installedPackages
+    );
+
+    this.subscription.add(
+      this.prefs.onChange('humanizePackageNames').subscribe(shouldHumanize => {
+        console.log('New humanize', shouldHumanize.newValue);
+        this.shouldHumanize = shouldHumanize.newValue;
+      })
     );
 
     // update selected status for datasource sorting feature

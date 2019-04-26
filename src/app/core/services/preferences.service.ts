@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
-import { UserPreferences } from '../../../electron/preferences.model';
+import {
+  UserPreferences,
+  defaultConfig
+} from '../../../electron/preferences.model';
 import { prefs } from '../../../electron/prefs';
 import { Observable, Subject } from 'rxjs';
 
@@ -17,7 +20,9 @@ export class PreferencesService {
   }
 
   get<K extends keyof UserPreferences>(key: K): UserPreferences[K] {
-    return prefs.get(key) as UserPreferences[K];
+    const value = prefs.get(key) as UserPreferences[K];
+    if (value !== undefined) return value;
+    else return defaultConfig[key];
   }
 
   onChange<K extends keyof UserPreferences>(

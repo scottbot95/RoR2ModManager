@@ -18,6 +18,11 @@ export class PreferencesPageComponent implements OnInit, OnDestroy {
 
   darkMode = this.fb.control(this.prefs.get('darkMode'));
   respectPinned = this.fb.control(this.prefs.get('respectPinned'));
+  humanizePackageNames = this.fb.control(
+    this.prefs.get('humanizePackageNames')
+  );
+  checkForUpdates = this.fb.control(this.prefs.get('checkUpdatesOnStart'));
+
   ror2Path = this.prefs.get('ror2_path');
 
   private subscription = new Subscription();
@@ -38,6 +43,18 @@ export class PreferencesPageComponent implements OnInit, OnDestroy {
     this.subscription.add(
       this.respectPinned.valueChanges.subscribe(newValue => {
         this.prefs.set('respectPinned', newValue);
+      })
+    );
+
+    this.subscription.add(
+      this.humanizePackageNames.valueChanges.subscribe(newValue => {
+        this.prefs.set('humanizePackageNames', newValue);
+      })
+    );
+
+    this.subscription.add(
+      this.checkForUpdates.valueChanges.subscribe(newValue => {
+        this.prefs.set('checkUpdatesOnStart', newValue);
       })
     );
   }

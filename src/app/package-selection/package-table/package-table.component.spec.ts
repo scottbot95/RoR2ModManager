@@ -22,6 +22,7 @@ import { By } from '@angular/platform-browser';
 import { ReactiveFormsModule } from '@angular/forms';
 import { DatabaseService } from '../../core/services/database.service';
 import { PreferencesService } from '../../core/services/preferences.service';
+import { HumanizePipe } from '../../shared/humanize.pipe';
 
 @Component({
   selector: 'app-test-host',
@@ -49,7 +50,8 @@ describe('PackageTableComponent', () => {
       declarations: [
         PackageTableComponent,
         TestHostComponent,
-        MockFocusOnKeysDirective
+        MockFocusOnKeysDirective,
+        HumanizePipe
       ],
       imports: [
         NoopAnimationsModule,

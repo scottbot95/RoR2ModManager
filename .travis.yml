@@ -1,23 +1,36 @@
 language: node_js
 node_js:
   - '10'
-cache: npm # caches $HOME/.npm and node_modules
+cache: npm
 dist: xenial
 sudo: required
 services:
   - xvfb
+  - docker
 addons:
   chrome: stable
+
 before_script:
   - export DISPLAY=:99.0
 install:
-  - npm set progress=false
-  - npm ci # install from package-lock.json
-  - npm i -g codecov
+  - yarn
+  - yarn global add codecov
 script:
   - ng lint
-  - npm run test:ci
-  - npm run e2e:ci
-  # - npm run build:ci
+  - yarn test:ci
+  - yarn e2e:ci
+  - ./build-docker.sh
 after_success:
   - codecov
+before_deploy:
+  - echo Hello
+deploy:
+  provider: releases
+  api_key:
+    secure: SOF5Z6E5tMGtL2UBGOSAK335wJSwVsT5r2oA4WJr8i1y/dfJ0AvwiUMe/HmjKbzBCq+P+ZPOUzEB1AY9aovv3eMweCpHqUqHN14+iA4PxLeyo8MZP7lnKpIyZAH8NsKZStx6f+K+AnC6t6x8X2WLWGli89/wWtnczoc/mKEKFLHXy/8gtcUisB5HsZnxU16eIdUJbV/x8ulo1r9p2JyAKAnV901CWtMyMGae+5LX3afcEmezgcL32RCVkP+zBtTJZJ5RcYRjTWInmwe6YP+xJWP+7UACvljyXVUQg4+x3rync+Bcv+BEY/SuSbMdU5WmE8PJwu12H/gB1brDTkg1QzrQh9c82gkyNu5DNAFkcx/LjXioONBkjUrAdxxYl4k4xfnfgX7oEMfqSdsDnVXp5yMZpw06Pky01f6EvhiAlKW+eQtiWd+FRVDktG+Lc8+ew821h/FM9pvlj/FxKh3jZVov7n1c8npIIAXACVriphXTxA4qdpaPBsZWgrcVkFzVTOQHifZs/eXToYnLpjyXiUoTGuq6wMub7fixF+kpd/cx2pWWzGGdJD9BWsRQJOzTDez3Dpr41Wb4nEzXvYUKmODzkhv6Vre+I+Ot4BzoTJ+tJ84oifLFLClIzuoCD87h7Vo1rRLEnd9UjprK6dIU7OiyRIQ9BuSRSId0tMCd6ps=
+  file:
+    - release/*.exe
+    - release/*.AppImage
+  on:
+    tags: true
+    repo: scottbot95/RoR2ModManager

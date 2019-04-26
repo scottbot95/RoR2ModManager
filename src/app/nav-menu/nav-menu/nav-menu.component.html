@@ -32,6 +32,15 @@
       <span>RoR2 Mod Manager</span>
       <span fxFlex></span>
       <button
+        *ngIf="router.url === '/preferences'"
+        mat-icon-button
+        matTooltip="Back"
+        (click)="goBack()"
+      >
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <button
+        *ngIf="router.url !== '/preferences'"
         mat-icon-button
         routerLink="/preferences"
         matTooltip="Preferences"
