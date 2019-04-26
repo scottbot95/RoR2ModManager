@@ -12,14 +12,16 @@ addons:
 
 before_script:
   - export DISPLAY=:99.0
-install:
+before_install:
   - npm set progress=false
-  - npm ci
-  - npm i -g codecov
+  - npm i -g yarn
+install:
+  - yarn
+  - yarn global add codecov
 script:
-  # - ng lint
-  # - npm run test:ci
-  # - npm run e2e:ci
+  - ng lint
+  - yarn test:ci
+  - yarn e2e:ci
   - ./build-docker.sh
 after_success:
   - codecov
