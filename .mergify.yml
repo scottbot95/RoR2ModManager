@@ -1,9 +1,7 @@
 pull_request_rules:
   - name: Automatic merge on CI success
     conditions:
-      - status-success=continuous-integration/travis-ci/push
-      - status-success=codecov/project
-      - status-success=codecov/patch
+      - status-success=[continuous-integration/travis-ci/push,codecov/project,codecov/patch]
     actions:
       merge:
         method: merge

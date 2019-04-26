@@ -38,6 +38,7 @@
     "electron:linux": "npm run build:prod && electron-builder build --linux",
     "electron:windows": "npm run build:prod && electron-builder build --windows",
     "electron:mac": "npm run build:prod && electron-builder build --mac",
+    "electron:all": "npm-run-all electron:linux electron:windows",
     "test": "npm run postinstall:web && ng test",
     "test:ci": "npm run postinstall:web && ng test --progress=false --code-coverage",
     "test:dev": "npm run postinstall:web && ng test --watch",
