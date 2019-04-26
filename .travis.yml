@@ -19,11 +19,10 @@ script:
   - ng lint
   - yarn test:ci
   - yarn e2e:ci
-  - ./build-docker.sh
 after_success:
   - codecov
 before_deploy:
-  - echo Hello
+  - ./build-docker.sh
 deploy:
   provider: releases
   draft: true
