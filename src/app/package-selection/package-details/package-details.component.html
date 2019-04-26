@@ -7,12 +7,13 @@
    -->
 <mat-card>
   <mat-card-header>
-    <mat-card-title
-      >{{ package.name }}<small> by {{ package.owner }}</small></mat-card-title
-    >
-    <mat-card-subtitle>{{
-      package.latestVersion.description
-    }}</mat-card-subtitle>
+    <mat-card-title>
+      {{ package.name | humanize: shouldHumanize }}
+      <small> by {{ package.owner }} </small>
+    </mat-card-title>
+    <mat-card-subtitle>
+      {{ package.latestVersion.description }}
+    </mat-card-subtitle>
   </mat-card-header>
   <mat-card-content>
     <table class="details">
@@ -51,7 +52,7 @@
       >
         <mat-list-item>
           <span class="clickable" (click)="showDetails(dep.pkg)">
-            {{ dep.pkg.name }}
+            {{ dep.pkg.name | humanize: shouldHumanize }}
           </span>
           &#160;
           <small>by {{ dep.pkg.owner }}</small>

@@ -168,6 +168,8 @@ function sortPackages(
         return compare(a.dateUpdated, b.dateUpdated, isAsc);
       case 'select':
         return compare(!!a.selected, !!b.selected, !isAsc);
+      case 'downloads':
+        return compare(a.totalDownloads, b.totalDownloads, isAsc);
       default:
         return 0;
     }
