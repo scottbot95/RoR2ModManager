@@ -1,7 +1,7 @@
 import {
   UserPreferences,
   defaultConfig
-} from '../../../electron/preferences.model';
+} from '../../../../electron/preferences.model';
 import { ChangeEvent } from './preferences.service';
 import { Observable, of, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';

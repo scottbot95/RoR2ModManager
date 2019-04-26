@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import {
   UserPreferences,
   defaultConfig
-} from '../../../electron/preferences.model';
-import { prefs } from '../../../electron/prefs';
+} from '../../../../electron/preferences.model';
+import { prefs } from '../../../../electron/prefs';
 import { Observable, Subject } from 'rxjs';
 
 export interface ChangeEvent<T> {

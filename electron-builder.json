@@ -31,7 +31,8 @@
   },
   "linux": {
     "icon": "dist",
-    "target": ["AppImage"]
+    "target": ["AppImage"],
+    "category": "Utility"
   },
   "nsis": {
     "oneClick": false,

@@ -25,15 +25,15 @@ The Angular component contains an example of Electron and NodeJS native lib impo
 
 ## Included Commands
 
-| Command                    | Description                                                                                                 |
-| -------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| `npm run ng:serve:web`     | Execute the app in the browser                                                                              |
-| `npm run build`            | Build the app. Your built files are in the /dist folder.                                                    |
-| `npm run build:prod`       | Build the app with Angular aot. Your built files are in the /dist folder.                                   |
-| `npm run electron:local`   | Builds your application and start electron                                                                  |
-| `npm run electron:linux`   | Builds your application and creates an app consumable on linux system                                       |
-| `npm run electron:windows` | On a Windows OS, builds your application and creates an app consumable in windows 32/64 bit systems         |
-| `npm run electron:mac`     | On a MAC OS, builds your application and generates a `.app` file of your application that can be run on Mac |
+| Command                 | Description                                                                                                 |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `yarn ng:serve:web`     | Execute the app in the browser                                                                              |
+| `yarn build`            | Build the app. Your built files are in the /dist folder.                                                    |
+| `yarn build:prod`       | Build the app with Angular aot. Your built files are in the /dist folder.                                   |
+| `yarn electron:local`   | Builds your application and start electron                                                                  |
+| `yarn electron:linux`   | Builds your application and creates an app consumable on linux system                                       |
+| `yarn electron:windows` | On a Windows OS, builds your application and creates an app consumable in windows 32/64 bit systems         |
+| `yarn electron:mac`     | On a MAC OS, builds your application and generates a `.app` file of your application that can be run on Mac |
 
 **Your application is optimised. Only /dist folder and node dependencies are included in the executable.**
 
@@ -43,7 +43,7 @@ You can do this! Just by importing your library in npm dependencies (not devDepe
 
 ## Browser mode
 
-Maybe you want to execute the application in the browser with hot reload ? You can do it with `npm run ng:serve:web`.
+Maybe you want to execute the application in the browser with hot reload ? You can do it with `yarn ng:serve:web`.
 Note that you can't use Electron or NodeJS native libraries in this case. Please check `providers/electron.service.ts` to watch how conditional import of electron/Native libraries is done.
 
 [build-badge]: https://travis-ci.org/scottbot95/RoR2ModManager.svg?branch=master
