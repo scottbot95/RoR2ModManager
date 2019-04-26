@@ -17,10 +17,8 @@ addons:
   apt:
     sources:
       - sourceline: 'deb https://dl.winehq.org/wine-builds/ubuntu/ xenial main'
-      key_url: 'https://dl.winehq.org/wine-builds/winehq.key'
-    packages:
-      winehq-stable
-
+      - key_url: 'https://dl.winehq.org/wine-builds/winehq.key'
+    packages: winehq-stable
 
 before_script:
   - export DISPLAY=:99.0
