@@ -12,9 +12,6 @@ addons:
 
 before_script:
   - export DISPLAY=:99.0
-before_install:
-  - npm set progress=false
-  - npm i -g yarn
 install:
   - yarn
   - yarn global add codecov
