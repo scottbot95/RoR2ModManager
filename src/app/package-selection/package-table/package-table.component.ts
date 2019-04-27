@@ -23,8 +23,8 @@ import {
   PackageChangeset,
   PackageService
 } from '../../core/services/package.service';
-import { SelectionChangesetModel } from '../../shared/selection-changeset';
 import { PreferencesService } from '../../core/services/preferences.service';
+import { SelectionModel } from '@angular/cdk/collections';
 
 @Component({
   selector: 'app-package-table',
@@ -49,14 +49,13 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
     'latest',
     'downloads'
   ];
-  selection: SelectionChangesetModel<Package>;
+  selection: SelectionModel<Package>;
 
   filter = new FormControl('');
 
   shouldHumanize = this.prefs.get('humanizePackageNames');
 
   private subscription = new Subscription();
-  private _installedPackages: PackageList;
 
   constructor(
     public packages: PackageService,
@@ -64,10 +63,7 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.selection = new SelectionChangesetModel<Package>(
-      true,
-      this.installedPackages
-    );
+    this.selection = new SelectionModel<Package>(true, []);
 
     this.subscription.add(
       this.prefs.onChange('humanizePackageNames').subscribe(shouldHumanize => {
@@ -92,7 +88,7 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.subscription.add(
       this.installedPackages.subscribe(pkgs => {
-        this._installedPackages = pkgs;
+        this.selection.select(...pkgs);
       })
     );
   }
@@ -131,30 +127,36 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   isRowDirty(pkg: Package) {
-    const installed = this._installedPackages.find(p => p.uuid4 === pkg.uuid4);
-
-    let dirty: boolean;
-    if (installed !== undefined) {
-      dirty = !this.selection.isSelected(pkg);
-    } else {
-      dirty = this.selection.isSelected(pkg);
-    }
-    return dirty;
+    return !!pkg.selected !== !!pkg.installedVersion;
   }
 
   handleApplyChanges() {
-    const changeset = this.selection.getChangeset();
+    const added = new Set<Package>();
+    const removed = new Set<Package>();
+    this.dataSource.filteredData.forEach(pkg => {
+      if (this.isRowDirty(pkg)) {
+        if (pkg.selected) {
+          added.add(pkg);
+        } else {
+          removed.add(pkg);
+        }
+      }
+    });
+
     const changes = new PackageChangeset();
-    changes.removed = changeset.removed;
-    changes.updated = new Set(
-      Array.from(changeset.added).map(pkg => pkg.latestVersion)
-    );
+    changes.removed = removed;
+    changes.updated = new Set(Array.from(added).map(pkg => pkg.latestVersion));
     this.applyChanges(changes);
   }
 
   refreshPackages() {
     this.packages.downloadPackageList();
   }
+
+  isSelectionDirty = () => {
+    if (!this.dataSource) return false;
+    return this.dataSource.filteredData.some(pkg => this.isRowDirty(pkg));
+  };
 
   private selectAllDependencies(pkg: PackageVersion) {
     const toSelect: PackageVersionList = [];

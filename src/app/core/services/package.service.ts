@@ -128,7 +128,7 @@ export class PackageService {
     pkg.pkg.installedVersion = pkg;
 
     await this.db.updatePackage(pkg.pkg.uuid4, {
-      installedVersion: pkg.version.version
+      installed_version: pkg.version.version
     });
 
     this.installedPackagesSource.next([
@@ -165,7 +165,7 @@ export class PackageService {
 
     pkg.installedVersion = null;
 
-    await this.db.updatePackage(pkg.uuid4, { installedVersion: null });
+    await this.db.updatePackage(pkg.uuid4, { installed_version: null });
 
     this.installedPackagesSource.next(
       this.installedPackagesSource.value.filter(

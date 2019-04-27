@@ -51,14 +51,22 @@ export class DatabaseService {
     return this.db.packages.clear();
   }
 
-  public updatePackage(uuid4: string, changes: any): Promise<number> {
+  public updatePackage(
+    uuid4: string,
+    changes: Partial<SerializedPackage>
+  ): Promise<number> {
     return this.db.packages.update(uuid4, changes);
   }
 
   public async bulkUpdatePackages(packages: PackageList): Promise<number> {
     const serialized = serializePackageList(packages);
     const updates = await Promise.all(
-      serialized.map(pkg => this.db.packages.update(pkg.uuid4, pkg))
+      serialized.map(async pkg => {
+        if ((await this.db.packages.update(pkg.uuid4, pkg)) === 0) {
+          await this.db.packages.add(pkg);
+        }
+        return 1;
+      })
     );
     return updates.reduce((acc, val) => acc + val);
   }
