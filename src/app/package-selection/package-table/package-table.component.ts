@@ -12,7 +12,11 @@ import { MatPaginator, MatSort } from '@angular/material';
 import { Subscription, Observable } from 'rxjs';
 import { delay } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
-import { PackageTableDataSource } from './package-table-datasource';
+import {
+  PackageTableDataSource,
+  SelectablePackge,
+  calcPackageDirty
+} from './package-table-datasource';
 import {
   Package,
   PackageList,
@@ -49,7 +53,7 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
     'latest',
     'downloads'
   ];
-  selection: SelectionModel<Package>;
+  selection: SelectionModel<SelectablePackge>;
 
   filter = new FormControl('');
 
@@ -63,7 +67,7 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.selection = new SelectionModel<Package>(true, []);
+    this.selection = new SelectionModel<SelectablePackge>(true, []);
 
     this.subscription.add(
       this.prefs.onChange('humanizePackageNames').subscribe(shouldHumanize => {
@@ -77,10 +81,12 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.selection.changed.pipe(delay(0)).subscribe(changed => {
         changed.added.forEach(pkg => {
           pkg.selected = true;
+          calcPackageDirty(pkg);
           this.selectAllDependencies(pkg.latestVersion);
         });
         changed.removed.forEach(pkg => {
           pkg.selected = false;
+          calcPackageDirty(pkg);
           this.deselectAvailDependencies(pkg.latestVersion);
         });
       })
@@ -89,6 +95,7 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.subscription.add(
       this.installedPackages.subscribe(pkgs => {
         this.selection.select(...pkgs);
+        pkgs.forEach(pkg => calcPackageDirty(pkg));
       })
     );
   }
@@ -126,15 +133,11 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.showPackageDetails.emit(pkg);
   }
 
-  isRowDirty(pkg: Package) {
-    return !!pkg.selected !== !!pkg.installedVersion;
-  }
-
   handleApplyChanges() {
     const added = new Set<Package>();
     const removed = new Set<Package>();
     this.dataSource.filteredData.forEach(pkg => {
-      if (this.isRowDirty(pkg)) {
+      if (pkg.dirty) {
         if (pkg.selected) {
           added.add(pkg);
         } else {
@@ -155,7 +158,7 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   isSelectionDirty = () => {
     if (!this.dataSource) return false;
-    return this.dataSource.filteredData.some(pkg => this.isRowDirty(pkg));
+    return this.dataSource.filteredData.some(pkg => pkg.dirty);
   };
 
   private selectAllDependencies(pkg: PackageVersion) {

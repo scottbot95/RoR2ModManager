@@ -138,7 +138,7 @@
       mat-row
       *matRowDef="let row; columns: displayedColumns"
       [hidden]="isLoading"
-      [class.dirty]="isRowDirty(row)"
+      [class.dirty]="row.dirty"
       [class.dependency]="row.requiredBy.size === 1"
       [class.pinned]="row.isPinned"
       class="clickable"

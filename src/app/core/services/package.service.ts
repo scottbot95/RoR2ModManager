@@ -214,19 +214,20 @@ export class PackageService {
     //   });
     // });
     const install_dir = this.prefs.get('ror2_path');
+    const path = this.elecron.path;
+    const fs = this.elecron.fs;
     return zipStream
-      .on('entry', (entry: ZipEntry) => {
-        const path = this.elecron.path;
+      .on('entry', function(entry: ZipEntry) {
         if (path.dirname(entry.path).startsWith('BepInExPack')) {
           const destination = path.join(
             install_dir,
             entry.path.slice('BepInExPack/'.length)
           );
           if (entry.type === 'Directory') {
-            this.elecron.fs.mkdirSync(destination);
+            fs.mkdirSync(destination);
           } else {
             entry.pipe(
-              this.elecron.fs.createWriteStream(
+              fs.createWriteStream(
                 path.join(install_dir, entry.path.slice('BepInExPack/'.length))
               )
             );

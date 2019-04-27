@@ -50,7 +50,6 @@ export class Package extends PackageBase {
   totalDownloads: number;
   requiredBy: Set<PackageVersion>;
 
-  selected?: boolean;
   installedVersion?: PackageVersion;
 }
 
