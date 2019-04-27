@@ -2,7 +2,7 @@ language: node_js
 node_js:
   - '10'
 cache:
-  -yarn
+  yarn: true
   directories:
     - $HOME/.cache/electron
     - $HOME/.cache/electron-builder
