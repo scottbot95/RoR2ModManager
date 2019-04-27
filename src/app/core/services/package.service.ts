@@ -278,7 +278,31 @@ export class PackageService {
     for (const scheme of protocols) {
       console.log(`Registering protocol ${scheme}`);
       this.electron.protocol.registerHttpProtocol(scheme, (req, cb) => {
-        console.log(req.url);
+        // format ror2mm://v1/install/thunderstore.io/[author]/[package]/[version]/
+        const chunks = req.url.split('/');
+        const protocol = chunks[0];
+        const [
+          protocolVersion,
+          action,
+          provider,
+          author,
+          packageName,
+          version
+        ] = chunks.slice(2);
+        if (
+          protocolVersion === 'v1' &&
+          action === 'install' &&
+          provider === 'thunderstore.io'
+        ) {
+          const packageToInstall = this.allPackagesSource.value.find(
+            p => p.owner === author && p.name === packageName
+          );
+          const versionToInstall = packageToInstall.versions.find(
+            v => v.version.version === version
+          );
+          console.log('Marking package for install', versionToInstall);
+          this.selectedPackage.next(packageToInstall);
+        }
       });
     }
   }
