@@ -1,9 +1,9 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import {
   PackageService,
   PackageChangeset
 } from '../../core/services/package.service';
-import { Subscription, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Package, PackageList } from '../../core/models/package.model';
 import { map, tap } from 'rxjs/operators';
 
