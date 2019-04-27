@@ -197,9 +197,11 @@ export class PackageService {
         this.uninstallPackage(toRemove)
       )
     );
+    console.log('Removed packages', uuids);
+
     this.installedPackagesSource.next(
-      this.installedPackagesSource.value.filter(installed =>
-        uuids.includes(installed.uuid4)
+      this.installedPackagesSource.value.filter(
+        installed => !uuids.includes(installed.uuid4)
       )
     );
 
