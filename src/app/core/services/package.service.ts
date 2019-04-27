@@ -36,7 +36,7 @@ export class PackageService {
 
   constructor(
     private download: DownloadService,
-    private elecron: ElectronService,
+    private electron: ElectronService,
     private prefs: PreferencesService,
     private thunderstore: ThunderstoreService,
     private db: DatabaseService
@@ -101,8 +101,8 @@ export class PackageService {
       console.warn(
         `Skipping package ${pkg.fullName} as it's not a Bepis package`
       );
-      this.elecron.remote.dialog.showMessageBox(
-        this.elecron.remote.getCurrentWindow(),
+      this.electron.remote.dialog.showMessageBox(
+        this.electron.remote.getCurrentWindow(),
         {
           type: 'warning',
           title: 'Skipping package',
@@ -117,12 +117,11 @@ export class PackageService {
 
     const zipPath = await this.download.download(pkg);
     // Dirty hack because the specs really didn't like this
-    if (this.elecron.isElectron()) {
-      const fileStream = this.elecron.fs.createReadStream(zipPath);
-      const zipStream = fileStream.pipe(this.elecron.unzipper.Parse());
+    if (this.electron.isElectron()) {
+      const fileStream = this.electron.fs.createReadStream(zipPath);
 
-      if (pkg.pkg.uuid4 === BEPIN_UUID4) await this.installBepin(zipStream);
-      else await this.installZip(fileStream, pkg.pkg.fullName);
+      if (pkg.pkg.uuid4 === BEPIN_UUID4) await this.installBepin(fileStream);
+      else await this.installBepInPlugin(fileStream, pkg.pkg.fullName);
     }
 
     pkg.pkg.installedVersion = pkg;
@@ -141,26 +140,26 @@ export class PackageService {
   public async uninstallPackage(pkg: Package) {
     if (pkg.uuid4 === BEPIN_UUID4) {
       await Promise.all([
-        this.elecron.fsExtras.deleteDirectory(
-          this.elecron.path.dirname(this.getBepInExPluginPath())
+        this.electron.fs.remove(
+          this.electron.path.dirname(this.getBepInExPluginPath())
         ),
-        this.elecron.fsExtras.deleteFile(
-          this.elecron.path.join(this.prefs.get('ror2_path'), 'winhttp.dll')
+        this.electron.fs.remove(
+          this.electron.path.join(this.prefs.get('ror2_path'), 'winhttp.dll')
         ),
-        this.elecron.fsExtras.deleteFile(
-          this.elecron.path.join(
+        this.electron.fs.remove(
+          this.electron.path.join(
             this.prefs.get('ror2_path'),
             'doorstop_config.ini'
           )
         )
       ]);
     } else {
-      const installedPath = this.elecron.path.join(
+      const installedPath = this.electron.path.join(
         this.getBepInExPluginPath(),
         pkg.fullName
       );
 
-      await this.elecron.fsExtras.deleteDirectory(installedPath);
+      await this.electron.fs.remove(installedPath);
     }
 
     pkg.installedVersion = null;
@@ -195,53 +194,61 @@ export class PackageService {
     changeset.updated.forEach(toInstall => this.installPackage(toInstall));
   }
 
-  private installZip(fileStream: ReadStream, path: string): Promise<void> {
-    const install_dir = this.elecron.path.join(
-      this.getBepInExPluginPath(),
-      path
-    );
-    return fileStream
-      .pipe(this.elecron.unzipper.Extract({ path: install_dir }))
-      .promise();
+  private extractZip(fileStream: ReadStream, path: string): Promise<void> {
+    return fileStream.pipe(this.electron.unzipper.Extract({ path })).promise();
   }
 
-  private installBepin(zipStream: ParseStream): Promise<void> {
-    // this.elecron.ipcRenderer.send('installBepin', zipFile);
-    // return new Promise((resolve, reject) => {
-    //   this.elecron.ipcRenderer.on('bepinInstalled', (event, err) => {
-    //     if (err) reject(err);
-    //     else resolve();
-    //   });
-    // });
+  private installBepInPlugin(fileStream: ReadStream, plugin_dir: string) {
+    const install_dir = this.electron.path.join(
+      this.getBepInExPluginPath(),
+      plugin_dir
+    );
+
+    return this.extractZip(fileStream, install_dir);
+  }
+
+  private async installBepin(fileStream: ReadStream): Promise<void> {
+    const path = this.electron.path;
+    const fs = this.electron.fs;
+    const glob = this.electron.glob;
     const install_dir = this.prefs.get('ror2_path');
-    const path = this.elecron.path;
-    const fs = this.elecron.fs;
-    return zipStream
-      .on('entry', function(entry: ZipEntry) {
-        if (path.dirname(entry.path).startsWith('BepInExPack')) {
-          const destination = path.join(
-            install_dir,
-            entry.path.slice('BepInExPack/'.length)
-          );
-          if (entry.type === 'Directory') {
-            fs.mkdirSync(destination);
-          } else {
-            entry.pipe(
-              fs.createWriteStream(
-                path.join(install_dir, entry.path.slice('BepInExPack/'.length))
-              )
-            );
-          }
-          entry.autodrain();
-        } else {
-          entry.autodrain();
+
+    const tmp_path = path.join(
+      this.electron.remote.app.getPath('temp'),
+      this.electron.remote.app.getName(),
+      'BepInExPack'
+    );
+    // extract zip
+    await this.extractZip(fileStream, tmp_path);
+    return new Promise((resolve, reject) => {
+      glob(
+        'BepInExPack/**/*',
+        {
+          realpath: true,
+          nodir: true,
+          cwd: tmp_path
+        },
+        (err, files) => {
+          if (err) return reject(err);
+          Promise.all(
+            files.map(async file => {
+              const relativePath = file.slice(
+                (tmp_path + '/BepInExPack/').length
+              );
+              return fs.move(file, path.join(install_dir, relativePath));
+            })
+          )
+            .then(() => {
+              resolve();
+            })
+            .catch(reject);
         }
-      })
-      .promise();
+      );
+    });
   }
 
   private getBepInExPluginPath() {
-    return this.elecron.path.join(
+    return this.electron.path.join(
       this.prefs.get('ror2_path'),
       'BepInEx',
       'plugins'

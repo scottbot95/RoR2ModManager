@@ -4,10 +4,11 @@ import { Injectable } from '@angular/core';
 // the resulting javascript file will look as if you never imported the module at all.
 import { ipcRenderer, webFrame, remote } from 'electron';
 import * as childProcess from 'child_process';
-import * as fs from 'fs';
+import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as DownloadManager from 'electron-download-manager';
 import * as unzipper from 'unzipper';
+import * as glob from 'glob';
 
 @Injectable()
 export class ElectronService {
@@ -19,11 +20,7 @@ export class ElectronService {
   path: typeof path;
   downloadManager: typeof DownloadManager;
   unzipper: typeof unzipper;
-
-  fsExtras: {
-    deleteFile: (file: string) => Promise<void>;
-    deleteDirectory: (dir: string) => Promise<void>;
-  };
+  glob: typeof glob;
 
   constructor() {
     // Conditional imports
@@ -33,18 +30,14 @@ export class ElectronService {
       this.remote = window.require('electron').remote;
 
       this.childProcess = window.require('child_process');
-      this.fs = window.require('fs');
 
+      this.fs = this.remote.require('fs-extra');
       this.path = this.remote.require('path');
       this.downloadManager = this.remote.require('electron-download-manager');
       this.unzipper = this.remote.require('unzipper');
+      this.glob = this.remote.require('glob');
 
       this.configureIpc();
-
-      this.fsExtras = {
-        deleteDirectory: this.deleteDirectory.bind(this),
-        deleteFile: this.deleteFile.bind(this)
-      };
     }
   }
 
