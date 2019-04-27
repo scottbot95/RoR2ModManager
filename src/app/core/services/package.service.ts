@@ -47,8 +47,8 @@ export class PackageService {
       this.loadPackagesFromCache()
         .then(packages => {
           // if we didn't load any packages, download them
-          console.log('Package cache is empty, downloading list');
           if (!Array.isArray(packages) || packages.length === 0) {
+            console.log('Package cache is empty, downloading list');
             this.downloadPackageList();
           }
         })
@@ -81,7 +81,10 @@ export class PackageService {
       packages => {
         if (packages) {
           this.db.bulkUpdatePackages(packages);
-          this.allPackagesSource.next(packages);
+          // be a little smarter about this maybe?
+          this.loadPackagesFromCache().then(newPackages =>
+            this.allPackagesSource.next(newPackages)
+          );
         }
       },
       err => {
@@ -166,16 +169,17 @@ export class PackageService {
 
     await this.db.updatePackage(pkg.uuid4, { installed_version: null });
 
-    this.installedPackagesSource.next(
-      this.installedPackagesSource.value.filter(
-        installed => installed.uuid4 !== pkg.uuid4
-      )
-    );
+    return pkg.uuid4;
+    // this.installedPackagesSource.next(
+    //   this.installedPackagesSource.value.filter(
+    //     installed => installed.uuid4 !== pkg.uuid4
+    //   )
+    // );
   }
 
   public updatePackage(pkg: Package, version: PackageVersion) {}
 
-  public applyChanges(changeset: PackageChangeset) {
+  public async applyChanges(changeset: PackageChangeset) {
     console.log('Applying package changeset', changeset);
     // Add packages that have an old version installed to remove list
     changeset.updated.forEach(update => {
@@ -188,7 +192,16 @@ export class PackageService {
     });
 
     // uninstall old packages
-    changeset.removed.forEach(toRemove => this.uninstallPackage(toRemove));
+    const uuids = await Promise.all(
+      Array.from(changeset.removed).map(toRemove =>
+        this.uninstallPackage(toRemove)
+      )
+    );
+    this.installedPackagesSource.next(
+      this.installedPackagesSource.value.filter(installed =>
+        uuids.includes(installed.uuid4)
+      )
+    );
 
     // install new packages
     changeset.updated.forEach(toInstall => this.installPackage(toInstall));

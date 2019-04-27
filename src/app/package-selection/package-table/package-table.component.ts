@@ -94,8 +94,10 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.subscription.add(
       this.installedPackages.subscribe(pkgs => {
+        console.log('Selecting installed packages', pkgs);
         this.selection.select(...pkgs);
-        pkgs.forEach(pkg => calcPackageDirty(pkg));
+        if (this.dataSource && this.dataSource.hasData())
+          this.dataSource.data.forEach(pkg => calcPackageDirty(pkg));
       })
     );
   }
@@ -136,7 +138,7 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
   handleApplyChanges() {
     const added = new Set<Package>();
     const removed = new Set<Package>();
-    this.dataSource.filteredData.forEach(pkg => {
+    this.dataSource.data.forEach(pkg => {
       if (pkg.dirty) {
         if (pkg.selected) {
           added.add(pkg);
