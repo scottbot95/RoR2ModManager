@@ -46,8 +46,9 @@
     "test:ci": "npm-run-all postinstall:web && ng test --progress=false --code-coverage --browsers ChromeHeadlessNoSandbox",
     "test:dev": "npm-run-all postinstall:web && ng test --watch --browsers Chrome",
     "test:dev:coverage": "npm-run-all postinstall:web && ng test --watch --code-coverage --browsers Chrome",
-    "e2e": "npm-run-all build:prod && mocha --timeout 300000 --require ts-node/register e2e/**/*.spec.ts",
-    "e2e:ci": "npm-run-all \"build:prod --progress=false\" && mocha --timeout 300000 --require ts-node/register e2e/**/*.spec.ts",
+    "e2e": "npm-run-all build:prod e2e:run",
+    "e2e:ci": "npm-run-all \"build:prod --progress=false\" e2e:run",
+    "e2e:run": "mocha --timeout 300000 --require ts-node/register e2e/**/*.spec.ts",
     "version": "conventional-changelog -i CHANGELOG.md -s -r 0 && git add CHANGELOG.md"
   },
   "devDependencies": {
