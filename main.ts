@@ -6,7 +6,7 @@ import { register } from 'electron-download-manager';
 
 import { UserPreferences } from './electron/preferences.model';
 import { prefs } from './electron/prefs';
-import { name } from './package.json';
+import { name, protocols } from './package.json';
 
 const server = 'https://hazel.scottbot95.now.sh';
 const feed = `${server}/update/${process.platform}/${app.getVersion()}`;
@@ -115,27 +115,44 @@ function createWindow() {
 }
 
 try {
-  // This method will be called when Electron has finished
-  // initialization and is ready to create browser windows.
-  // Some APIs can only be used after this event occurs.
-  app.on('ready', createWindow);
+  // ensure there is only one window open at a time
+  const gotLock = app.requestSingleInstanceLock();
+  if (!gotLock) {
+    app.quit();
+  } else {
+    app.on('second-instance', (event, argv, workingDir) => {
+      if (win) {
+        if (win.isMinimized()) win.restore();
+        win.focus();
+        if (protocols.some(p => argv[1].startsWith(`${p}://`))) {
+          win.webContents.loadURL(argv[1]);
+        }
+        win.webContents.send('', argv[1]);
+      }
+    });
 
-  // Quit when all windows are closed.
-  app.on('window-all-closed', () => {
-    // On OS X it is common for applications and their menu bar
-    // to stay active until the user quits explicitly with Cmd + Q
-    if (process.platform !== 'darwin') {
-      app.quit();
-    }
-  });
+    // This method will be called when Electron has finished
+    // initialization and is ready to create browser windows.
+    // Some APIs can only be used after this event occurs.
+    app.on('ready', createWindow);
 
-  app.on('activate', () => {
-    // On OS X it's common to re-create a window in the app when the
-    // dock icon is clicked and there are no other windows open.
-    if (win === null) {
-      createWindow();
-    }
-  });
+    // Quit when all windows are closed.
+    app.on('window-all-closed', () => {
+      // On OS X it is common for applications and their menu bar
+      // to stay active until the user quits explicitly with Cmd + Q
+      if (process.platform !== 'darwin') {
+        app.quit();
+      }
+    });
+
+    app.on('activate', () => {
+      // On OS X it's common to re-create a window in the app when the
+      // dock icon is clicked and there are no other windows open.
+      if (win === null) {
+        createWindow();
+      }
+    });
+  }
 } catch (e) {
   // Catch Error
   // throw e;

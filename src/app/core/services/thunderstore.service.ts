@@ -9,7 +9,8 @@ import {
 } from '../models/package.model';
 import { ElectronService } from './electron.service';
 
-const PROTOCOL_PREFIX = 'ror2mm';
+import { protocols } from '../../../../package.json';
+
 @Injectable()
 export class ThunderstoreService {
   private baseUrl = 'https://thunderstore.io/api/v1';
@@ -55,9 +56,11 @@ export class ThunderstoreService {
   }
 
   private registerHttpProtocol() {
-    console.log(`Registering protocol ${PROTOCOL_PREFIX}`);
-    this.electron.protocol.registerHttpProtocol(PROTOCOL_PREFIX, (req, cb) => {
-      console.log(req.url);
-    });
+    for (const scheme of protocols) {
+      console.log(`Registering protocol ${scheme}`);
+      this.electron.protocol.registerHttpProtocol(scheme, (req, cb) => {
+        console.log(req.url);
+      });
+    }
   }
 }

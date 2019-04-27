@@ -17,6 +17,9 @@
     "typescript",
     "sass"
   ],
+  "protocols": [
+    "ror2mm"
+  ],
   "main": "main.js",
   "private": true,
   "scripts": {
