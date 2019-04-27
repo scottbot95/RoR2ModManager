@@ -5,11 +5,14 @@ import { ElectronService } from './electron.service';
 import {
   MockElectronService,
   MockDownloadService,
-  MockPreferencesService
+  MockPreferencesService,
+  MockThunderstoreService
 } from './mocks';
 import { DownloadService } from './download.service';
 import { testPackage } from '../models/package.model.spec';
 import { PreferencesService } from './preferences.service';
+import { ThunderstoreService } from './thunderstore.service';
+import { DatabaseService } from './database.service';
 
 describe('PackageService', () => {
   let service: PackageService;
@@ -18,9 +21,11 @@ describe('PackageService', () => {
     TestBed.configureTestingModule({
       providers: [
         PackageService,
+        DatabaseService,
         { provide: ElectronService, useClass: MockElectronService },
         { provide: DownloadService, useClass: MockDownloadService },
-        { provide: PreferencesService, useClass: MockPreferencesService }
+        { provide: PreferencesService, useClass: MockPreferencesService },
+        { provide: ThunderstoreService, useClass: MockThunderstoreService }
       ]
     });
 
