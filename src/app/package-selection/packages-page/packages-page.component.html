@@ -2,14 +2,8 @@
   <app-package-table
     [applyChanges]="applyChanges"
     [installedPackages]="installedPackages$"
-    (showPackageDetails)="selectedPackage = $event"
     fxFlex
   ></app-package-table>
 
-  <app-package-details
-    *ngIf="selectedPackage"
-    [package]="selectedPackage"
-    (showPackageDetails)="selectedPackage = $event"
-    fxFlex
-  ></app-package-details>
+  <app-package-details fxFlex></app-package-details>
 </div>

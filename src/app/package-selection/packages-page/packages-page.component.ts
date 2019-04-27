@@ -16,7 +16,6 @@ import { map, tap } from 'rxjs/operators';
   }
 })
 export class PackagesPageComponent {
-  selectedPackage: Package;
   installedPackages$: Observable<
     PackageList
   > = this.service.installedPackages$.pipe(

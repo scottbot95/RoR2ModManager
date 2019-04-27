@@ -40,7 +40,6 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatSort) sort: MatSort;
   @Input() applyChanges: (selection: PackageChangeset) => void;
   @Input() installedPackages: Observable<PackageList>;
-  @Output() showPackageDetails = new EventEmitter<Package>();
   dataSource: PackageTableDataSource;
   isLoading: boolean;
 
@@ -132,7 +131,8 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   showDetails(pkg: Package) {
-    this.showPackageDetails.emit(pkg);
+    this.packages.selectedPackage.next(pkg);
+    // this.showPackageDetails.emit(pkg);
   }
 
   handleApplyChanges() {

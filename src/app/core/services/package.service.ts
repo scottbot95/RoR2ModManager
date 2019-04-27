@@ -13,6 +13,8 @@ import { ReadStream } from 'fs';
 import { ThunderstoreService } from './thunderstore.service';
 import { DatabaseService } from './database.service';
 
+import { protocols } from '../../../../package.json';
+
 export interface PackageChangeset {
   updated: Set<PackageVersion>;
   removed: Set<Package>;
@@ -33,6 +35,8 @@ export class PackageService {
   private allPackagesSource = new BehaviorSubject<PackageList>([]);
   public allPackages$ = this.allPackagesSource.asObservable();
 
+  public selectedPackage = new BehaviorSubject<Package>(undefined);
+
   constructor(
     private download: DownloadService,
     private electron: ElectronService,
@@ -40,6 +44,8 @@ export class PackageService {
     private thunderstore: ThunderstoreService,
     private db: DatabaseService
   ) {
+    this.registerHttpProtocol();
+
     if (this.prefs.get('checkUpdatesOnStart')) {
       this.downloadPackageList();
     } else {
@@ -266,5 +272,14 @@ export class PackageService {
       'BepInEx',
       'plugins'
     );
+  }
+
+  private registerHttpProtocol() {
+    for (const scheme of protocols) {
+      console.log(`Registering protocol ${scheme}`);
+      this.electron.protocol.registerHttpProtocol(scheme, (req, cb) => {
+        console.log(req.url);
+      });
+    }
   }
 }

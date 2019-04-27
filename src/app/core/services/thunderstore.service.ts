@@ -9,8 +9,6 @@ import {
 } from '../models/package.model';
 import { ElectronService } from './electron.service';
 
-import { protocols } from '../../../../package.json';
-
 @Injectable()
 export class ThunderstoreService {
   private baseUrl = 'https://thunderstore.io/api/v1';
@@ -20,9 +18,7 @@ export class ThunderstoreService {
     .asObservable()
     .pipe(distinctUntilChanged()); // prevents update spam
 
-  constructor(private http: HttpClient, private electron: ElectronService) {
-    this.registerHttpProtocol();
-  }
+  constructor(private http: HttpClient, private electron: ElectronService) {}
 
   public loadAllPackages(): Observable<PackageList> {
     // clear obseravble to indicate loading status
@@ -53,14 +49,5 @@ export class ThunderstoreService {
       }
     );
     return this.allPackages$;
-  }
-
-  private registerHttpProtocol() {
-    for (const scheme of protocols) {
-      console.log(`Registering protocol ${scheme}`);
-      this.electron.protocol.registerHttpProtocol(scheme, (req, cb) => {
-        console.log(req.url);
-      });
-    }
   }
 }

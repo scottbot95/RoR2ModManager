@@ -10,22 +10,24 @@ import {
 import { Package } from '../../core/models/package.model';
 import { PreferencesService } from '../../core/services/preferences.service';
 import { Subscription } from 'rxjs';
+import { PackageService } from '../../core/services/package.service';
 
 @Component({
   selector: 'app-package-details',
   templateUrl: './package-details.component.html',
-  styleUrls: ['./package-details.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrls: ['./package-details.component.scss']
 })
 export class PackageDetailsComponent implements OnInit, OnDestroy {
-  @Input() package: Package;
-  @Output() showPackageDetails = new EventEmitter<Package>();
+  package: Package;
 
   shouldHumanize = this.prefs.get('humanizePackageNames');
 
   private subscription = new Subscription();
 
-  constructor(private prefs: PreferencesService) {}
+  constructor(
+    private prefs: PreferencesService,
+    private packages: PackageService
+  ) {}
 
   ngOnInit() {
     this.subscription.add(
@@ -33,10 +35,16 @@ export class PackageDetailsComponent implements OnInit, OnDestroy {
         this.shouldHumanize = event.newValue;
       })
     );
+
+    this.subscription.add(
+      this.packages.selectedPackage.subscribe(pkg => {
+        this.package = pkg;
+      })
+    );
   }
 
   showDetails(pkg: Package) {
-    this.showPackageDetails.emit(pkg);
+    this.packages.selectedPackage.next(pkg);
   }
 
   ngOnDestroy() {
