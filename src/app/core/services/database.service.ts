@@ -68,7 +68,7 @@ export class DatabaseService {
         return 1;
       })
     );
-    return updates.reduce((acc, val) => acc + val);
+    return updates.reduce((acc, val) => acc + val, 0);
   }
 
   public get packageTable() {

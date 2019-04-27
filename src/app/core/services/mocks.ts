@@ -79,6 +79,9 @@ export class MockElectronService {
     createWriteStream: () => {},
     createReadStream: () => {}
   };
+  protocol = {
+    registerHttpProtocol: () => {}
+  };
   isElectron() {
     return false;
   }

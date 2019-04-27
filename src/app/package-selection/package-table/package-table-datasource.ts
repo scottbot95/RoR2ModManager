@@ -1,7 +1,13 @@
 import { DataSource } from '@angular/cdk/collections';
 import { MatPaginator, MatSort } from '@angular/material';
-import { map, distinctUntilChanged, debounceTime } from 'rxjs/operators';
-import { Observable, merge, Subscription, BehaviorSubject } from 'rxjs';
+import { map, distinctUntilChanged, debounceTime, tap } from 'rxjs/operators';
+import {
+  Observable,
+  merge,
+  Subscription,
+  BehaviorSubject,
+  Subject
+} from 'rxjs';
 import { Package } from '../../core/models/package.model';
 import { FormControl } from '@angular/forms';
 import { PreferencesService } from '../../core/services/preferences.service';
@@ -34,6 +40,10 @@ export class PackageTableDataSource extends DataSource<SelectablePackge> {
   public loading$ = this.loadingSource
     .asObservable()
     .pipe(distinctUntilChanged());
+
+  private changedSource = new Subject<SelectablePackge[]>();
+  /** An event triggered when dataset changes */
+  public changed = this.changedSource.asObservable();
 
   private subscription = new Subscription();
 
@@ -99,6 +109,9 @@ export class PackageTableDataSource extends DataSource<SelectablePackge> {
     );
 
     return merge(...dataMutations).pipe(
+      tap(() => {
+        this.changedSource.next(this.data);
+      }),
       map(() => {
         return this.getPagedData(this.getSortedData([...this.filteredData]));
       })
@@ -111,6 +124,10 @@ export class PackageTableDataSource extends DataSource<SelectablePackge> {
    */
   disconnect() {
     this.subscription.unsubscribe();
+  }
+
+  hasData() {
+    return Array.isArray(this.data) && this.data.length > 0;
   }
 
   /**

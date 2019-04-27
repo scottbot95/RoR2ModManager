@@ -13,6 +13,9 @@ import {
   MatInputModule
 } from '@angular/material';
 
+// Inject hammerjs
+import 'hammerjs';
+
 @NgModule({
   exports: [
     MatButtonModule,

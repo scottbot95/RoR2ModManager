@@ -1,7 +1,11 @@
 language: node_js
 node_js:
   - '10'
-cache: npm
+cache:
+  yarn: true
+  directories:
+    - $HOME/.cache/electron
+    - $HOME/.cache/electron-builder
 dist: xenial
 sudo: required
 services:
