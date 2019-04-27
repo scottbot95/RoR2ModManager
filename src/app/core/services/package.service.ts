@@ -77,13 +77,12 @@ export class PackageService {
     this.allPackagesSource.next(null);
 
     this.thunderstore.loadAllPackages().subscribe(
-      packages => {
+      async packages => {
         if (packages) {
-          this.db.bulkUpdatePackages(packages);
+          await this.db.bulkUpdatePackages(packages);
           // be a little smarter about this maybe?
-          this.loadPackagesFromCache().then(newPackages =>
-            this.allPackagesSource.next(newPackages)
-          );
+          const newPackages = await this.loadPackagesFromCache();
+          this.allPackagesSource.next(newPackages);
         }
       },
       err => {

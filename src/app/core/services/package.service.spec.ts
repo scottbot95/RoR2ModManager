@@ -46,8 +46,8 @@ describe('PackageService', () => {
 
   it('should install a package', async () => {
     await service.installPackage(testPackage.latestVersion);
-    service.installedPackages$.subscribe(packages => {
-      expect(packages.length).toBe(1);
+    service.allPackages$.subscribe(packages => {
+      expect(packages.filter(p => p.installedVersion).length).toBe(1);
     });
   });
 });
