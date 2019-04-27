@@ -26,26 +26,41 @@ export class DatabaseService {
 
   constructor() {}
 
-  public savePackage(pkg: Package, overwrite = false) {
+  public savePackage(pkg: Package, overwrite = false): Promise<string> {
     const serialized = serializePackage(pkg);
     if (overwrite) {
-      this.db.packages.put(serialized);
+      return this.db.packages.put(serialized);
     } else {
-      this.db.packages.add(serialized);
+      return this.db.packages.add(serialized);
     }
   }
 
-  public savePackages(packages: PackageList, overwrite = false) {
+  public savePackages(
+    packages: PackageList,
+    overwrite = false
+  ): Promise<string> {
     const serialized = serializePackageList(packages);
     if (overwrite) {
-      this.db.packages.bulkPut(serialized);
+      return this.db.packages.bulkPut(serialized);
     } else {
-      this.db.packages.bulkAdd(serialized);
+      return this.db.packages.bulkAdd(serialized);
     }
   }
 
-  public clearPackages() {
-    this.db.packages.clear();
+  public clearPackages(): Promise<void> {
+    return this.db.packages.clear();
+  }
+
+  public updatePackage(uuid4: string, changes: any): Promise<number> {
+    return this.db.packages.update(uuid4, changes);
+  }
+
+  public async bulkUpdatePackages(packages: PackageList): Promise<number> {
+    const serialized = serializePackageList(packages);
+    const updates = await Promise.all(
+      serialized.map(pkg => this.db.packages.update(pkg.uuid4, pkg))
+    );
+    return updates.reduce((acc, val) => acc + val);
   }
 
   public get packageTable() {

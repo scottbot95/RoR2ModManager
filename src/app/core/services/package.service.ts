@@ -64,7 +64,11 @@ export class PackageService {
 
     const packages = deserializablePackageList(serializedPackages);
 
+    this.installedPackagesSource.next(
+      packages.filter(pkg => pkg.installedVersion)
+    );
     this.allPackagesSource.next(packages);
+
     console.log('Loaded packages from cache', packages);
     return packages;
   }
@@ -76,7 +80,7 @@ export class PackageService {
     this.thunderstore.loadAllPackages().subscribe(
       packages => {
         if (packages) {
-          this.db.savePackages(packages, true);
+          this.db.bulkUpdatePackages(packages);
           this.allPackagesSource.next(packages);
         }
       },
@@ -112,6 +116,7 @@ export class PackageService {
     }
 
     const zipPath = await this.download.download(pkg);
+    // Dirty hack because the specs really didn't like this
     if (this.elecron.isElectron()) {
       const fileStream = this.elecron.fs.createReadStream(zipPath);
       const zipStream = fileStream.pipe(this.elecron.unzipper.Parse());
@@ -119,6 +124,12 @@ export class PackageService {
       if (pkg.pkg.uuid4 === BEPIN_UUID4) await this.installBepin(zipStream);
       else await this.installZip(fileStream, pkg.pkg.fullName);
     }
+
+    pkg.pkg.installedVersion = pkg;
+
+    await this.db.updatePackage(pkg.pkg.uuid4, {
+      installedVersion: pkg.version.version
+    });
 
     this.installedPackagesSource.next([
       ...this.installedPackagesSource.value,
@@ -151,6 +162,10 @@ export class PackageService {
 
       await this.elecron.fsExtras.deleteDirectory(installedPath);
     }
+
+    pkg.installedVersion = null;
+
+    await this.db.updatePackage(pkg.uuid4, { installedVersion: null });
 
     this.installedPackagesSource.next(
       this.installedPackagesSource.value.filter(

@@ -118,7 +118,7 @@ export const deserializablePackageList = (
     };
 
     pkg.totalDownloads = totalDownloads;
-    if (serializedPkg.installed_version) {
+    if (serializedPkg.installed_version !== undefined) {
       pkg.installedVersion = pkg.versions.find(
         v => v.version.version === serializedPkg.installed_version
       );
@@ -178,6 +178,10 @@ export const serializePackage = (pkg: Package): SerializedPackage => {
       })
     )
   };
+
+  if (pkg.installedVersion !== undefined) {
+    serialized.installed_version = pkg.installedVersion.version.version;
+  }
 
   return serialized;
 };
