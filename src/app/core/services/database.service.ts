@@ -2,12 +2,14 @@ import { Injectable } from '@angular/core';
 import Dexie from 'dexie';
 import {
   Package,
-  SerializablePackageList,
-  SerializablePackage
+  SerializedPackage,
+  serializePackage,
+  serializePackageList,
+  PackageList
 } from '../models/package.model';
 
 export class Database extends Dexie {
-  packages: Dexie.Table<SerializablePackage, string>;
+  packages: Dexie.Table<SerializedPackage, string>;
 
   constructor() {
     super('Database');
@@ -24,16 +26,49 @@ export class DatabaseService {
 
   constructor() {}
 
-  public savePackage(pkg: SerializablePackage) {
-    this.db.packages.add(pkg);
+  public savePackage(pkg: Package, overwrite = false): Promise<string> {
+    const serialized = serializePackage(pkg);
+    if (overwrite) {
+      return this.db.packages.put(serialized);
+    } else {
+      return this.db.packages.add(serialized);
+    }
   }
 
-  public savePackages(packages: SerializablePackageList) {
-    this.db.packages.bulkAdd(packages);
+  public savePackages(
+    packages: PackageList,
+    overwrite = false
+  ): Promise<string> {
+    const serialized = serializePackageList(packages);
+    if (overwrite) {
+      return this.db.packages.bulkPut(serialized);
+    } else {
+      return this.db.packages.bulkAdd(serialized);
+    }
   }
 
-  public clearPackages() {
-    this.db.packages.clear();
+  public clearPackages(): Promise<void> {
+    return this.db.packages.clear();
+  }
+
+  public updatePackage(
+    uuid4: string,
+    changes: Partial<SerializedPackage>
+  ): Promise<number> {
+    return this.db.packages.update(uuid4, changes);
+  }
+
+  public async bulkUpdatePackages(packages: PackageList): Promise<number> {
+    const serialized = serializePackageList(packages);
+    const updates = await Promise.all(
+      serialized.map(async pkg => {
+        if ((await this.db.packages.update(pkg.uuid4, pkg)) === 0) {
+          await this.db.packages.add(pkg);
+        }
+        return 1;
+      })
+    );
+    return updates.reduce((acc, val) => acc + val, 0);
   }
 
   public get packageTable() {

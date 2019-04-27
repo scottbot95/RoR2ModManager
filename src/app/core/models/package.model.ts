@@ -10,15 +10,16 @@ interface SerializablePackageBase {
   uuid4: string;
 }
 
-export interface SerializablePackage extends SerializablePackageBase {
+export interface SerializedPackage extends SerializablePackageBase {
   owner: string;
   maintainers: string[];
   date_updated: string;
   is_pinned: boolean;
-  versions: SerializablePackageVersionList;
+  versions: SerializedPackageVersionList;
+  installed_version?: string;
 }
 
-export interface SerializablePackageVersion extends SerializablePackageBase {
+export interface SerializedPackageVersion extends SerializablePackageBase {
   download_url: string;
   dependencies: PackageNameVersion[];
   downloads: number;
@@ -49,14 +50,14 @@ export class Package extends PackageBase {
   totalDownloads: number;
   requiredBy: Set<PackageVersion>;
 
-  selected?: boolean;
+  installedVersion?: PackageVersion;
 }
 
 export class PackageVersion extends PackageBase {
   downloadUrl: string;
   dependencies: PackageVersionList;
   downloads: number;
-  versionNumber: SemVer;
+  version: SemVer;
   websiteUrl: string;
   description: string;
   icon: string;
@@ -69,15 +70,14 @@ export class InstalledPackage extends Package {
   installedVersion: PackageVersion | undefined;
 }
 
-export type SerializablePackageList = SerializablePackage[];
-export type SerializablePackageVersionList = SerializablePackageVersion[];
+export type SerializedPackageList = SerializedPackage[];
+export type SerializedPackageVersionList = SerializedPackageVersion[];
 export type PackageList = Package[];
 export type PackageVersionList = PackageVersion[];
-export type InstalledPackageList = InstalledPackage[];
 
-export const parseSerializablePackageList = (
-  serializedPackages: SerializablePackageList
-) => {
+export const deserializablePackageList = (
+  serializedPackages: SerializedPackageList
+): PackageList => {
   const packages = serializedPackages.map(serializedPkg => {
     let totalDownloads = 0;
     const pkg: Package = {
@@ -104,7 +104,7 @@ export const parseSerializablePackageList = (
           isActive: v.is_active,
           pkg: undefined,
           uuid4: v.uuid4,
-          versionNumber: new SemVer(v.version_number),
+          version: new SemVer(v.version_number),
           websiteUrl: v.website_url,
           dependencies: []
         };
@@ -117,6 +117,11 @@ export const parseSerializablePackageList = (
     };
 
     pkg.totalDownloads = totalDownloads;
+    if (serializedPkg.installed_version !== undefined) {
+      pkg.installedVersion = pkg.versions.find(
+        v => v.version.version === serializedPkg.installed_version
+      );
+    }
 
     return pkg;
   });
@@ -131,7 +136,7 @@ export const parseSerializablePackageList = (
             p => p.owner === owner && p.name === name
           );
           const depVer = depPkg.versions.find(v =>
-            satisfies(v.versionNumber, `~${versionString}`)
+            satisfies(v.version, `~${versionString}`)
           );
 
           ver.dependencies.push(depVer);
@@ -141,4 +146,47 @@ export const parseSerializablePackageList = (
   });
 
   return packages;
+};
+
+export const serializePackage = (pkg: Package): SerializedPackage => {
+  const serialized: SerializedPackage = {
+    date_created: pkg.dateCreated.toISOString(),
+    date_updated: pkg.dateUpdated.toISOString(),
+    full_name: pkg.fullName,
+    is_active: pkg.isActive,
+    is_pinned: pkg.isPinned,
+    maintainers: pkg.maintainers,
+    name: pkg.name,
+    owner: pkg.owner,
+    uuid4: pkg.uuid4,
+    versions: pkg.versions.map(
+      (v): SerializedPackageVersion => ({
+        date_created: v.dateCreated.toISOString(),
+        dependencies: v.dependencies.map(d => d.fullName),
+        description: v.description,
+        download_url: v.downloadUrl,
+        downloads: v.downloads,
+        full_name: v.fullName,
+        icon: v.icon,
+        is_active: v.isActive,
+        name: v.name,
+        readme: v.readme,
+        uuid4: v.uuid4,
+        version_number: v.version.version,
+        website_url: v.websiteUrl
+      })
+    )
+  };
+
+  if (pkg.installedVersion !== undefined) {
+    serialized.installed_version = pkg.installedVersion.version.version;
+  }
+
+  return serialized;
+};
+
+export const serializePackageList = (
+  packages: PackageList
+): SerializedPackageList => {
+  return packages.map((pkg): SerializedPackage => serializePackage(pkg));
 };

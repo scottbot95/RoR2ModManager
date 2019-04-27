@@ -90,3 +90,11 @@ export class MockDownloadService {
     return mockResult;
   }
 }
+
+export class MockThunderstoreService {
+  public allPackages$ = new BehaviorSubject<PackageList>([]);
+
+  loadAllPackages(): Observable<PackageList> {
+    return this.allPackages$;
+  }
+}

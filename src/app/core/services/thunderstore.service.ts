@@ -3,12 +3,10 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { distinctUntilChanged, map } from 'rxjs/operators';
 import {
-  SerializablePackageList,
+  SerializedPackageList,
   PackageList,
-  parseSerializablePackageList
+  deserializablePackageList
 } from '../models/package.model';
-import { DatabaseService } from './database.service';
-import { PreferencesService } from './preferences.service';
 
 @Injectable()
 export class ThunderstoreService {
@@ -19,36 +17,7 @@ export class ThunderstoreService {
     .asObservable()
     .pipe(distinctUntilChanged()); // prevents update spam
 
-  constructor(
-    private http: HttpClient,
-    private db: DatabaseService,
-    private prefs: PreferencesService
-  ) {
-    if (this.prefs.get('checkUpdatesOnStart')) {
-      this.loadAllPackages();
-    } else {
-      this.loadPackagesFromCache()
-        .then(packages => {
-          if (!Array.isArray(packages) || packages.length === 0) {
-            this.loadAllPackages();
-          }
-        })
-        .catch(err => {
-          console.error(err);
-          this.loadAllPackages();
-        });
-    }
-  }
-
-  public async loadPackagesFromCache(): Promise<PackageList> {
-    const serializedPackages = await this.db.packageTable.toArray();
-    // map dependency references this should be dried up probably...
-    const packages = parseSerializablePackageList(serializedPackages);
-
-    this.allPackagesSource.next(packages);
-    console.log('Loaded packages from cache', packages);
-    return packages;
-  }
+  constructor(private http: HttpClient) {}
 
   public loadAllPackages(): Observable<PackageList> {
     // clear obseravble to indicate loading status
@@ -56,14 +25,14 @@ export class ThunderstoreService {
     this.allPackagesSource.next(null);
 
     // also clear out indexeddb
-    this.db.clearPackages();
+    // this.db.clearPackages();
 
     const url = `${this.baseUrl}/package`;
-    const result = this.http.get<SerializablePackageList>(url).pipe(
+    const result = this.http.get<SerializedPackageList>(url).pipe(
       map(apiPackages => {
-        const packages = parseSerializablePackageList(apiPackages);
+        const packages = deserializablePackageList(apiPackages);
 
-        this.db.savePackages(apiPackages);
+        // this.db.savePackages(apiPackages);
         console.log('Downloaded package list', packages);
         return packages;
       })

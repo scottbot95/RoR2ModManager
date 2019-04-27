@@ -1,4 +1,4 @@
-import { PackageVersion, Package, InstalledPackage } from './package.model';
+import { PackageVersion, Package } from './package.model';
 import { SemVer } from 'semver';
 
 export const testBepInExPackPackageVersion: PackageVersion = {
@@ -11,7 +11,7 @@ export const testBepInExPackPackageVersion: PackageVersion = {
   isActive: true,
   name: 'BepInExPack',
   uuid4: '',
-  versionNumber: new SemVer('1.0.0'),
+  version: new SemVer('1.0.0'),
   websiteUrl: '',
   fullName: 'bbepis-BepInExPack-1.0.0',
   pkg: undefined
@@ -45,7 +45,7 @@ export const testPackageVersion: PackageVersion = {
   isActive: true,
   name: 'testPackage',
   uuid4: '',
-  versionNumber: new SemVer('1.0.0'),
+  version: new SemVer('1.0.0'),
   websiteUrl: '',
   fullName: 'author-testPackage-1.0.0',
   pkg: undefined
@@ -68,8 +68,3 @@ export const testPackage: Package = {
 };
 
 testPackageVersion.pkg = testPackage;
-
-export const testInstalledPackage: InstalledPackage = {
-  ...testPackage,
-  installedVersion: testPackageVersion
-};

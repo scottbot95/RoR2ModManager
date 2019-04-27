@@ -34,5 +34,6 @@
     "e2e/*.map": true,
     "**/.DS_Store": true,
     "**/Thumbs.db": true
-  }
+  },
+  "npm.packageManager": "yarn"
 }

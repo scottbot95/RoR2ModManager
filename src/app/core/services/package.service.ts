@@ -1,15 +1,17 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { ParseStream, Entry as ZipEntry } from 'unzipper';
+import { BehaviorSubject, Observable } from 'rxjs';
 import {
-  InstalledPackageList,
+  PackageList,
   PackageVersion,
-  Package
+  Package,
+  deserializablePackageList
 } from '../models/package.model';
 import { DownloadService } from './download.service';
 import { ElectronService } from './electron.service';
 import { PreferencesService } from './preferences.service';
 import { ReadStream } from 'fs';
+import { ThunderstoreService } from './thunderstore.service';
+import { DatabaseService } from './database.service';
 
 export interface PackageChangeset {
   updated: Set<PackageVersion>;
@@ -25,16 +27,72 @@ const BEPIN_UUID4 = '4c253b36-fd0b-4e6d-b4d8-b227972af4da';
 
 @Injectable()
 export class PackageService {
-  private installedPackagesSource = new BehaviorSubject<InstalledPackageList>(
-    []
-  );
+  private installedPackagesSource = new BehaviorSubject<PackageList>([]);
   public installedPackages$ = this.installedPackagesSource.asObservable();
+
+  private allPackagesSource = new BehaviorSubject<PackageList>([]);
+  public allPackages$ = this.allPackagesSource.asObservable();
 
   constructor(
     private download: DownloadService,
-    private elecron: ElectronService,
-    private prefs: PreferencesService
-  ) {}
+    private electron: ElectronService,
+    private prefs: PreferencesService,
+    private thunderstore: ThunderstoreService,
+    private db: DatabaseService
+  ) {
+    if (this.prefs.get('checkUpdatesOnStart')) {
+      this.downloadPackageList();
+    } else {
+      this.loadPackagesFromCache()
+        .then(packages => {
+          // if we didn't load any packages, download them
+          if (!Array.isArray(packages) || packages.length === 0) {
+            console.log('Package cache is empty, downloading list');
+            this.downloadPackageList();
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          this.downloadPackageList();
+        });
+    }
+  }
+
+  public async loadPackagesFromCache(): Promise<PackageList> {
+    const serializedPackages = await this.db.packageTable.toArray();
+
+    const packages = deserializablePackageList(serializedPackages);
+
+    this.installedPackagesSource.next(
+      packages.filter(pkg => pkg.installedVersion)
+    );
+    this.allPackagesSource.next(packages);
+
+    console.log('Loaded packages from cache', packages);
+    return packages;
+  }
+
+  public downloadPackageList(): Observable<PackageList> {
+    const oldPackages = this.allPackagesSource.value;
+    this.allPackagesSource.next(null);
+
+    this.thunderstore.loadAllPackages().subscribe(
+      async packages => {
+        if (packages) {
+          await this.db.bulkUpdatePackages(packages);
+          // be a little smarter about this maybe?
+          const newPackages = await this.loadPackagesFromCache();
+          this.allPackagesSource.next(newPackages);
+        }
+      },
+      err => {
+        console.error('Failed to download packages');
+        console.error(err);
+        this.allPackagesSource.next(oldPackages);
+      }
+    );
+    return this.allPackages$;
+  }
 
   public async installPackage(pkg: PackageVersion) {
     if (
@@ -44,8 +102,8 @@ export class PackageService {
       console.warn(
         `Skipping package ${pkg.fullName} as it's not a Bepis package`
       );
-      this.elecron.remote.dialog.showMessageBox(
-        this.elecron.remote.getCurrentWindow(),
+      this.electron.remote.dialog.showMessageBox(
+        this.electron.remote.getCurrentWindow(),
         {
           type: 'warning',
           title: 'Skipping package',
@@ -59,13 +117,19 @@ export class PackageService {
     }
 
     const zipPath = await this.download.download(pkg);
-    if (this.elecron.isElectron()) {
-      const fileStream = this.elecron.fs.createReadStream(zipPath);
-      const zipStream = fileStream.pipe(this.elecron.unzipper.Parse());
+    // Dirty hack because the specs really didn't like this
+    if (this.electron.isElectron()) {
+      const fileStream = this.electron.fs.createReadStream(zipPath);
 
-      if (pkg.pkg.uuid4 === BEPIN_UUID4) await this.installBepin(zipStream);
-      else await this.installZip(fileStream, pkg.pkg.fullName);
+      if (pkg.pkg.uuid4 === BEPIN_UUID4) await this.installBepin(fileStream);
+      else await this.installBepInPlugin(fileStream, pkg.pkg.fullName);
     }
+
+    pkg.pkg.installedVersion = pkg;
+
+    await this.db.updatePackage(pkg.pkg.uuid4, {
+      installed_version: pkg.version.version
+    });
 
     this.installedPackagesSource.next([
       ...this.installedPackagesSource.value,
@@ -77,38 +141,43 @@ export class PackageService {
   public async uninstallPackage(pkg: Package) {
     if (pkg.uuid4 === BEPIN_UUID4) {
       await Promise.all([
-        this.elecron.fsExtras.deleteDirectory(
-          this.elecron.path.dirname(this.getBepInExPluginPath())
+        this.electron.fs.remove(
+          this.electron.path.dirname(this.getBepInExPluginPath())
         ),
-        this.elecron.fsExtras.deleteFile(
-          this.elecron.path.join(this.prefs.get('ror2_path'), 'winhttp.dll')
+        this.electron.fs.remove(
+          this.electron.path.join(this.prefs.get('ror2_path'), 'winhttp.dll')
         ),
-        this.elecron.fsExtras.deleteFile(
-          this.elecron.path.join(
+        this.electron.fs.remove(
+          this.electron.path.join(
             this.prefs.get('ror2_path'),
             'doorstop_config.ini'
           )
         )
       ]);
     } else {
-      const installedPath = this.elecron.path.join(
+      const installedPath = this.electron.path.join(
         this.getBepInExPluginPath(),
         pkg.fullName
       );
 
-      await this.elecron.fsExtras.deleteDirectory(installedPath);
+      await this.electron.fs.remove(installedPath);
     }
 
-    this.installedPackagesSource.next(
-      this.installedPackagesSource.value.filter(
-        installed => installed.uuid4 !== pkg.uuid4
-      )
-    );
+    pkg.installedVersion = null;
+
+    await this.db.updatePackage(pkg.uuid4, { installed_version: null });
+
+    return pkg.uuid4;
+    // this.installedPackagesSource.next(
+    //   this.installedPackagesSource.value.filter(
+    //     installed => installed.uuid4 !== pkg.uuid4
+    //   )
+    // );
   }
 
   public updatePackage(pkg: Package, version: PackageVersion) {}
 
-  public applyChanges(changeset: PackageChangeset) {
+  public async applyChanges(changeset: PackageChangeset) {
     console.log('Applying package changeset', changeset);
     // Add packages that have an old version installed to remove list
     changeset.updated.forEach(update => {
@@ -121,58 +190,78 @@ export class PackageService {
     });
 
     // uninstall old packages
-    changeset.removed.forEach(toRemove => this.uninstallPackage(toRemove));
+    const uuids = await Promise.all(
+      Array.from(changeset.removed).map(toRemove =>
+        this.uninstallPackage(toRemove)
+      )
+    );
+    console.log('Removed packages', uuids);
+
+    this.installedPackagesSource.next(
+      this.installedPackagesSource.value.filter(
+        installed => !uuids.includes(installed.uuid4)
+      )
+    );
 
     // install new packages
     changeset.updated.forEach(toInstall => this.installPackage(toInstall));
   }
 
-  private installZip(fileStream: ReadStream, path: string): Promise<void> {
-    const install_dir = this.elecron.path.join(
-      this.getBepInExPluginPath(),
-      path
-    );
-    return fileStream
-      .pipe(this.elecron.unzipper.Extract({ path: install_dir }))
-      .promise();
+  private extractZip(fileStream: ReadStream, path: string): Promise<void> {
+    return fileStream.pipe(this.electron.unzipper.Extract({ path })).promise();
   }
 
-  private installBepin(zipStream: ParseStream): Promise<void> {
-    // this.elecron.ipcRenderer.send('installBepin', zipFile);
-    // return new Promise((resolve, reject) => {
-    //   this.elecron.ipcRenderer.on('bepinInstalled', (event, err) => {
-    //     if (err) reject(err);
-    //     else resolve();
-    //   });
-    // });
+  private installBepInPlugin(fileStream: ReadStream, plugin_dir: string) {
+    const install_dir = this.electron.path.join(
+      this.getBepInExPluginPath(),
+      plugin_dir
+    );
+
+    return this.extractZip(fileStream, install_dir);
+  }
+
+  private async installBepin(fileStream: ReadStream): Promise<void> {
+    const path = this.electron.path;
+    const fs = this.electron.fs;
+    const glob = this.electron.glob;
     const install_dir = this.prefs.get('ror2_path');
-    return zipStream
-      .on('entry', (entry: ZipEntry) => {
-        const path = this.elecron.path;
-        if (path.dirname(entry.path).startsWith('BepInExPack')) {
-          const destination = path.join(
-            install_dir,
-            entry.path.slice('BepInExPack/'.length)
-          );
-          if (entry.type === 'Directory') {
-            this.elecron.fs.mkdirSync(destination);
-          } else {
-            entry.pipe(
-              this.elecron.fs.createWriteStream(
-                path.join(install_dir, entry.path.slice('BepInExPack/'.length))
-              )
-            );
-          }
-          entry.autodrain();
-        } else {
-          entry.autodrain();
+
+    const tmp_path = path.join(
+      this.electron.remote.app.getPath('temp'),
+      this.electron.remote.app.getName(),
+      'BepInExPack'
+    );
+    // extract zip
+    await this.extractZip(fileStream, tmp_path);
+    return new Promise((resolve, reject) => {
+      glob(
+        'BepInExPack/**/*',
+        {
+          realpath: true,
+          nodir: true,
+          cwd: tmp_path
+        },
+        (err, files) => {
+          if (err) return reject(err);
+          Promise.all(
+            files.map(async file => {
+              const relativePath = file.slice(
+                (tmp_path + '/BepInExPack/').length
+              );
+              return fs.move(file, path.join(install_dir, relativePath));
+            })
+          )
+            .then(() => {
+              resolve();
+            })
+            .catch(reject);
         }
-      })
-      .promise();
+      );
+    });
   }
 
   private getBepInExPluginPath() {
-    return this.elecron.path.join(
+    return this.electron.path.join(
       this.prefs.get('ror2_path'),
       'BepInEx',
       'plugins'

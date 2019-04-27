@@ -9,20 +9,26 @@ import {
   OnInit
 } from '@angular/core';
 import { MatPaginator, MatSort } from '@angular/material';
-import { PackageTableDataSource } from './package-table-datasource';
+import { Subscription, Observable } from 'rxjs';
+import { delay } from 'rxjs/operators';
+import { FormControl } from '@angular/forms';
+import {
+  PackageTableDataSource,
+  SelectablePackge,
+  calcPackageDirty
+} from './package-table-datasource';
 import {
   Package,
   PackageList,
   PackageVersion,
   PackageVersionList
 } from '../../core/models/package.model';
-import { ThunderstoreService } from '../../core/services/thunderstore.service';
-import { Subscription, Observable } from 'rxjs';
-import { delay } from 'rxjs/operators';
-import { PackageChangeset } from '../../core/services/package.service';
-import { SelectionChangesetModel } from '../../shared/selection-changeset';
-import { FormControl } from '@angular/forms';
+import {
+  PackageChangeset,
+  PackageService
+} from '../../core/services/package.service';
 import { PreferencesService } from '../../core/services/preferences.service';
+import { SelectionModel } from '@angular/cdk/collections';
 
 @Component({
   selector: 'app-package-table',
@@ -47,25 +53,21 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
     'latest',
     'downloads'
   ];
-  selection: SelectionChangesetModel<Package>;
+  selection: SelectionModel<SelectablePackge>;
 
   filter = new FormControl('');
 
   shouldHumanize = this.prefs.get('humanizePackageNames');
 
   private subscription = new Subscription();
-  private _installedPackages: PackageList;
 
   constructor(
-    public thunderstore: ThunderstoreService,
+    public packages: PackageService,
     private prefs: PreferencesService
   ) {}
 
   ngOnInit() {
-    this.selection = new SelectionChangesetModel<Package>(
-      true,
-      this.installedPackages
-    );
+    this.selection = new SelectionModel<SelectablePackge>(true, []);
 
     this.subscription.add(
       this.prefs.onChange('humanizePackageNames').subscribe(shouldHumanize => {
@@ -79,10 +81,12 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.selection.changed.pipe(delay(0)).subscribe(changed => {
         changed.added.forEach(pkg => {
           pkg.selected = true;
+          calcPackageDirty(pkg);
           this.selectAllDependencies(pkg.latestVersion);
         });
         changed.removed.forEach(pkg => {
           pkg.selected = false;
+          calcPackageDirty(pkg);
           this.deselectAvailDependencies(pkg.latestVersion);
         });
       })
@@ -90,7 +94,10 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.subscription.add(
       this.installedPackages.subscribe(pkgs => {
-        this._installedPackages = pkgs;
+        console.log('Selecting installed packages', pkgs);
+        this.selection.select(...pkgs);
+        if (this.dataSource && this.dataSource.hasData())
+          this.dataSource.data.forEach(pkg => calcPackageDirty(pkg));
       })
     );
   }
@@ -102,7 +109,7 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
         this.paginator,
         this.sort,
         this.filter,
-        this.thunderstore,
+        this.packages,
         this.prefs
       );
 
@@ -128,27 +135,33 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.showPackageDetails.emit(pkg);
   }
 
-  isRowDirty(pkg: Package) {
-    const installed = this._installedPackages.find(p => p.uuid4 === pkg.uuid4);
-
-    let dirty: boolean;
-    if (installed !== undefined) {
-      dirty = !this.selection.isSelected(pkg);
-    } else {
-      dirty = this.selection.isSelected(pkg);
-    }
-    return dirty;
-  }
-
   handleApplyChanges() {
-    const changeset = this.selection.getChangeset();
+    const added = new Set<Package>();
+    const removed = new Set<Package>();
+    this.dataSource.data.forEach(pkg => {
+      if (pkg.dirty) {
+        if (pkg.selected) {
+          added.add(pkg);
+        } else {
+          removed.add(pkg);
+        }
+      }
+    });
+
     const changes = new PackageChangeset();
-    changes.removed = changeset.removed;
-    changes.updated = new Set(
-      Array.from(changeset.added).map(pkg => pkg.latestVersion)
-    );
+    changes.removed = removed;
+    changes.updated = new Set(Array.from(added).map(pkg => pkg.latestVersion));
     this.applyChanges(changes);
   }
+
+  refreshPackages() {
+    this.packages.downloadPackageList();
+  }
+
+  isSelectionDirty = () => {
+    if (!this.dataSource) return false;
+    return this.dataSource.filteredData.some(pkg => pkg.dirty);
+  };
 
   private selectAllDependencies(pkg: PackageVersion) {
     const toSelect: PackageVersionList = [];

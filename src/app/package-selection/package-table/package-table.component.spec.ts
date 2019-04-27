@@ -15,7 +15,9 @@ import { ElectronService } from '../../core/services/electron.service';
 import {
   MockHttpClient,
   MockElectronService,
-  MockPreferencesService
+  MockPreferencesService,
+  MockThunderstoreService,
+  MockPackageService
 } from '../../core/services/mocks';
 import { Component, Directive, Input } from '@angular/core';
 import { By } from '@angular/platform-browser';
@@ -23,6 +25,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { DatabaseService } from '../../core/services/database.service';
 import { PreferencesService } from '../../core/services/preferences.service';
 import { HumanizePipe } from '../../shared/humanize.pipe';
+import { PackageService } from '../../core/services/package.service';
 
 @Component({
   selector: 'app-test-host',
@@ -62,11 +65,12 @@ describe('PackageTableComponent', () => {
         ReactiveFormsModule
       ],
       providers: [
-        ThunderstoreService,
         DatabaseService,
+        { provide: ThunderstoreService, useClass: MockThunderstoreService },
         { provide: PreferencesService, useClass: MockPreferencesService },
         { provide: ElectronService, useClass: MockElectronService },
-        { provide: HttpClient, useClass: MockHttpClient }
+        { provide: HttpClient, useClass: MockHttpClient },
+        { provide: PackageService, useClass: MockPackageService }
       ]
     }).compileComponents();
 
