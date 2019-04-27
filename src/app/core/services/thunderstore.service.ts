@@ -7,7 +7,9 @@ import {
   PackageList,
   deserializablePackageList
 } from '../models/package.model';
+import { ElectronService } from './electron.service';
 
+const PROTOCOL_PREFIX = 'ror2mm';
 @Injectable()
 export class ThunderstoreService {
   private baseUrl = 'https://thunderstore.io/api/v1';
@@ -17,7 +19,9 @@ export class ThunderstoreService {
     .asObservable()
     .pipe(distinctUntilChanged()); // prevents update spam
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private electron: ElectronService) {
+    this.registerHttpProtocol();
+  }
 
   public loadAllPackages(): Observable<PackageList> {
     // clear obseravble to indicate loading status
@@ -48,5 +52,12 @@ export class ThunderstoreService {
       }
     );
     return this.allPackages$;
+  }
+
+  private registerHttpProtocol() {
+    console.log(`Registering protocol ${PROTOCOL_PREFIX}`);
+    this.electron.protocol.registerHttpProtocol(PROTOCOL_PREFIX, (req, cb) => {
+      console.log(req.url);
+    });
   }
 }
