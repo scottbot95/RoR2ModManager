@@ -25,11 +25,11 @@
         aria-label="Toggle sidenav"
         mat-icon-button
         (click)="drawer.toggle()"
-        *ngIf="(isHandset$ | async)"
+        *ngIf="isHandset$ | async"
       >
         <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
       </button>
-      <span>RoR2 Mod Manager</span>
+      <span>RoR2 Mod Manager {{ version }}</span>
       <span fxFlex></span>
       <button
         *ngIf="router.url === '/preferences'"
@@ -48,7 +48,7 @@
         <mat-icon>settings</mat-icon>
       </button>
       <button mat-icon-button (click)="theme.toggleDarkMode()">
-        <mat-icon *ngIf="(theme.isDarkMode$ | async)" matTooltip="Light Mode"
+        <mat-icon *ngIf="theme.isDarkMode$ | async" matTooltip="Light Mode"
           >brightness_7</mat-icon
         >
         <mat-icon *ngIf="!(theme.isDarkMode$ | async)" matTooltip="Dark Mode"
