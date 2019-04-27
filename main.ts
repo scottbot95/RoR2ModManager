@@ -87,7 +87,7 @@ function createWindow() {
 
   if (serve) {
     require('electron-reload')(__dirname, {
-      electron: require(`${__dirname}/node_modules/electron`),
+      electron: require(path.join(__dirname, 'node_modules', 'electron')),
       argv: ['--serve']
     });
     win.loadURL('http://localhost:4200');
@@ -122,12 +122,10 @@ try {
   } else {
     app.on('second-instance', (event, argv, workingDir) => {
       if (win) {
-        if (win.isMinimized()) win.restore();
-        win.focus();
+        if (win.isMinimized) win.restore(); // restore seems to be broken
         if (protocols.some(p => argv[1].startsWith(`${p}://`))) {
           win.webContents.loadURL(argv[1]);
         }
-        win.webContents.send('', argv[1]);
       }
     });
 

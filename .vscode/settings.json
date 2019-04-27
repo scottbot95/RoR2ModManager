@@ -6,6 +6,7 @@
     "app-builds": true,
     "release": true,
     "**/main.js": true,
+    "electron/**/*.js": true,
     "src/**/*.js": true,
     "src/karma.conf.js": false,
     "**/*.js.map": true,
