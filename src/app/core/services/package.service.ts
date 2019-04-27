@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { ParseStream, Entry as ZipEntry } from 'unzipper';
 import {
   PackageList,
   PackageVersion,

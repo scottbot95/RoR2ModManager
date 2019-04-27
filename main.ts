@@ -43,6 +43,11 @@ regKey.get('RoR2Dir', (err, result) => {
   }
 });
 
+function canHandleProtocol(url: string) {
+  if (typeof url !== 'string') return false;
+  return protocols.some(p => url.startsWith(`${p}://`));
+}
+
 function createWindow() {
   const { height, width, x, y } = <UserPreferences['windowBounds']>(
     prefs.get('windowBounds')
@@ -123,7 +128,7 @@ try {
     app.on('second-instance', (event, argv, workingDir) => {
       if (win) {
         if (win.isMinimized) win.restore(); // restore seems to be broken
-        if (protocols.some(p => argv[1].startsWith(`${p}://`))) {
+        if (canHandleProtocol(argv[1])) {
           win.webContents.loadURL(argv[1]);
         }
       }
