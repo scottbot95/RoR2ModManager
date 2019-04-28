@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Simple handling of the install button on thunderstore.io
+  - For it opens details and marks package for install
+  - NOTE: So far only tested on linux
+
+### Fixed
+
+- Sidenav switches to 'side' mode in xsmall window sizes
+
 ## [0.2.0] 2019-04-27
 
 ### Added
@@ -27,6 +37,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial alpha release
 
 [unreleased]: https://github.com/scottbot95/RoR2ModManager/compare/v0.1.0...HEAD
-[0.1.1]: https://github.com/scottbot95/RoR2ModManager/compare/v0.1.1...v0.2.0
+[0.2.0]: https://github.com/scottbot95/RoR2ModManager/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/scottbot95/RoR2ModManager/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/scottbot95/RoR2ModManager/releases/tag/v0.1.0

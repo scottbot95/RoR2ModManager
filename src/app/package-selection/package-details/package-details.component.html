@@ -5,7 +5,7 @@
   <mat-card-actions>
   <mat-card-footer>
    -->
-<mat-card>
+<mat-card *ngIf="package">
   <mat-card-header>
     <mat-card-title>
       {{ package.name | humanize: shouldHumanize }}

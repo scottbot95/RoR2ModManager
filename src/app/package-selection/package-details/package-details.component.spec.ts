@@ -3,12 +3,13 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { PackageDetailsComponent } from './package-details.component';
 import { MaterialModule } from '../../shared/material.module';
 import { Component } from '@angular/core';
-import { Package } from '../../core/models/package.model';
-import { By } from '@angular/platform-browser';
-import { testPackage } from '../../core/models/package.model.spec';
 import { HumanizePipe } from '../../shared/humanize.pipe';
 import { PreferencesService } from '../../core/services/preferences.service';
-import { MockPreferencesService } from '../../core/services/mocks';
+import {
+  MockPreferencesService,
+  MockPackageService
+} from '../../core/services/mocks';
+import { PackageService } from '../../core/services/package.service';
 
 @Component({
   // tslint:disable-next-line: component-selector
@@ -17,42 +18,29 @@ import { MockPreferencesService } from '../../core/services/mocks';
 })
 class MockMarkdownComponent {}
 
-@Component({
-  selector: 'app-host-component',
-  template:
-    '<app-package-details [package]="testPackage"></app-package-details>'
-})
-class TestHostComponent {
-  testPackage: Package = testPackage;
-}
-
 describe('PackageDetailsComponent', () => {
-  let testHostComponent: TestHostComponent;
-  let testHostFixture: ComponentFixture<TestHostComponent>;
   let component: PackageDetailsComponent;
+  let fixture: ComponentFixture<PackageDetailsComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [
         PackageDetailsComponent,
         MockMarkdownComponent,
-        TestHostComponent,
         HumanizePipe
       ],
       imports: [MaterialModule],
       providers: [
-        { provide: PreferencesService, useClass: MockPreferencesService }
+        { provide: PreferencesService, useClass: MockPreferencesService },
+        { provide: PackageService, useClass: MockPackageService }
       ]
     }).compileComponents();
   }));
 
   beforeEach(() => {
-    testHostFixture = TestBed.createComponent(TestHostComponent);
-    testHostComponent = testHostFixture.componentInstance;
-    testHostFixture.detectChanges();
-    component = testHostFixture.debugElement.query(
-      By.directive(PackageDetailsComponent)
-    ).componentInstance;
+    fixture = TestBed.createComponent(PackageDetailsComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
   });
 
   it('should create', () => {

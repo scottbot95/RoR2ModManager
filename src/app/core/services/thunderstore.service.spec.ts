@@ -3,9 +3,14 @@ import { TestBed } from '@angular/core/testing';
 import { ThunderstoreService } from './thunderstore.service';
 import { HttpClient } from '@angular/common/http';
 import { of } from 'rxjs';
-import { MockHttpClient, MockPreferencesService } from './mocks';
+import {
+  MockHttpClient,
+  MockPreferencesService,
+  MockElectronService
+} from './mocks';
 import { DatabaseService } from './database.service';
 import { PreferencesService } from './preferences.service';
+import { ElectronService } from './electron.service';
 
 describe('ThunderstoreService', () => {
   beforeEach(() => {
@@ -14,7 +19,8 @@ describe('ThunderstoreService', () => {
         ThunderstoreService,
         DatabaseService,
         { provide: HttpClient, useClass: MockHttpClient },
-        { provide: PreferencesService, useClass: MockPreferencesService }
+        { provide: PreferencesService, useClass: MockPreferencesService },
+        { provide: ElectronService, useClass: MockElectronService }
       ]
     });
 

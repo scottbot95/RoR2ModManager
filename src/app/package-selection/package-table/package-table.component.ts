@@ -4,8 +4,6 @@ import {
   ViewChild,
   OnDestroy,
   Input,
-  Output,
-  EventEmitter,
   OnInit
 } from '@angular/core';
 import { MatPaginator, MatSort } from '@angular/material';
@@ -14,7 +12,6 @@ import { delay } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
 import {
   PackageTableDataSource,
-  SelectablePackge,
   calcPackageDirty
 } from './package-table-datasource';
 import {
@@ -25,7 +22,8 @@ import {
 } from '../../core/models/package.model';
 import {
   PackageChangeset,
-  PackageService
+  PackageService,
+  SelectablePackge
 } from '../../core/services/package.service';
 import { PreferencesService } from '../../core/services/preferences.service';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -40,7 +38,6 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatSort) sort: MatSort;
   @Input() applyChanges: (selection: PackageChangeset) => void;
   @Input() installedPackages: Observable<PackageList>;
-  @Output() showPackageDetails = new EventEmitter<Package>();
   dataSource: PackageTableDataSource;
   isLoading: boolean;
 
@@ -67,7 +64,7 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.selection = new SelectionModel<SelectablePackge>(true, []);
+    this.selection = this.packages.selection;
 
     this.subscription.add(
       this.prefs.onChange('humanizePackageNames').subscribe(shouldHumanize => {
@@ -132,7 +129,8 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   showDetails(pkg: Package) {
-    this.showPackageDetails.emit(pkg);
+    this.packages.selectedPackage.next(pkg);
+    // this.showPackageDetails.emit(pkg);
   }
 
   handleApplyChanges() {

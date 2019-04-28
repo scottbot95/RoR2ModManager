@@ -5,6 +5,12 @@
     "output": "release/",
     "buildResources": "build"
   },
+  "protocols": [
+    {
+      "name": "Risk of Rain 2 Mod Manager Protocol",
+      "schemes": ["ror2mm"]
+    }
+  ],
   "files": [
     "**/*",
     "!**/*.ts",
@@ -22,7 +28,7 @@
   ],
   "win": {
     "icon": "dist",
-    "target": ["nsis", "portable"]
+    "target": ["nsis"]
   },
   "mac": {
     "icon": "dist",
@@ -35,6 +41,7 @@
   },
   "nsis": {
     "oneClick": false,
+    "perMachine": true,
     "include": "build/installer.nsh"
   }
 }

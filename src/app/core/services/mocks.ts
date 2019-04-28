@@ -6,6 +6,8 @@ import { ChangeEvent } from './preferences.service';
 import { Observable, of, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PackageList, Package, PackageVersion } from '../models/package.model';
+import { SelectionModel } from '@angular/cdk/collections';
+import { SelectablePackge } from './package.service';
 
 export class MockPreferencesService {
   private data: UserPreferences = defaultConfig;
@@ -48,6 +50,9 @@ export class MockThemeService {
 export class MockPackageService {
   installedPackages$ = new BehaviorSubject<PackageList>([]);
 
+  selection = new SelectionModel<SelectablePackge>();
+  selectedPackage = new BehaviorSubject<Package>(undefined);
+
   installPackage(pkg: Package, version: PackageVersion) {
     this.installedPackages$.next([...this.installedPackages$.value, pkg]);
   }
@@ -78,6 +83,9 @@ export class MockElectronService {
   fs = {
     createWriteStream: () => {},
     createReadStream: () => {}
+  };
+  protocol = {
+    registerHttpProtocol: () => {}
   };
   isElectron() {
     return false;
