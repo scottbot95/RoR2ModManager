@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import {
-  PackageList,
   PackageVersion,
   Package,
   deserializablePackageList
@@ -12,6 +11,10 @@ import { PreferencesService } from './preferences.service';
 import { ReadStream } from 'fs';
 import { ThunderstoreService } from './thunderstore.service';
 import { DatabaseService } from './database.service';
+import { SelectionModel } from '@angular/cdk/collections';
+import { Selectable } from '../models/selectable.model';
+
+export interface SelectablePackge extends Selectable, Package {}
 
 import { protocols } from '../../../../package.json';
 
@@ -29,13 +32,14 @@ const BEPIN_UUID4 = '4c253b36-fd0b-4e6d-b4d8-b227972af4da';
 
 @Injectable()
 export class PackageService {
-  private installedPackagesSource = new BehaviorSubject<PackageList>([]);
+  private installedPackagesSource = new BehaviorSubject<SelectablePackge[]>([]);
   public installedPackages$ = this.installedPackagesSource.asObservable();
 
-  private allPackagesSource = new BehaviorSubject<PackageList>([]);
+  private allPackagesSource = new BehaviorSubject<SelectablePackge[]>([]);
   public allPackages$ = this.allPackagesSource.asObservable();
 
   public selectedPackage = new BehaviorSubject<Package>(undefined);
+  public selection = new SelectionModel<SelectablePackge>(true, []);
 
   constructor(
     private download: DownloadService,
@@ -64,7 +68,7 @@ export class PackageService {
     }
   }
 
-  public async loadPackagesFromCache(): Promise<PackageList> {
+  public async loadPackagesFromCache(): Promise<SelectablePackge[]> {
     const serializedPackages = await this.db.packageTable.toArray();
 
     const packages = deserializablePackageList(serializedPackages);
@@ -78,7 +82,7 @@ export class PackageService {
     return packages;
   }
 
-  public downloadPackageList(): Observable<PackageList> {
+  public downloadPackageList(): Observable<SelectablePackge[]> {
     const oldPackages = this.allPackagesSource.value;
     this.allPackagesSource.next(null);
 
@@ -301,6 +305,7 @@ export class PackageService {
             v => v.version.version === version
           );
           console.log('Marking package for install', versionToInstall);
+          this.selection.select(versionToInstall.pkg);
           this.selectedPackage.next(packageToInstall);
         }
       });

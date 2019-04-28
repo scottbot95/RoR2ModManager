@@ -8,13 +8,12 @@ import {
   BehaviorSubject,
   Subject
 } from 'rxjs';
-import { Package } from '../../core/models/package.model';
 import { FormControl } from '@angular/forms';
 import { PreferencesService } from '../../core/services/preferences.service';
-import { PackageService } from '../../core/services/package.service';
-import { Selectable } from '../../core/models/selectable.model';
-
-export interface SelectablePackge extends Selectable, Package {}
+import {
+  PackageService,
+  SelectablePackge
+} from '../../core/services/package.service';
 
 export const calcPackageDirty = (pkg: SelectablePackge) => {
   if (pkg.selected) {

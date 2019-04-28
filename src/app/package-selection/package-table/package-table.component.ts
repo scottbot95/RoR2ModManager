@@ -4,8 +4,6 @@ import {
   ViewChild,
   OnDestroy,
   Input,
-  Output,
-  EventEmitter,
   OnInit
 } from '@angular/core';
 import { MatPaginator, MatSort } from '@angular/material';
@@ -14,7 +12,6 @@ import { delay } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
 import {
   PackageTableDataSource,
-  SelectablePackge,
   calcPackageDirty
 } from './package-table-datasource';
 import {
@@ -25,7 +22,8 @@ import {
 } from '../../core/models/package.model';
 import {
   PackageChangeset,
-  PackageService
+  PackageService,
+  SelectablePackge
 } from '../../core/services/package.service';
 import { PreferencesService } from '../../core/services/preferences.service';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -66,7 +64,7 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.selection = new SelectionModel<SelectablePackge>(true, []);
+    this.selection = this.packages.selection;
 
     this.subscription.add(
       this.prefs.onChange('humanizePackageNames').subscribe(shouldHumanize => {
