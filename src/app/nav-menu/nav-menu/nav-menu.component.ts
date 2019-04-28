@@ -13,7 +13,7 @@ import { Router } from '@angular/router';
 })
 export class NavMenuComponent implements OnInit {
   isHandset$: Observable<boolean> = this.breakpointObserver
-    .observe(Breakpoints.Small)
+    .observe([Breakpoints.Small, Breakpoints.XSmall])
     .pipe(map(result => result.matches));
 
   constructor(

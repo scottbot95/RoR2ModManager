@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Sidenav switches to 'side' mode in xsmall window sizes
+
 ### Added
 
 - Filter box now has a clear button
