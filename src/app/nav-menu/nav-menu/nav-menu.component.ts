@@ -6,6 +6,8 @@ import { ThemeService } from '../../core/services/theme.service';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 
+import { version } from '../../../../package.json';
+
 @Component({
   selector: 'app-nav-menu',
   templateUrl: './nav-menu.component.html',
@@ -16,6 +18,8 @@ export class NavMenuComponent implements OnInit {
     .observe([Breakpoints.Small, Breakpoints.XSmall])
     .pipe(map(result => result.matches));
 
+  version: string;
+
   constructor(
     private breakpointObserver: BreakpointObserver,
     public theme: ThemeService,
@@ -23,7 +27,9 @@ export class NavMenuComponent implements OnInit {
     public router: Router
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.version = version;
+  }
 
   goBack() {
     this.location.back();
