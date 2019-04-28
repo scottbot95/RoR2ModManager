@@ -7,7 +7,6 @@ import {
   PackageList,
   deserializablePackageList
 } from '../models/package.model';
-import { ElectronService } from './electron.service';
 
 @Injectable()
 export class ThunderstoreService {
@@ -18,7 +17,7 @@ export class ThunderstoreService {
     .asObservable()
     .pipe(distinctUntilChanged()); // prevents update spam
 
-  constructor(private http: HttpClient, private electron: ElectronService) {}
+  constructor(private http: HttpClient) {}
 
   public loadAllPackages(): Observable<PackageList> {
     // clear obseravble to indicate loading status

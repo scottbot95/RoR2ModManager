@@ -4,7 +4,7 @@ import {
   PackageChangeset
 } from '../../core/services/package.service';
 import { Observable } from 'rxjs';
-import { Package, PackageList } from '../../core/models/package.model';
+import { PackageList } from '../../core/models/package.model';
 import { map, tap } from 'rxjs/operators';
 
 @Component({

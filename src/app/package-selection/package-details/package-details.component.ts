@@ -1,10 +1,6 @@
 import {
   Component,
   OnInit,
-  ChangeDetectionStrategy,
-  Input,
-  Output,
-  EventEmitter,
   OnDestroy
 } from '@angular/core';
 import { Package } from '../../core/models/package.model';

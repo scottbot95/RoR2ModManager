@@ -284,7 +284,7 @@ export class PackageService {
       this.electron.protocol.registerHttpProtocol(scheme, (req, cb) => {
         // format ror2mm://v1/install/thunderstore.io/[author]/[package]/[version]/
         const chunks = req.url.split('/');
-        const protocol = chunks[0];
+        // const protocol = chunks[0];
         const [
           protocolVersion,
           action,
