@@ -28,7 +28,7 @@ script:
 after_success:
   - codecov
 before_deploy:
-  - ./build-docker.sh
+  # - ./build-docker.sh
   - ./bundle.sh
 deploy:
   provider: releases

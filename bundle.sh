@@ -8,8 +8,15 @@ ZIP_FILE="$PACKAGE_NAME-$PACKAGE_VERSION.zip"
 RELEASE_FILE="$PRODUCT_NAME Setup $PACKAGE_VERSION.exe"
 
 pwd
-env
+ls
+echo $UNPACKED_DIR
+echo $PACKAGE_NAME
+echo $PACKAGE_VERSION
+echo $PRODUCT_NAME
+echo $ZIP_FILE
+echo $RELEASE_FILE
 exit
+
 
 # Create unpacked dir
 mkdir -p "$UNPACKED_DIR"
