@@ -12,6 +12,15 @@
 
 A simple mod manager for Risk of Rain 2 build using Angular and Electron.
 
+## Features
+
+- Browse all mods available from thunderstore.io
+- Handles the install button on thunderstore.io
+  - Currently it just marks package for install
+- Install and uninstall selected mods
+  - Also installs all necessary dependencies
+- Update mods (should work but has yet to be tested)
+
 # For Users
 
 ## Getting Started
@@ -26,7 +35,7 @@ installing your selected mods shortly. (I'm working on a progross screen)
 
 ## To build for development
 
-- **in a terminal window** -> npm start
+- **in a terminal window** -> yarn start
 
 Voila! You can use your Angular + Electron app in a local development environment with hot reload !
 
@@ -46,15 +55,6 @@ The Angular component contains an example of Electron and NodeJS native lib impo
 | `yarn electron:mac`     | On a MAC OS, builds your application and generates a `.app` file of your application that can be run on Mac |
 
 **Your application is optimised. Only /dist folder and node dependencies are included in the executable.**
-
-## You want to use a specific lib (like rxjs) in electron main thread ?
-
-You can do this! Just by importing your library in npm dependencies (not devDependencies) with `npm install --save`. It will be loaded by electron during build phase and added to the final package. Then use your library by importing it in `main.ts` file. Easy no ?
-
-## Browser mode
-
-Maybe you want to execute the application in the browser with hot reload ? You can do it with `yarn ng:serve:web`.
-Note that you can't use Electron or NodeJS native libraries in this case. Please check `providers/electron.service.ts` to watch how conditional import of electron/Native libraries is done.
 
 [build-badge]: https://travis-ci.org/scottbot95/RoR2ModManager.svg?branch=master
 [build]: https://travis-ci.org/scottbot95/RoR2ModManager
