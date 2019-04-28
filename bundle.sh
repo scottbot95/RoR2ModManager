@@ -7,6 +7,10 @@ PRODUCT_NAME=$(jq -r '.productName' electron-builder.json)
 ZIP_FILE="$PACKAGE_NAME-$PACKAGE_VERSION.zip"
 RELEASE_FILE="$PRODUCT_NAME Setup $PACKAGE_VERSION.exe"
 
+pwd
+env
+exit
+
 # Create unpacked dir
 mkdir -p "$UNPACKED_DIR"
 # create manifest.json

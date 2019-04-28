@@ -23,8 +23,8 @@ before_script:
   - export DISPLAY=:99.0
 script:
   - ng lint
-  - yarn test:ci
-  - yarn e2e:ci
+  # - yarn test:ci
+  # - yarn e2e:ci
 after_success:
   - codecov
 before_deploy:
