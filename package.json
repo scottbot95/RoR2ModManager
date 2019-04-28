@@ -1,7 +1,7 @@
 {
   "name": "ror2-mod-manager",
   "version": "0.2.0",
-  "description": "Mod Manager for Risk of Rain 2 using thunderstore.io",
+  "description": "A simple mod manager built using electron. Currently only supports BepInEx mods",
   "homepage": "https://github.com/scottbot95/RoR2ModManager",
   "repository": {
     "url": "https://github.com/scottbot95/RoR2ModManager"

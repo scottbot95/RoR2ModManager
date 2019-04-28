@@ -14,11 +14,13 @@ services:
 addons:
   chrome: stable
 
-before_script:
-  - export DISPLAY=:99.0
+before_install:
+  - sudo apt-get install jq
 install:
   - yarn
   - yarn global add codecov
+before_script:
+  - export DISPLAY=:99.0
 script:
   - ng lint
   - yarn test:ci
@@ -27,6 +29,7 @@ after_success:
   - codecov
 before_deploy:
   - ./build-docker.sh
+  - ./bundle.sh
 deploy:
   provider: releases
   draft: true
@@ -39,6 +42,7 @@ deploy:
   file:
     - release/*.exe
     - release/*.AppImage
+    - release/*.zip
   on:
     tags: true
     repo: scottbot95/RoR2ModManager
