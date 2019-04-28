@@ -5,5 +5,8 @@
     fxFlex
   ></app-package-table>
 
-  <app-package-details fxFlex></app-package-details>
+  <app-package-details
+    *ngIf="selectedPackage | async"
+    fxFlex
+  ></app-package-details>
 </div>

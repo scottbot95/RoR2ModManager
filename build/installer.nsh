@@ -10,7 +10,11 @@ Page custom RoR2InstallDirSelect LeaveCallback
 
 Function RoR2InstallDirSelect
 
-  StrCpy $DirText "C:\Program Files(x86)\Steam\steamapps\common\Risk of Rain 2"
+  ReadRegStr $DirText HKLM "Software\${PRODUCT_NAME}" "RoR2Dir"
+  ${If} $DirText == ""
+    StrCpy $DirText "C:\Program Files(x86)\Steam\steamapps\common\Risk of Rain 2"
+  ${EndIf}
+
 
   nsDialogs::Create 1018
   Pop $Dialog
@@ -51,7 +55,7 @@ Function LeaveCallback
   ${NSD_GetText} $RoR2Dir $DirText
   ${If} ${FileExists} "$DirText\Risk of Rain 2.exe"
 
-    WriteRegStr HKCU "Software\${PRODUCT_NAME}" "RoR2Dir" $DirText
+    WriteRegStr HKLM "Software\${PRODUCT_NAME}" "RoR2Dir" $DirText
   ${Else}
     MessageBox MB_OK|MB_ICONEXCLAMATION "Selected folder must contain 'Risk of Rain 2.exe'"
     Abort
@@ -60,3 +64,14 @@ FunctionEnd
 
 Section
 SectionEnd
+
+!macro customInstall
+  DetailPrint "Register ror2mm URI handler"
+  DeleteRegKey HKCR "ror2mm"
+  WriteRegStr HKCR "ror2mm" "" "URL:ror2mm"
+  WriteRegStr HKCR "ror2mm" "Url Protocol" ""
+  WriteRegStr HKCR "ror2mm\DefaultIcon" "" "$INSTDIR\${APP_EXECUTABLE_FILENAME}"
+  WriteRegStr HKCR "ror2mm\shell" "" ""
+  WriteRegStr HKCR "ror2mm\shell\Open" "" ""
+  WriteRegStr HKCR "ror2mm\shell\Open\command" "" "$INSTDIR\${APP_EXECUTABLE_FILENAME} %1"
+!macroend

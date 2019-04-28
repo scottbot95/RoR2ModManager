@@ -1,10 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   PackageService,
   PackageChangeset
 } from '../../core/services/package.service';
 import { Observable } from 'rxjs';
-import { PackageList } from '../../core/models/package.model';
+import { PackageList, Package } from '../../core/models/package.model';
 import { map, tap } from 'rxjs/operators';
 
 @Component({
@@ -15,7 +15,7 @@ import { map, tap } from 'rxjs/operators';
     style: 'display:flex;flex-direction:column;flex-grow:1;'
   }
 })
-export class PackagesPageComponent {
+export class PackagesPageComponent implements OnInit {
   installedPackages$: Observable<
     PackageList
   > = this.service.installedPackages$.pipe(
@@ -23,7 +23,13 @@ export class PackagesPageComponent {
     map(pkgs => pkgs.map(pkg => pkg.installedVersion.pkg))
   );
 
+  selectedPackage: Observable<Package>;
+
   constructor(private service: PackageService) {}
+
+  ngOnInit() {
+    this.selectedPackage = this.service.selectedPackage;
+  }
 
   applyChanges = (changes: PackageChangeset) => {
     // install new packages
