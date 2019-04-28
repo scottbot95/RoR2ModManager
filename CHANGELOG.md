@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.1] 2019-04-28
+
+### Fixed
+
+- Properly register URI handler on windows
+- Installer remembers Risk of Rain 2 install path
+- Package table is full width until a package is selected for details
+
 ## [0.3.0] 2019-04-28
 
 ### Added
@@ -39,6 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial alpha release
 
 [unreleased]: https://github.com/scottbot95/RoR2ModManager/compare/v0.1.0...HEAD
+[0.3.1]: https://github.com/scottbot95/RoR2ModManager/compare/v0.2.0...v0.3.1
 [0.3.0]: https://github.com/scottbot95/RoR2ModManager/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/scottbot95/RoR2ModManager/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/scottbot95/RoR2ModManager/compare/v0.1.0...v0.1.1
