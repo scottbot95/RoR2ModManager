@@ -29,7 +29,7 @@ after_success:
   - codecov
 before_deploy:
   - ./build-docker.sh
-  - ./bundle.sh
+  - sudo ./bundle.sh
 deploy:
   provider: releases
   draft: true
