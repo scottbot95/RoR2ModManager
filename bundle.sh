@@ -13,11 +13,11 @@ mkdir -p "$UNPACKED_DIR"
 jq '{name:"RoR2ModManager", version_number:.version, website_url:.homepage, description:.description, dependencies:[]}' package.json > "$UNPACKED_DIR/manifest.json"
 cd $UNPACKED_DIR
 # link rest of files
-ln ../$RELEASE_FILE
-ln ../src/favicon.256x256.png icon.png
+rm "$RELEASE_FILE" && ln "../$RELEASE_FILE"
+rm icon.png && ln "../../src/favicon.256x256.png" icon.png
 # link readme if it doesn't exist already
-if [! -f README.md]; then
-  ln ../README.md
+if [ ! -f README.md ]; then
+  ln ../../README.md
 fi
 zip -r $ZIP_FILE .
 
