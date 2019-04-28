@@ -28,8 +28,8 @@ script:
 after_success:
   - codecov
 before_deploy:
-  # - ./build-docker.sh
-  - ./bundle.sh
+  - ./build-docker.sh
+  - sudo ./bundle.sh
 deploy:
   provider: releases
   draft: true
