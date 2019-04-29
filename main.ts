@@ -7,6 +7,7 @@ import { register } from 'electron-download-manager';
 import { UserPreferences } from './electron/preferences.model';
 import { prefs } from './electron/prefs';
 import { name, protocols } from './package.json';
+import { configureApplicationMenu } from './electron/menu';
 
 const server = 'https://hazel.scottbot95.now.sh';
 const feed = `${server}/update/${process.platform}/${app.getVersion()}`;
@@ -126,6 +127,8 @@ try {
         }
       }
     });
+
+    configureApplicationMenu();
 
     // This method will be called when Electron has finished
     // initialization and is ready to create browser windows.
