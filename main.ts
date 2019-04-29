@@ -33,14 +33,7 @@ regKey.get('RoR2Dir', (err, result) => {
     // save it to prefs
     prefs.set('ror2_path', result.value);
 
-    // remove it from registry as we'll use the pref from here on out
-    regKey.destroy(err2 => {
-      if (err2) {
-        console.error(
-          `Failed to remove registry key ${regKey.hive}${regKey.key}`
-        );
-      }
-    });
+    // leave it in registry in case we reinstall
   }
 });
 
