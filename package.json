@@ -6,6 +6,9 @@
   "repository": {
     "url": "https://github.com/scottbot95/RoR2ModManager"
   },
+  "bugs": {
+    "url": "https://github.com/scottbot95/RoR2ModManager/issues/new"
+  },
   "author": {
     "name": "Scott Techau",
     "email": "scotttechau@gmail.com"
@@ -120,6 +123,7 @@
     "zone.js": "0.8.29"
   },
   "dependencies": {
+    "about-window": "^1.12.1",
     "electron-download-manager": "^2.3.0",
     "electron-store": "^3.2.0",
     "fs-extra": "^7.0.1",
