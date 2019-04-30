@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { PreferencesPageComponent } from './main/preferences-page/preferences-page.component';
 
 const routes: Routes = [
   {

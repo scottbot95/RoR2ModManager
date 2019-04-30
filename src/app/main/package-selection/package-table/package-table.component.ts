@@ -7,7 +7,7 @@ import {
   OnInit
 } from '@angular/core';
 import { MatPaginator, MatSort } from '@angular/material';
-import { Subscription, Observable, TeardownLogic } from 'rxjs';
+import { Subscription, Observable } from 'rxjs';
 import { delay } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
 import {

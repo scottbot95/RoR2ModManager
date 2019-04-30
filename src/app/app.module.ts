@@ -14,10 +14,7 @@ import { MarkdownModule } from 'ngx-markdown';
 
 import { AppComponent } from './app.component';
 import { CoreModule } from './core/core.module';
-import { NavMenuModule } from './main/nav-menu/nav-menu.module';
 import { SharedModule } from './shared/shared.module';
-import { PreferencesPageComponent } from './main/preferences-page/preferences-page.component';
-import { PackageSelectionModule } from './main/package-selection/package-selection.module';
 import { ProfileModule } from './profile/profile.module';
 
 // AoT requires an exported function for factories

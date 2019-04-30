@@ -1,5 +1,4 @@
 import { ipcMain, BrowserWindow, screen } from 'electron';
-import * as url from 'url';
 import { createBrowserWindow } from './windows';
 
 export const registerIpcListeners = () => {
@@ -13,7 +12,7 @@ export const registerIpcListeners = () => {
       const display = screen.getPrimaryDisplay();
       const width = 400;
       const height = 600;
-      const dialog = createBrowserWindow(
+      createBrowserWindow(
         {
           parent: win,
           x: (display.bounds.width - width) / 2,

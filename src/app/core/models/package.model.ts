@@ -75,6 +75,14 @@ export type SerializedPackageVersionList = SerializedPackageVersion[];
 export type PackageList = Package[];
 export type PackageVersionList = PackageVersion[];
 
+export const parseDependencyString = (str: string) => {
+  const chunks = str.split('-');
+  const owner = chunks.slice(0, chunks.length - 2).join('-');
+  const name = chunks[chunks.length - 2];
+  const versionNumber = chunks[chunks.length - 1];
+  return { owner, name, versionNumber };
+};
+
 export const deserializablePackageList = (
   serializedPackages: SerializedPackageList
 ): PackageList => {
@@ -131,12 +139,14 @@ export const deserializablePackageList = (
       ver.pkg = pkg;
       serializedPackages[pkgIdx].versions[verIdx].dependencies.forEach(
         depString => {
-          const [owner, name, versionString] = depString.split('-');
+          const { owner, name, versionNumber } = parseDependencyString(
+            depString
+          );
           const depPkg = packages.find(
             p => p.owner === owner && p.name === name
           );
           const depVer = depPkg.versions.find(v =>
-            satisfies(v.version, `~${versionString}`)
+            satisfies(v.version, `~${versionNumber}`)
           );
 
           ver.dependencies.push(depVer);

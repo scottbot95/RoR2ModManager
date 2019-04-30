@@ -3,7 +3,8 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import {
   PackageVersion,
   Package,
-  deserializablePackageList
+  deserializablePackageList,
+  parseDependencyString
 } from '../models/package.model';
 import { DownloadService } from './download.service';
 import { ElectronService } from './electron.service';
@@ -250,7 +251,7 @@ export class PackageService {
       err.name = 'PackageSourceEmptyError';
       throw err;
     }
-    const [owner, name, versionNumber] = depString.split('-');
+    const { name, owner, versionNumber } = parseDependencyString(depString);
     const foundPkg = this.allPackagesSource.value.find(
       pkg => pkg.owner === owner && pkg.name === name
     );

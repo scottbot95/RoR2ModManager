@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 
-import { PackageSelectionRoutingModule } from './packages-selection-routing.module';
 import { SharedModule } from '../../shared/shared.module';
 import { PackageTableComponent } from './package-table/package-table.component';
 import { PackagesPageComponent } from './packages-page/packages-page.component';

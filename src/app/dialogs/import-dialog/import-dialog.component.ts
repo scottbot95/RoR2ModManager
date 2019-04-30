@@ -2,8 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ElectronService } from '../../core/services/electron.service';
 import { PackageVersionList } from '../../core/models/package.model';
 import {
-  PackageService,
-  PackageChangeset
+  PackageService
 } from '../../core/services/package.service';
 import { PROFILE_EXTENSIONS } from '../../profile/constants';
 import { PackageProfile } from '../../core/models/profile.model';
@@ -15,7 +14,7 @@ import { PackageProfile } from '../../core/models/profile.model';
 })
 export class ImportDialogComponent implements OnInit {
   packages: PackageVersionList;
-  errors: string[];
+  errors: string[] = [];
 
   private profile: PackageProfile;
 
@@ -35,23 +34,31 @@ export class ImportDialogComponent implements OnInit {
         if (files) {
           const [path] = files;
           try {
+            this.errors = [];
             const profile: PackageProfile = await this.electron.fs.readJson(
               path
             );
-            this.packages = profile.map(dep =>
-              this.service.findPackageFromDependencyString(dep)
-            );
+            this.packages = profile
+              .map(dep => {
+                try {
+                  return this.service.findPackageFromDependencyString(dep);
+                } catch (err) {
+                  if (
+                    err.name === 'PackageSourceEmptyError' ||
+                    err.name === 'PackageNotFoundError'
+                  ) {
+                    this.errors.push(err.message);
+                  }
+                }
+              })
+              .filter(p => p); // prune falsy elements
             this.profile = profile;
-            this.errors = null;
+
             console.log('Loaded valid profile file', this.packages);
           } catch (err) {
             switch (err.name) {
               case 'SyntaxError':
                 this.errors = ['Cannot parse profile file'];
-                break;
-              case 'PackageSourceEmptyError':
-              case 'PackageNotFoundError':
-                this.errors = [err.message];
                 break;
             }
             this.errors = [err.message || err];
