@@ -50,6 +50,8 @@ export class MockThemeService {
 export class MockPackageService {
   installedPackages$ = new BehaviorSubject<PackageList>([]);
 
+  allPackages$ = new BehaviorSubject<PackageList>([]);
+
   selection = new SelectionModel<SelectablePackge>();
   selectedPackage = new BehaviorSubject<Package>(undefined);
 
@@ -105,4 +107,12 @@ export class MockThunderstoreService {
   loadAllPackages(): Observable<PackageList> {
     return this.allPackages$;
   }
+}
+
+export class MockProfileService {
+  registerMenuHandlers() {}
+}
+
+export class MockMatDialog {
+  open() {}
 }

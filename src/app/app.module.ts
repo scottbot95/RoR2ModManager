@@ -18,6 +18,7 @@ import { NavMenuModule } from './nav-menu/nav-menu.module';
 import { SharedModule } from './shared/shared.module';
 import { PreferencesPageComponent } from './preferences-page/preferences-page.component';
 import { PackageSelectionModule } from './package-selection/package-selection.module';
+import { ProfileModule } from './profile/profile.module';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -41,7 +42,8 @@ export function HttpLoaderFactory(http: HttpClient) {
         useFactory: HttpLoaderFactory,
         deps: [HttpClient]
       }
-    })
+    }),
+    ProfileModule
   ],
   bootstrap: [AppComponent]
 })

@@ -24,6 +24,7 @@ export class ThemeService {
     private prefs: PreferencesService
   ) {
     const { classList } = this.overlay.getContainerElement();
+    classList.add('mat-typography');
 
     this.isDarkMode$.subscribe(isDarkMode => {
       // doing it this way so adding more themes later should be easier
