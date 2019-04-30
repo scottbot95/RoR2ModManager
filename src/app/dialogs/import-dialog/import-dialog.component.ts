@@ -69,6 +69,10 @@ export class ImportDialogComponent implements OnInit {
     if (this.profile) {
       await this.service.installProfile(this.profile, true);
     }
+    this.electron.ipcRenderer.sendTo(
+      this.electron.remote.getCurrentWindow().getParentWindow().webContents.id,
+      'refreshPackages'
+    );
     this.electron.remote
       .getCurrentWindow()
       .getParentWindow()
