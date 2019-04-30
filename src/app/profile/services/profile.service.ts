@@ -31,7 +31,7 @@ export class ProfileService {
   }
 
   public showImportDialog() {
-    this.electron.ipcRenderer.send('openDialog', 'importProfile');
+    this.electron.ipcRenderer.send('openDialog', 'importProfile', true);
   }
 
   public showExportDialog() {

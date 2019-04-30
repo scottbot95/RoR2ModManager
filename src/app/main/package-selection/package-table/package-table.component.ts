@@ -19,13 +19,13 @@ import {
   PackageList,
   PackageVersion,
   PackageVersionList
-} from '../../core/models/package.model';
+} from '../../../core/models/package.model';
 import {
   PackageChangeset,
   PackageService,
   SelectablePackge
-} from '../../core/services/package.service';
-import { PreferencesService } from '../../core/services/preferences.service';
+} from '../../../core/services/package.service';
+import { PreferencesService } from '../../../core/services/preferences.service';
 import { SelectionModel } from '@angular/cdk/collections';
 
 @Component({

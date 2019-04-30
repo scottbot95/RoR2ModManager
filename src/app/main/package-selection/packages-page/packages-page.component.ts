@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import {
   PackageService,
   PackageChangeset
-} from '../../core/services/package.service';
+} from '../../../core/services/package.service';
 import { Observable } from 'rxjs';
-import { PackageList, Package } from '../../core/models/package.model';
+import { PackageList, Package } from '../../../core/models/package.model';
 import { map, tap } from 'rxjs/operators';
 
 @Component({

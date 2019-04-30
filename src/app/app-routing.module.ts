@@ -1,17 +1,11 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { PreferencesPageComponent } from './preferences-page/preferences-page.component';
+import { PreferencesPageComponent } from './main/preferences-page/preferences-page.component';
 
 const routes: Routes = [
   {
     path: '',
-    pathMatch: 'full',
-    redirectTo: 'packages'
-  },
-  {
-    path: 'preferences',
-    pathMatch: 'full',
-    component: PreferencesPageComponent
+    loadChildren: './main/main.module#MainModule'
   },
   {
     path: 'dialogs',

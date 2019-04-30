@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { PreferencesService } from '../core/services/preferences.service';
+import { PreferencesService } from '../../core/services/preferences.service';
 import { FormBuilder } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { ElectronService } from '../core/services/electron.service';
+import { ElectronService } from '../../core/services/electron.service';
 
 @Component({
   selector: 'app-preferences-page',

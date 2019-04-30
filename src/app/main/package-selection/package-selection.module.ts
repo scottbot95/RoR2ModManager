@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 
 import { PackageSelectionRoutingModule } from './packages-selection-routing.module';
-import { SharedModule } from '../shared/shared.module';
+import { SharedModule } from '../../shared/shared.module';
 import { PackageTableComponent } from './package-table/package-table.component';
 import { PackagesPageComponent } from './packages-page/packages-page.component';
 import {
@@ -19,7 +19,6 @@ import { MarkdownModule } from 'ngx-markdown';
     PackageDetailsComponent
   ],
   imports: [
-    PackageSelectionRoutingModule,
     SharedModule,
     MarkdownModule.forChild(),
     MatSortModule,

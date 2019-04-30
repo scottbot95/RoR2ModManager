@@ -2,11 +2,11 @@ import { LayoutModule } from '@angular/cdk/layout';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { NavMenuComponent } from './nav-menu.component';
-import { MaterialModule } from '../../shared/material.module';
+import { MaterialModule } from '../../../shared/material.module';
 import { MatToolbarModule, MatSidenavModule } from '@angular/material';
-import { ThemeService } from '../../core/services/theme.service';
+import { ThemeService } from '../../../core/services/theme.service';
 import { RouterTestingModule } from '@angular/router/testing';
-import { MockThemeService } from '../../core/services/mocks';
+import { MockThemeService } from '../../../core/services/mocks';
 
 describe('NavMenuComponent', () => {
   let component: NavMenuComponent;

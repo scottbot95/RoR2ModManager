@@ -14,10 +14,10 @@ import { MarkdownModule } from 'ngx-markdown';
 
 import { AppComponent } from './app.component';
 import { CoreModule } from './core/core.module';
-import { NavMenuModule } from './nav-menu/nav-menu.module';
+import { NavMenuModule } from './main/nav-menu/nav-menu.module';
 import { SharedModule } from './shared/shared.module';
-import { PreferencesPageComponent } from './preferences-page/preferences-page.component';
-import { PackageSelectionModule } from './package-selection/package-selection.module';
+import { PreferencesPageComponent } from './main/preferences-page/preferences-page.component';
+import { PackageSelectionModule } from './main/package-selection/package-selection.module';
 import { ProfileModule } from './profile/profile.module';
 
 // AoT requires an exported function for factories
@@ -26,15 +26,13 @@ export function HttpLoaderFactory(http: HttpClient) {
 }
 
 @NgModule({
-  declarations: [AppComponent, PreferencesPageComponent],
+  declarations: [AppComponent],
   imports: [
     BrowserAnimationsModule,
     CoreModule,
     SharedModule,
     AppRoutingModule,
     HttpClientModule,
-    NavMenuModule,
-    PackageSelectionModule,
     MarkdownModule.forRoot(),
     TranslateModule.forRoot({
       loader: {
