@@ -17,6 +17,7 @@ import { Selectable } from '../models/selectable.model';
 export interface SelectablePackge extends Selectable, Package {}
 
 import { protocols } from '../../../../package.json';
+import { PackageProfile } from '../models/profile.model';
 
 export interface PackageChangeset {
   updated: Set<PackageVersion>;
@@ -214,7 +215,28 @@ export class PackageService {
     );
 
     // install new packages
-    changeset.updated.forEach(toInstall => this.installPackage(toInstall));
+    await Promise.all(
+      Array.from(changeset.updated).map(toInstall =>
+        this.installPackage(toInstall)
+      )
+    );
+  }
+
+  public installProfile(
+    profile: PackageProfile,
+    cleanInstall = false
+  ): Promise<void> {
+    let removed: Set<Package> = new Set<Package>();
+    if (cleanInstall) {
+      removed = new Set<Package>(
+        this.allPackagesSource.value.filter(pkg => pkg.installedVersion)
+      );
+    }
+    const updated = new Set<PackageVersion>(
+      profile.map(str => this.findPackageFromDependencyString(str))
+    );
+
+    return this.applyChanges({ removed, updated });
   }
 
   public findPackageFromDependencyString(
@@ -224,16 +246,28 @@ export class PackageService {
       !Array.isArray(this.allPackagesSource.value) ||
       this.allPackagesSource.value.length === 0
     ) {
-      return;
+      const err = new Error('No packages loaded yet. Try again later');
+      err.name = 'PackageSourceEmptyError';
+      throw err;
     }
     const [owner, name, versionNumber] = depString.split('-');
     const foundPkg = this.allPackagesSource.value.find(
       pkg => pkg.owner === owner && pkg.name === name
     );
-    if (!foundPkg) return;
+    if (!foundPkg) {
+      const err = new Error(`Could not find package for ${depString}`);
+      err.name = 'PackageNotFoundError';
+      throw err;
+    }
     const foundVersion = foundPkg.versions.find(
       ver => ver.version.version === versionNumber
     );
+
+    if (!foundVersion) {
+      const err = new Error(`Could not find package version for ${depString}`);
+      err.name = 'PackageNotFoundError';
+      throw err;
+    }
     return foundVersion;
   }
 

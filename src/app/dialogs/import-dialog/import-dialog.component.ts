@@ -1,8 +1,12 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ElectronService } from '../../core/services/electron.service';
 import { PackageVersionList } from '../../core/models/package.model';
-import { PackageService } from '../../core/services/package.service';
+import {
+  PackageService,
+  PackageChangeset
+} from '../../core/services/package.service';
 import { PROFILE_EXTENSIONS } from '../../profile/constants';
+import { PackageProfile } from '../../core/models/profile.model';
 
 @Component({
   selector: 'app-import-dialog',
@@ -12,6 +16,8 @@ import { PROFILE_EXTENSIONS } from '../../profile/constants';
 export class ImportDialogComponent implements OnInit {
   packages: PackageVersionList;
   errors: string[];
+
+  private profile: PackageProfile;
 
   constructor(
     private electron: ElectronService,
@@ -29,15 +35,28 @@ export class ImportDialogComponent implements OnInit {
         if (files) {
           const [path] = files;
           try {
-            const depStrings: string[] = await this.electron.fs.readJson(path);
-            this.packages = depStrings.map(dep =>
+            const profile: PackageProfile = await this.electron.fs.readJson(
+              path
+            );
+            this.packages = profile.map(dep =>
               this.service.findPackageFromDependencyString(dep)
             );
+            this.profile = profile;
+            this.errors = null;
             console.log('Loaded valid profile file', this.packages);
           } catch (err) {
-            console.warn(err);
+            switch (err.name) {
+              case 'SyntaxError':
+                this.errors = ['Cannot parse profile file'];
+                break;
+              case 'PackageSourceEmptyError':
+              case 'PackageNotFoundError':
+                this.errors = [err.message];
+                break;
+            }
             this.errors = [err.message || err];
             this.packages = undefined;
+            this.profile = [];
           } finally {
             this.changeDetector.detectChanges();
           }
@@ -46,7 +65,10 @@ export class ImportDialogComponent implements OnInit {
     );
   }
 
-  handleClose() {
+  async handleClose() {
+    if (this.profile) {
+      await this.service.installProfile(this.profile, true);
+    }
     this.electron.remote
       .getCurrentWindow()
       .getParentWindow()

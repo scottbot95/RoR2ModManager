@@ -9,11 +9,11 @@
       <mat-divider *ngIf="isLast"></mat-divider>
     </mat-list>
     <div *ngIf="errors">
-      <p color="error" *ngFor="let error of errors">{{ error }}</p>
+      <mat-error *ngFor="let error of errors">{{ error }}</mat-error>
     </div>
   </mat-dialog-content>
   <mat-dialog-actions>
-    <button mat-button (click)="handleClose()">Close</button>
+    <button mat-button (click)="handleClose()">Apply</button>
   </mat-dialog-actions>
   <div></div>
 </div>

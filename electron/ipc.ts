@@ -21,7 +21,9 @@ export const registerIpcListeners = () => {
           width,
           height,
           modal,
-          autoHideMenuBar: true
+          autoHideMenuBar: true,
+          minimizable: false,
+          maximizable: false
         },
         `/dialogs/${dialogSlug}`
       );
