@@ -8,6 +8,8 @@ import { UserPreferences } from './electron/preferences.model';
 import { prefs } from './electron/prefs';
 import { name, protocols } from './package.json';
 import { configureApplicationMenu } from './electron/menu';
+import { registerIpcListeners } from './electron/ipc';
+import { createBrowserWindow } from './electron/windows';
 
 const server = 'https://hazel.scottbot95.now.sh';
 const feed = `${server}/update/${process.platform}/${app.getVersion()}`;
@@ -17,6 +19,8 @@ autoUpdater.setFeedURL({ url: feed });
 register({
   downloadFolder: path.join(app.getPath('userData'), 'downloadCache')
 });
+
+registerIpcListeners();
 
 let win: BrowserWindow, serve: boolean;
 const args = process.argv.slice(1);
@@ -48,16 +52,11 @@ function createWindow() {
   );
 
   // Create the browser window.
-  win = new BrowserWindow({
+  win = createBrowserWindow({
     x,
     y,
     width,
-    height,
-    webPreferences: {
-      nodeIntegration: true,
-      webSecurity: false,
-      allowRunningInsecureContent: false
-    }
+    height
   });
 
   if (prefs.get('windowMaximized')) {
@@ -89,15 +88,6 @@ function createWindow() {
       electron: require(path.join(__dirname, 'node_modules', 'electron')),
       argv: ['--serve']
     });
-    win.loadURL('http://localhost:4200');
-  } else {
-    win.loadURL(
-      formatUrl({
-        pathname: path.join(__dirname, 'dist/index.html'),
-        protocol: 'file:',
-        slashes: true
-      })
-    );
   }
 
   if (serve) {

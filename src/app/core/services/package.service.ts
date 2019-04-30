@@ -217,6 +217,26 @@ export class PackageService {
     changeset.updated.forEach(toInstall => this.installPackage(toInstall));
   }
 
+  public findPackageFromDependencyString(
+    depString: string
+  ): PackageVersion | undefined {
+    if (
+      !Array.isArray(this.allPackagesSource.value) ||
+      this.allPackagesSource.value.length === 0
+    ) {
+      return;
+    }
+    const [owner, name, versionNumber] = depString.split('-');
+    const foundPkg = this.allPackagesSource.value.find(
+      pkg => pkg.owner === owner && pkg.name === name
+    );
+    if (!foundPkg) return;
+    const foundVersion = foundPkg.versions.find(
+      ver => ver.version.version === versionNumber
+    );
+    return foundVersion;
+  }
+
   private extractZip(fileStream: ReadStream, path: string): Promise<void> {
     return fileStream.pipe(this.electron.unzipper.Extract({ path })).promise();
   }

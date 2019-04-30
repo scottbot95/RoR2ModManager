@@ -7,6 +7,7 @@ import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 
 import { version } from '../../../../package.json';
+import { AppConfig } from '../../../environments/environment';
 
 @Component({
   selector: 'app-nav-menu',
@@ -28,7 +29,10 @@ export class NavMenuComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.version = version;
+    this.version = AppConfig.production
+      ? version
+      : `${version}-${AppConfig.environment}`;
+    console.log(window.location);
   }
 
   goBack() {

@@ -112,7 +112,3 @@ export class MockThunderstoreService {
 export class MockProfileService {
   registerMenuHandlers() {}
 }
-
-export class MockMatDialog {
-  open() {}
-}

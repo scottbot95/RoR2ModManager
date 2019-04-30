@@ -1,0 +1,16 @@
+<h1>Import Package Profile</h1>
+<div>
+  <button mat-raised-button (click)="showOpenDialog()">Browse</button>
+  <mat-list dense *ngIf="packages">
+    <mat-list-item *ngFor="let pkg of packages; last as isLast">
+      {{ pkg?.name || 'foo' }}
+    </mat-list-item>
+    <mat-divider *ngIf="isLast"></mat-divider>
+  </mat-list>
+  <div *ngIf="errors">
+    <p color="error" *ngFor="let error of errors">{{ error }}</p>
+  </div>
+</div>
+<div>
+  <button mat-button (click)="handleClose()">Close</button>
+</div>

@@ -12,6 +12,10 @@ const routes: Routes = [
     path: 'preferences',
     pathMatch: 'full',
     component: PreferencesPageComponent
+  },
+  {
+    path: 'dialogs',
+    loadChildren: './dialogs/dialogs.module#DialogsModule'
   }
 ];
 
