@@ -1,6 +1,9 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { MainComponent } from './main.component';
+import { RouterTestingModule } from '@angular/router/testing';
+import { NavMenuModule } from '../nav-menu/nav-menu.module';
+import { MockNavMenuComponent } from '../../core/services/mocks';
 
 describe('MainComponent', () => {
   let component: MainComponent;
@@ -8,9 +11,9 @@ describe('MainComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ MainComponent ]
-    })
-    .compileComponents();
+      declarations: [MainComponent, MockNavMenuComponent],
+      imports: [RouterTestingModule]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
