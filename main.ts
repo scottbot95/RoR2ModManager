@@ -8,6 +8,7 @@ import { UserPreferences } from './electron/preferences.model';
 import { prefs } from './electron/prefs';
 import { name, protocols } from './package.json';
 import { configureApplicationMenu } from './electron/menu';
+import { registerDownloadManager } from './electron/downloads';
 
 const server = 'https://hazel.scottbot95.now.sh';
 const feed = `${server}/update/${process.platform}/${app.getVersion()}`;
@@ -16,6 +17,10 @@ autoUpdater.setFeedURL({ url: feed });
 
 register({
   downloadFolder: path.join(app.getPath('userData'), 'downloadCache')
+});
+
+registerDownloadManager({
+  downloadPath: path.join(app.getPath('userData'), 'downloadCache')
 });
 
 let win: BrowserWindow, serve: boolean;
