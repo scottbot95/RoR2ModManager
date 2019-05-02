@@ -12,43 +12,47 @@
       <small> by {{ package.owner }} </small>
     </mat-card-title>
     <mat-card-subtitle>
-      {{ package.latestVersion.description }}
+      {{ packageVersion.description }}
     </mat-card-subtitle>
   </mat-card-header>
   <mat-card-content>
     <table class="details">
       <tr>
         <td>Latests Updated:</td>
-        <td>
+        <td align="right">
           {{ package.dateUpdated | date: 'MMM d, y, h:mm a ' }}
+        </td>
+        <td rowspan="3" align="right">
+          <img class="icon" [src]="packageVersion.icon" />
         </td>
       </tr>
       <tr>
         <td>Latest Version:</td>
-        <td>
-          {{ package.latestVersion.version }}
+        <td align="right">
+          {{ packageVersion.version }}
         </td>
       </tr>
       <tr>
         <td>Total Downloads:</td>
-        <td>
+        <td align="right">
           {{ package.totalDownloads }}
         </td>
       </tr>
     </table>
 
-    <mat-card *ngIf="package.latestVersion.readme">
+    <mat-card *ngIf="packageVersion.readme">
       <mat-card-title>README</mat-card-title>
       <mat-card-content>
         <markdown>
-          {{ package.latestVersion.readme }}
+          {{ packageVersion.readme }}
         </markdown>
       </mat-card-content>
     </mat-card>
     <strong>Dependencies:</strong>
-    <mat-list dense>
+    <span *ngIf="packageVersion.dependencies.length === 0"> None </span>
+    <mat-list dense *ngIf="packageVersion.dependencies">
       <ng-container
-        *ngFor="let dep of package.latestVersion.dependencies; last as isLast"
+        *ngFor="let dep of packageVersion.dependencies; last as isLast"
       >
         <mat-list-item>
           <span class="clickable" (click)="showDetails(dep.pkg)">
