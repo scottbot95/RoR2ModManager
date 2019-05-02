@@ -24,10 +24,11 @@ cd $UNPACKED_DIR
 # link rest of files
 rm "$RELEASE_FILE"; ln "../$RELEASE_FILE"
 rm icon.png; ln "../../src/favicon.256x256.png" icon.png
-# link readme if it doesn't exist already
-if [ ! -f README.md ]; then
-  ln ../../README.md
-fi
+
+# Create thunderstore readme
+rm README.md; cp ../../thunderstore/README.md .
+cat ../../CHANGELOG.md >> README.md
+
 zip -r $ZIP_FILE .
 
 mv $ZIP_FILE ..
