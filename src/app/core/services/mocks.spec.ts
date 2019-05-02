@@ -8,6 +8,7 @@ import { map } from 'rxjs/operators';
 import { PackageList, Package, PackageVersion } from '../models/package.model';
 import { SelectionModel } from '@angular/cdk/collections';
 import { SelectablePackge } from './package.service';
+import { Component } from '@angular/core';
 
 export class MockPreferencesService {
   private data: UserPreferences = defaultConfig;
@@ -49,6 +50,8 @@ export class MockThemeService {
 
 export class MockPackageService {
   installedPackages$ = new BehaviorSubject<PackageList>([]);
+
+  allPackages$ = new BehaviorSubject<PackageList>([]);
 
   selection = new SelectionModel<SelectablePackge>();
   selectedPackage = new BehaviorSubject<Package>(undefined);
@@ -106,3 +109,17 @@ export class MockThunderstoreService {
     return this.allPackages$;
   }
 }
+
+export class MockProfileService {
+  registerMenuHandlers() {}
+}
+
+export class MockChangeDetectorRef {
+  detectChanges() {}
+}
+
+@Component({
+  selector: 'app-nav-menu',
+  template: '<ng-content></ng-content>'
+})
+export class MockNavMenuComponent {}

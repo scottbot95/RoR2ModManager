@@ -10,6 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - About page
+- Import/Export package profile menu items
+
+### Changed
+
+- Completely rewrote download manager code, should work much better now
 
 ## [0.3.1] 2019-04-28
 

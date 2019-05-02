@@ -7,7 +7,7 @@ import {
   MockHttpClient,
   MockPreferencesService,
   MockElectronService
-} from './mocks';
+} from './mocks.spec';
 import { DatabaseService } from './database.service';
 import { PreferencesService } from './preferences.service';
 import { ElectronService } from './electron.service';

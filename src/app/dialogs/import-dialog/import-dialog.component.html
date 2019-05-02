@@ -1,0 +1,24 @@
+<div class="mat-dialog-container" fxLayout="column">
+  <h1 mat-dialog-title>Import Package Profile</h1>
+  <mat-dialog-content>
+    <button mat-raised-button (click)="showOpenDialog()">Browse</button>
+    <mat-list dense *ngIf="packages">
+      <mat-list-item *ngFor="let pkg of packages; last as isLast">
+        {{ pkg.name }} <small> {{ pkg.version.version }} </small>
+      </mat-list-item>
+      <mat-divider *ngIf="isLast"></mat-divider>
+    </mat-list>
+    <div *ngIf="errors">
+      <ng-container *ngFor="let error of errors; last as isLast">
+        <mat-error>
+          {{ error }}
+        </mat-error>
+        <br *ngIf="!isLast" />
+      </ng-container>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button (click)="handleClose()">Apply</button>
+  </mat-dialog-actions>
+  <div></div>
+</div>

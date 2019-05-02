@@ -124,7 +124,6 @@
   },
   "dependencies": {
     "about-window": "^1.12.1",
-    "electron-download-manager": "^2.3.0",
     "electron-store": "^3.2.0",
     "fs-extra": "^7.0.1",
     "glob": "^7.1.3",

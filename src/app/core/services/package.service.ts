@@ -3,7 +3,8 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import {
   PackageVersion,
   Package,
-  deserializablePackageList
+  deserializablePackageList,
+  parseDependencyString
 } from '../models/package.model';
 import { DownloadService } from './download.service';
 import { ElectronService } from './electron.service';
@@ -17,6 +18,7 @@ import { Selectable } from '../models/selectable.model';
 export interface SelectablePackge extends Selectable, Package {}
 
 import { protocols } from '../../../../package.json';
+import { PackageProfile } from '../models/profile.model';
 
 export interface PackageChangeset {
   updated: Set<PackageVersion>;
@@ -214,7 +216,60 @@ export class PackageService {
     );
 
     // install new packages
-    changeset.updated.forEach(toInstall => this.installPackage(toInstall));
+    await Promise.all(
+      Array.from(changeset.updated).map(toInstall =>
+        this.installPackage(toInstall)
+      )
+    );
+  }
+
+  public installProfile(
+    profile: PackageProfile,
+    cleanInstall = false
+  ): Promise<void> {
+    let removed: Set<Package> = new Set<Package>();
+    if (cleanInstall) {
+      removed = new Set<Package>(
+        this.allPackagesSource.value.filter(pkg => pkg.installedVersion)
+      );
+    }
+    const updated = new Set<PackageVersion>(
+      profile.map(str => this.findPackageFromDependencyString(str))
+    );
+
+    return this.applyChanges({ removed, updated });
+  }
+
+  public findPackageFromDependencyString(
+    depString: string
+  ): PackageVersion | undefined {
+    if (
+      !Array.isArray(this.allPackagesSource.value) ||
+      this.allPackagesSource.value.length === 0
+    ) {
+      const err = new Error('No packages loaded yet. Try again later');
+      err.name = 'PackageSourceEmptyError';
+      throw err;
+    }
+    const { name, owner, versionNumber } = parseDependencyString(depString);
+    const foundPkg = this.allPackagesSource.value.find(
+      pkg => pkg.owner === owner && pkg.name === name
+    );
+    if (!foundPkg) {
+      const err = new Error(`Could not find package for ${depString}`);
+      err.name = 'PackageNotFoundError';
+      throw err;
+    }
+    const foundVersion = foundPkg.versions.find(
+      ver => ver.version.version === versionNumber
+    );
+
+    if (!foundVersion) {
+      const err = new Error(`Could not find package version for ${depString}`);
+      err.name = 'PackageNotFoundError';
+      throw err;
+    }
+    return foundVersion;
   }
 
   private extractZip(fileStream: ReadStream, path: string): Promise<void> {

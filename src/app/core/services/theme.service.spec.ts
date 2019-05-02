@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { ThemeService } from './theme.service';
 import { PreferencesService } from './preferences.service';
-import { MockPreferencesService } from './mocks';
+import { MockPreferencesService } from './mocks.spec';
 
 describe('ThemeService', () => {
   beforeEach(() =>

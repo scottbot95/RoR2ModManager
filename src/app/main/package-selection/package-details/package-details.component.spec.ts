@@ -1,15 +1,15 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PackageDetailsComponent } from './package-details.component';
-import { MaterialModule } from '../../shared/material.module';
+import { MaterialModule } from '../../../shared/material.module';
 import { Component } from '@angular/core';
-import { HumanizePipe } from '../../shared/humanize.pipe';
-import { PreferencesService } from '../../core/services/preferences.service';
+import { HumanizePipe } from '../../../shared/humanize.pipe';
+import { PreferencesService } from '../../../core/services/preferences.service';
 import {
   MockPreferencesService,
   MockPackageService
-} from '../../core/services/mocks';
-import { PackageService } from '../../core/services/package.service';
+} from '../../../core/services/mocks.spec';
+import { PackageService } from '../../../core/services/package.service';
 
 @Component({
   // tslint:disable-next-line: component-selector

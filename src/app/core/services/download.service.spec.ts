@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { DownloadService } from './download.service';
 import { ElectronService } from './electron.service';
-import { MockElectronService } from './mocks';
+import { MockElectronService } from './mocks.spec';
 
 describe('DownloadService', () => {
   beforeEach(() =>

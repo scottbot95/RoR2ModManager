@@ -2,9 +2,9 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PackagesPageComponent } from './packages-page.component';
 import { Component, Input } from '@angular/core';
-import { Package } from '../../core/models/package.model';
-import { PackageService } from '../../core/services/package.service';
-import { MockPackageService } from '../../core/services/mocks';
+import { Package } from '../../../core/models/package.model';
+import { PackageService } from '../../../core/services/package.service';
+import { MockPackageService } from '../../../core/services/mocks.spec';
 
 @Component({
   selector: 'app-package-table',

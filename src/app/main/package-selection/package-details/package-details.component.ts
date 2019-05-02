@@ -1,12 +1,8 @@
-import {
-  Component,
-  OnInit,
-  OnDestroy
-} from '@angular/core';
-import { Package } from '../../core/models/package.model';
-import { PreferencesService } from '../../core/services/preferences.service';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Package } from '../../../core/models/package.model';
+import { PreferencesService } from '../../../core/services/preferences.service';
 import { Subscription } from 'rxjs';
-import { PackageService } from '../../core/services/package.service';
+import { PackageService } from '../../../core/services/package.service';
 
 @Component({
   selector: 'app-package-details',

@@ -19,14 +19,15 @@ import {
   PackageList,
   PackageVersion,
   PackageVersionList
-} from '../../core/models/package.model';
+} from '../../../core/models/package.model';
 import {
   PackageChangeset,
   PackageService,
   SelectablePackge
-} from '../../core/services/package.service';
-import { PreferencesService } from '../../core/services/preferences.service';
+} from '../../../core/services/package.service';
+import { PreferencesService } from '../../../core/services/preferences.service';
 import { SelectionModel } from '@angular/cdk/collections';
+import { ElectronService } from '../../../core/services/electron.service';
 
 @Component({
   selector: 'app-package-table',
@@ -60,11 +61,22 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     public packages: PackageService,
-    private prefs: PreferencesService
+    private prefs: PreferencesService,
+    private electron: ElectronService
   ) {}
 
   ngOnInit() {
     this.selection = this.packages.selection;
+
+    // this.subscription.add(1)
+    this.refreshPackages = this.refreshPackages.bind(this);
+    this.electron.ipcRenderer.on('refreshPackages', this.refreshPackages);
+    this.subscription.add(() => {
+      this.electron.ipcRenderer.removeListener(
+        'refreshPackages',
+        this.refreshPackages
+      );
+    });
 
     this.subscription.add(
       this.prefs.onChange('humanizePackageNames').subscribe(shouldHumanize => {

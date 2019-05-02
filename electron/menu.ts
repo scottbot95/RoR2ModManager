@@ -1,4 +1,4 @@
-import { Menu } from 'electron';
+import { Menu, BrowserWindow } from 'electron';
 import openAboutWindow from 'about-window';
 import * as path from 'path';
 
@@ -18,6 +18,21 @@ const template: Electron.MenuItemConstructorOptions[] = [
       { role: 'zoomout' },
       { type: 'separator' },
       { role: 'togglefullscreen' }
+    ]
+  },
+  {
+    label: 'Profile',
+    submenu: [
+      {
+        label: 'Import',
+        click: () =>
+          BrowserWindow.getFocusedWindow().webContents.send('importProfile')
+      },
+      {
+        label: 'Export',
+        click: () =>
+          BrowserWindow.getFocusedWindow().webContents.send('exportProfile')
+      }
     ]
   },
   {

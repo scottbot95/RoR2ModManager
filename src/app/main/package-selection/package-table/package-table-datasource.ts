@@ -9,11 +9,11 @@ import {
   Subject
 } from 'rxjs';
 import { FormControl } from '@angular/forms';
-import { PreferencesService } from '../../core/services/preferences.service';
+import { PreferencesService } from '../../../core/services/preferences.service';
 import {
   PackageService,
   SelectablePackge
-} from '../../core/services/package.service';
+} from '../../../core/services/package.service';
 
 export const calcPackageDirty = (pkg: SelectablePackge) => {
   if (pkg.selected) {

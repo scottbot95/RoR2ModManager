@@ -5,7 +5,12 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ElectronService } from './core/services/electron.service';
 import { Component } from '@angular/core';
 import { ThemeService } from './core/services/theme.service';
-import { MockThemeService, MockElectronService } from './core/services/mocks';
+import {
+  MockThemeService,
+  MockElectronService,
+  MockProfileService
+} from './core/services/mocks.spec';
+import { ProfileService } from './profile/services/profile.service';
 
 @Component({
   selector: 'app-nav-menu',
@@ -26,7 +31,8 @@ describe('AppComponent', () => {
       providers: [
         { provide: ElectronService, useClass: MockElectronService },
         { provide: ThemeService, useClass: MockThemeService },
-        { provide: TranslateService, useClass: TranslateServiceStub }
+        { provide: TranslateService, useClass: TranslateServiceStub },
+        { provide: ProfileService, useClass: MockProfileService }
       ],
       imports: [RouterTestingModule, TranslateModule.forRoot()]
     }).compileComponents();
