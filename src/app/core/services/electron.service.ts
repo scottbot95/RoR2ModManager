@@ -6,7 +6,6 @@ import { ipcRenderer, webFrame, remote, protocol, screen } from 'electron';
 import * as childProcess from 'child_process';
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import * as DownloadManager from 'electron-download-manager';
 import * as unzipper from 'unzipper';
 import * as glob from 'glob';
 
@@ -20,7 +19,6 @@ export class ElectronService {
   childProcess: typeof childProcess;
   fs: typeof fs;
   path: typeof path;
-  downloadManager: typeof DownloadManager;
   unzipper: typeof unzipper;
   glob: typeof glob;
 
@@ -38,7 +36,6 @@ export class ElectronService {
 
       this.fs = this.remote.require('fs-extra');
       this.path = this.remote.require('path');
-      this.downloadManager = this.remote.require('electron-download-manager');
       this.unzipper = this.remote.require('unzipper');
       this.glob = this.remote.require('glob');
 

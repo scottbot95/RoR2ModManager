@@ -2,7 +2,6 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { MainComponent } from './main.component';
 import { RouterTestingModule } from '@angular/router/testing';
-import { NavMenuModule } from '../nav-menu/nav-menu.module';
 import { MockNavMenuComponent } from '../../core/services/mocks';
 
 describe('MainComponent', () => {
