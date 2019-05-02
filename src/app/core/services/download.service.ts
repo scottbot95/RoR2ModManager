@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ElectronService } from './electron.service';
 import { PackageVersion } from '../models/package.model';
-import * as DownloadManger from 'electron-download-manager';
 import { DownloadResultInfo } from '../../../../electron/downloads';
 
 interface Download {
@@ -17,11 +16,9 @@ export type DownloadResult = string;
 
 @Injectable()
 export class DownloadService {
-  private downloadManger: typeof DownloadManger;
   private downloads = new Map<string, Download>();
 
   constructor(private electron: ElectronService) {
-    this.downloadManger = this.electron.downloadManager;
     this.electron.ipcRenderer.on(
       'download-complete',
       this.onComplete.bind(this)

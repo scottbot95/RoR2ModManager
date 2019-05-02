@@ -1,7 +1,7 @@
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import { app, BrowserWindow, Session, ipcMain } from 'electron';
-import { PackageVersion, Package } from '../src/app/core/models/package.model';
+import { app, BrowserWindow, ipcMain } from 'electron';
+import { PackageVersion } from '../src/app/core/models/package.model';
 
 export interface DownloadRegisterOptions {
   downloadPath?: string;
