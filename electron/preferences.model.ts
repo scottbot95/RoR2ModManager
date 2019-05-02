@@ -41,7 +41,8 @@ export const preferencesSchema = <Schema>{
     type: 'boolean'
   },
   ror2_path: {
-    type: 'string'
+    type: 'string',
+    default: ''
   },
   darkMode: {
     type: 'boolean'
