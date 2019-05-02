@@ -7,7 +7,7 @@ import { SharedModule } from '../../shared/shared.module';
 import {
   MockPreferencesService,
   MockElectronService
-} from '../../core/services/mocks';
+} from '../../core/services/mocks.spec';
 import { ElectronService } from '../../core/services/electron.service';
 
 describe('PreferencesPageComponent', () => {

@@ -5,7 +5,7 @@ import { ElectronService } from '../../core/services/electron.service';
 import {
   MockElectronService,
   MockPackageService
-} from '../../core/services/mocks';
+} from '../../core/services/mocks.spec';
 import { PackageService } from '../../core/services/package.service';
 
 describe('ProfileService', () => {

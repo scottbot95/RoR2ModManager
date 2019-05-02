@@ -6,7 +6,7 @@ import { MaterialModule } from '../../../shared/material.module';
 import { MatToolbarModule, MatSidenavModule } from '@angular/material';
 import { ThemeService } from '../../../core/services/theme.service';
 import { RouterTestingModule } from '@angular/router/testing';
-import { MockThemeService } from '../../../core/services/mocks';
+import { MockThemeService } from '../../../core/services/mocks.spec';
 
 describe('NavMenuComponent', () => {
   let component: NavMenuComponent;

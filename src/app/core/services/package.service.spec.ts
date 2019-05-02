@@ -7,7 +7,7 @@ import {
   MockDownloadService,
   MockPreferencesService,
   MockThunderstoreService
-} from './mocks';
+} from './mocks.spec';
 import { DownloadService } from './download.service';
 import { testPackage } from '../models/package.model.spec';
 import { PreferencesService } from './preferences.service';

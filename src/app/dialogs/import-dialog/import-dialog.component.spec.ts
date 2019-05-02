@@ -11,7 +11,7 @@ import {
   MockElectronService,
   MockPackageService,
   MockChangeDetectorRef
-} from '../../core/services/mocks';
+} from '../../core/services/mocks.spec';
 import { PackageService } from '../../core/services/package.service';
 import { ChangeDetectorRef } from '@angular/core';
 

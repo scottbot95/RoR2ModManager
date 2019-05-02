@@ -9,7 +9,7 @@ import {
   MockThemeService,
   MockElectronService,
   MockProfileService
-} from './core/services/mocks';
+} from './core/services/mocks.spec';
 import { ProfileService } from './profile/services/profile.service';
 
 @Component({

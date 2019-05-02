@@ -8,7 +8,7 @@ import { PreferencesService } from '../../../core/services/preferences.service';
 import {
   MockPreferencesService,
   MockPackageService
-} from '../../../core/services/mocks';
+} from '../../../core/services/mocks.spec';
 import { PackageService } from '../../../core/services/package.service';
 
 @Component({

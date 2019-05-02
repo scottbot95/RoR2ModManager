@@ -18,7 +18,7 @@ import {
   MockPreferencesService,
   MockThunderstoreService,
   MockPackageService
-} from '../../../core/services/mocks';
+} from '../../../core/services/mocks.spec';
 import { Component, Directive, Input } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { ReactiveFormsModule } from '@angular/forms';
