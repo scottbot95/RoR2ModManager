@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - About page
 - Import/Export package profile menu items
+- Menu items to open various useful folders
 
 ### Changed
 
