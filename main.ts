@@ -8,6 +8,7 @@ import { UserPreferences } from './electron/preferences.model';
 import { prefs } from './electron/prefs';
 import { name, protocols } from './package.json';
 import { configureApplicationMenu } from './electron/menu';
+import { registerDownloadManager } from './electron/downloads';
 
 const server = 'https://hazel.scottbot95.now.sh';
 const feed = `${server}/update/${process.platform}/${app.getVersion()}`;
@@ -16,6 +17,10 @@ autoUpdater.setFeedURL({ url: feed });
 
 register({
   downloadFolder: path.join(app.getPath('userData'), 'downloadCache')
+});
+
+registerDownloadManager({
+  downloadPath: path.join(app.getPath('userData'), 'downloadCache')
 });
 
 let win: BrowserWindow, serve: boolean;
@@ -85,10 +90,13 @@ function createWindow() {
   });
 
   if (serve) {
-    require('electron-reload')(__dirname, {
+    const watch = require('electron-reload');
+    const options = {
       electron: require(path.join(__dirname, 'node_modules', 'electron')),
       argv: ['--serve']
-    });
+    };
+    watch(__dirname, options);
+    watch(path.join(__dirname, 'electron'), options);
     win.loadURL('http://localhost:4200');
   } else {
     win.loadURL(
