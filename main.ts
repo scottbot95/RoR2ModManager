@@ -90,10 +90,13 @@ function createWindow() {
   });
 
   if (serve) {
-    require('electron-reload')(__dirname, {
+    const watch = require('electron-reload');
+    const options = {
       electron: require(path.join(__dirname, 'node_modules', 'electron')),
       argv: ['--serve']
-    });
+    };
+    watch(__dirname, options);
+    watch(path.join(__dirname, 'electron'), options);
     win.loadURL('http://localhost:4200');
   } else {
     win.loadURL(

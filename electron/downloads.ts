@@ -1,7 +1,7 @@
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import { app, BrowserWindow, Session, ipcMain } from 'electron';
-import { PackageVersion } from '../src/app/core/models/package.model';
+import { PackageVersion, Package } from '../src/app/core/models/package.model';
 
 export interface DownloadRegisterOptions {
   downloadPath?: string;
@@ -10,6 +10,16 @@ export interface DownloadRegisterOptions {
 export interface DownloadOptions {
   /** Default: true */
   useCache?: boolean;
+}
+
+export type DownloadState =
+  | 'completed'
+  | 'cancelled'
+  | 'interrupted'
+  | 'cached';
+export interface DownloadResultInfo {
+  state: DownloadState;
+  filePath: string;
 }
 
 const defaultRegsiterOpts: DownloadRegisterOptions = {
@@ -24,13 +34,25 @@ let registeredOptions: DownloadRegisterOptions = defaultRegsiterOpts;
 
 const downloads = new Map<string, PackageVersion>();
 
-export const registerDownloadManager = (regOpts?: DownloadRegisterOptions) => {
-  registeredOptions = Object.assign({}, defaultRegsiterOpts, regOpts);
-  Session.defaultSession.setDownloadPath(registeredOptions.downloadPath);
+const regsiterListener = (
+  win: BrowserWindow,
+  opts: DownloadRegisterOptions
+) => {
+  registeredOptions = Object.assign({}, defaultRegsiterOpts, opts);
+  const { session } = win.webContents;
+  session.setDownloadPath(registeredOptions.downloadPath);
 
-  Session.defaultSession.on('will-download', handleWillDownload);
+  session.on('will-download', handleWillDownload);
 
   ipcMain.on('download-package', handleDownload);
+};
+
+export const registerDownloadManager = (
+  regOpts: DownloadRegisterOptions = {}
+) => {
+  app.on('browser-window-created', (event, win) => {
+    regsiterListener(win, regOpts);
+  });
 };
 
 async function handleDownload(
@@ -40,16 +62,15 @@ async function handleDownload(
 ) {
   if (!pkg) return;
   const options = Object.assign({}, defaultDownloadOpts, downloadOpts);
-  if (
-    options.useCache &&
-    (await fs.pathExists(
-      path.join(registeredOptions.downloadPath, `${pkg.fullName}.zip`)
-    ))
-  ) {
+  const filePath = path.join(
+    registeredOptions.downloadPath,
+    `${pkg.fullName}.zip`
+  );
+  if (options.useCache && (await fs.pathExists(filePath))) {
     console.log(
       `${pkg.fullName}.zip already exists in cache, skipping download.`
     );
-    return event.sender.send('download-complete', pkg);
+    return sendDownloadComplete('cached', filePath, pkg, event.sender);
   }
 
   downloads.set(pkg.fullName + '.zip', pkg);
@@ -62,8 +83,28 @@ function handleWillDownload(
   webContent: Electron.webContents
 ) {
   console.log(item.getFilename());
+  item.setSavePath(
+    path.join(registeredOptions.downloadPath, item.getFilename())
+  );
   const pkg = downloads.get(item.getFilename());
+  const filePath = path.join(
+    registeredOptions.downloadPath,
+    item.getFilename()
+  );
   item.on('done', (event, state) => {
-    webContent.send('download-complete', pkg);
+    sendDownloadComplete(state, filePath, pkg, webContent);
   });
+}
+
+function sendDownloadComplete(
+  state: DownloadState,
+  filePath: string,
+  pkg: PackageVersion,
+  webContent: Electron.WebContents
+) {
+  const result: DownloadResultInfo = {
+    state,
+    filePath
+  };
+  webContent.send('download-complete', pkg, result);
 }
