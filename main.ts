@@ -1,7 +1,6 @@
 import { app, BrowserWindow, autoUpdater } from 'electron';
 import * as path from 'path';
 import * as Registry from 'winreg';
-import { register } from 'electron-download-manager';
 
 import { UserPreferences } from './electron/preferences.model';
 import { prefs } from './electron/prefs';
@@ -15,10 +14,6 @@ const server = 'https://hazel.scottbot95.now.sh';
 const feed = `${server}/update/${process.platform}/${app.getVersion()}`;
 
 autoUpdater.setFeedURL({ url: feed });
-
-register({
-  downloadFolder: path.join(app.getPath('userData'), 'downloadCache')
-});
 
 registerIpcListeners();
 registerDownloadManager({
