@@ -16,6 +16,10 @@ A simple mod manager for Risk of Rain 2 build using Angular and Electron.
 - Install and uninstall selected mods
   - Also installs all necessary dependencies
 - Update mods (should work but has yet to be tested)
+- Very primative import/export system
+  - Many improvements to come
+- Open various useful folder from menu
+- Open config file for (some) installed packages
 
 ## Getting Started
 
@@ -23,7 +27,7 @@ Simply download and install the latest version found on the [releases](https://g
 
 From there, simply select which mods you would like to install (dependencies will be automatically selected for you) and click 'Apply'.
 It won't seem like it's doing anything, but don't worry, it will begin downloading and
-installing your selected mods shortly. (I'm working on a progross screen)
+installing your selected mods shortly. (I'm working on a progress screen)
 
 [build-badge]: https://travis-ci.org/scottbot95/RoR2ModManager.svg?branch=master
 [build]: https://travis-ci.org/scottbot95/RoR2ModManager
@@ -32,4 +36,4 @@ installing your selected mods shortly. (I'm working on a progross screen)
 [github-star-badge]: https://img.shields.io/github/stars/scottbot95/RoR2ModManager.svg?style=social
 [github-star]: https://github.com/scottbot95/RoR2ModManager/stargazers
 
-![screenshot](https://i.imgur.com/UDCkkUn.png)
+![screenshot](https://i.imgur.com/CLMXyly.png)
