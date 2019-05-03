@@ -143,7 +143,11 @@
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="['filter', 'refresh']"></tr>
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr
+      mat-header-row
+      *matHeaderRowDef="displayedColumns"
+      (contextmenu)="showColumnSelectMenu()"
+    ></tr>
     <tr
       mat-row
       *matRowDef="let row; columns: displayedColumns"

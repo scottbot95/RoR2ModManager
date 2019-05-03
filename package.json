@@ -1,6 +1,6 @@
 {
   "name": "ror2-mod-manager",
-  "version": "0.4.0",
+  "version": "0.4.2",
   "description": "A simple mod manager built using electron. Currently only supports BepInEx mods",
   "homepage": "https://github.com/scottbot95/RoR2ModManager",
   "repository": {
