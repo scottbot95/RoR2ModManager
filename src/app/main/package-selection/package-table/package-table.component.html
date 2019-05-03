@@ -153,6 +153,7 @@
       [class.pinned]="row.isPinned"
       class="clickable"
       (click)="showDetails(row)"
+      (contextmenu)="showContextMenu(row)"
     ></tr>
     <tr mat-footer-row *matFooterRowDef="['apply']"></tr>
   </table>

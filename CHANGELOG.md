@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Import/Export package profile menu items
 - Menu items to open various useful folders
 - Package icons to table and details views
+- Context menu to installed packages with option to open config file
 
 ### Changed
 

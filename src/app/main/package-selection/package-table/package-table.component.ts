@@ -23,7 +23,8 @@ import {
 import {
   PackageChangeset,
   PackageService,
-  SelectablePackge
+  SelectablePackge,
+  BEPIN_UUID4
 } from '../../../core/services/package.service';
 import { PreferencesService } from '../../../core/services/preferences.service';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -144,6 +145,46 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
   showDetails(pkg: Package) {
     this.packages.selectedPackage.next(pkg);
     // this.showPackageDetails.emit(pkg);
+  }
+
+  showContextMenu(pkg: Package) {
+    if (pkg.installedVersion) {
+      this.electron.remote.Menu.buildFromTemplate([
+        {
+          label: 'Open config file',
+          click: this.tryOpenPackageConfig(pkg).bind(this)
+        }
+      ]).popup();
+    }
+  }
+
+  tryOpenPackageConfig(pkg: Package) {
+    const join = this.electron.path.join;
+    const filenameBase = `${pkg.owner}.${pkg.name}.cfg`;
+    let filenames: string[];
+    if (pkg.uuid4 === BEPIN_UUID4) filenames = ['BepInEx.cfg'];
+    else filenames = ['com', 'dev'].map(pre => `${pre}.${filenameBase}`);
+
+    return async () => {
+      const dir = join(this.prefs.get('ror2_path'), 'BepInEx', 'config');
+      let foundConfigFile: string;
+      for (const fileName of filenames) {
+        const testPath = join(dir, fileName);
+        if (await this.electron.fs.pathExists(testPath)) {
+          foundConfigFile = testPath;
+          break;
+        }
+      }
+
+      if (foundConfigFile !== undefined) {
+        this.electron.remote.shell.openItem(foundConfigFile);
+      } else {
+        this.electron.remote.dialog.showErrorBox(
+          'File not found',
+          `Could not find config file for ${pkg.name}`
+        );
+      }
+    };
   }
 
   handleApplyChanges() {

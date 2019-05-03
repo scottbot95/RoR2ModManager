@@ -30,7 +30,7 @@ export class PackageChangeset {
   removed = new Set<Package>();
 }
 
-const BEPIN_UUID4 = '4c253b36-fd0b-4e6d-b4d8-b227972af4da';
+export const BEPIN_UUID4 = '4c253b36-fd0b-4e6d-b4d8-b227972af4da';
 
 @Injectable()
 export class PackageService {
