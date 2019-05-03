@@ -7,9 +7,17 @@
    -->
 <mat-card *ngIf="package">
   <mat-card-header>
-    <mat-card-title>
+    <mat-card-title fxLayout="row">
       {{ package.name | humanize: shouldHumanize }}
       <small> by {{ package.owner }} </small>
+      <span fxFlex></span>
+      <button
+        mat-raised-button
+        matTooltip="Open on thunderstore.io"
+        (click)="openPackage()"
+      >
+        Thunderstore
+      </button>
     </mat-card-title>
     <mat-card-subtitle>
       {{ packageVersion.description }}
