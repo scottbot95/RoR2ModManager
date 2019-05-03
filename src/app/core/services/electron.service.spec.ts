@@ -8,7 +8,7 @@ describe('ElectronService', () => {
   beforeAll(() => {
     window.require = () => {};
     const mockElectron = {
-      ipcRenderer: {},
+      ipcRenderer: { on: () => {} },
       webFrame: {},
       remote: { require: () => {} }
     };
@@ -38,8 +38,11 @@ describe('ElectronService', () => {
   });
 
   it('should detect if running in electron', () => {
+    const oldProcess = window.process;
     window.process = { type: 'renderer' };
     const electron: ElectronService = TestBed.get(ElectronService);
-    expect(electron.isElectron()).toBeTruthy();
+    const result = electron.isElectron();
+    window.process = oldProcess;
+    expect(result).toBeTruthy();
   });
 });
