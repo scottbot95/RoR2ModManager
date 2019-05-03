@@ -28,9 +28,9 @@ export class ElectronService {
       this.ipcRenderer = window.require('electron').ipcRenderer;
       this.webFrame = window.require('electron').webFrame;
       this.remote = window.require('electron').remote;
-      this.screen = window.require('electron').screen;
 
       this.protocol = this.remote.protocol;
+      this.screen = this.remote.screen;
 
       this.childProcess = window.require('child_process');
 

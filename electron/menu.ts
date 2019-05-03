@@ -70,7 +70,10 @@ const template: Electron.MenuItemConstructorOptions[] = [
           openAboutWindow({
             icon_path: path.join(__dirname, '../dist/favicon.png'),
             package_json_dir: path.join(__dirname, '..'),
-            win_options: { autoHideMenuBar: true }
+            win_options: {
+              autoHideMenuBar: true,
+              webPreferences: { nodeIntegration: true }
+            }
           });
         }
       }
