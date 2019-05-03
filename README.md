@@ -17,11 +17,14 @@ A simple mod manager for Risk of Rain 2 build using Angular and Electron.
 - Browse all mods available from thunderstore.io
 - Handles the install button on thunderstore.io
   - Currently it just marks package for install
+  - You then have to click apply for install the mod
 - Install and uninstall selected mods
   - Also installs all necessary dependencies
 - Update mods (should work but has yet to be tested)
-
-# For Users
+- Very primative import/export system
+  - Many improvements to come
+- Open various useful folder from menu
+- Open config file for (some) installed packages
 
 ## Getting Started
 
@@ -29,7 +32,22 @@ Simply download and install the latest version found on the [releases](https://g
 
 From there, simply select which mods you would like to install (dependencies will be automatically selected for you) and click 'Apply'.
 It won't seem like it's doing anything, but don't worry, it will begin downloading and
-installing your selected mods shortly. (I'm working on a progross screen)
+installing your selected mods shortly. (I'm working on a progress screen)
+
+![screenshot](https://i.imgur.com/CLMXyly.png)
+
+[build-badge]: https://travis-ci.org/scottbot95/RoR2ModManager.svg?branch=master
+[build]: https://travis-ci.org/scottbot95/RoR2ModManager
+[license-badge]: https://img.shields.io/badge/license-Apache2-blue.svg?style=flat
+[license]: https://github.com/scottbot95/RoR2ModManager/blob/master/LICENSE.md
+[prs-badge]: https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square
+[prs]: http://makeapullrequest.com
+[github-watch-badge]: https://img.shields.io/github/watchers/scottbot95/RoR2ModManager.svg?style=social
+[github-watch]: https://github.com/scottbot95/RoR2ModManager/watchers
+[github-star-badge]: https://img.shields.io/github/stars/scottbot95/RoR2ModManager.svg?style=social
+[github-star]: https://github.com/scottbot95/RoR2ModManager/stargazers
+[codecov-badge]: https://codecov.io/gh/scottbot95/RoR2ModManager/branch/master/graph/badge.svg
+[codecov]: https://codecov.io/gh/scottbot95/RoR2ModManager
 
 # For Developers
 
@@ -55,16 +73,3 @@ The Angular component contains an example of Electron and NodeJS native lib impo
 | `yarn electron:mac`     | On a MAC OS, builds your application and generates a `.app` file of your application that can be run on Mac |
 
 **Your application is optimised. Only /dist folder and node dependencies are included in the executable.**
-
-[build-badge]: https://travis-ci.org/scottbot95/RoR2ModManager.svg?branch=master
-[build]: https://travis-ci.org/scottbot95/RoR2ModManager
-[license-badge]: https://img.shields.io/badge/license-Apache2-blue.svg?style=flat
-[license]: https://github.com/scottbot95/RoR2ModManager/blob/master/LICENSE.md
-[prs-badge]: https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square
-[prs]: http://makeapullrequest.com
-[github-watch-badge]: https://img.shields.io/github/watchers/scottbot95/RoR2ModManager.svg?style=social
-[github-watch]: https://github.com/scottbot95/RoR2ModManager/watchers
-[github-star-badge]: https://img.shields.io/github/stars/scottbot95/RoR2ModManager.svg?style=social
-[github-star]: https://github.com/scottbot95/RoR2ModManager/stargazers
-[codecov-badge]: https://codecov.io/gh/scottbot95/RoR2ModManager/branch/master/graph/badge.svg
-[codecov]: https://codecov.io/gh/scottbot95/RoR2ModManager

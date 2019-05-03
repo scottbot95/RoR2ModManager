@@ -22,11 +22,11 @@ mkdir -p "$UNPACKED_DIR"
 jq '{name:"RoR2ModManager", version_number:.version, website_url:.homepage, description:.description, dependencies:[]}' package.json > "$UNPACKED_DIR/manifest.json"
 cd $UNPACKED_DIR
 # link rest of files
-rm "$RELEASE_FILE"; ln "../$RELEASE_FILE"
+# rm "$RELEASE_FILE"; ln "../$RELEASE_FILE"
 rm icon.png; ln "../../src/favicon.256x256.png" icon.png
 
 # Create thunderstore readme
-rm README.md; cp ../../thunderstore/README.md .
+sed '/# For Developers/Q' ../../README.md > README.md
 cat ../../CHANGELOG.md >> README.md
 
 zip -r $ZIP_FILE .
