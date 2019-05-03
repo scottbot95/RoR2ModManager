@@ -86,7 +86,8 @@ export class MockElectronService {
       showOpenDialog: (options: object) => {
         return ['C:\\fakepath'];
       },
-      showMessageBox: () => {}
+      showMessageBox: () => {},
+      showSaveDialog: () => {}
     },
     require: (module: string) => ({}),
     getCurrentWindow: () => {}
@@ -94,7 +95,8 @@ export class MockElectronService {
   fs = {
     createWriteStream: () => {},
     createReadStream: () => {},
-    readJson: () => {}
+    readJson: () => {},
+    writeJson: () => {}
   };
   protocol = {
     registerHttpProtocol: () => {}
