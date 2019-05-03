@@ -3,6 +3,7 @@ import { Package, PackageVersion } from '../../../core/models/package.model';
 import { PreferencesService } from '../../../core/services/preferences.service';
 import { Subscription } from 'rxjs';
 import { PackageService } from '../../../core/services/package.service';
+import { ElectronService } from '../../../core/services/electron.service';
 
 @Component({
   selector: 'app-package-details',
@@ -19,7 +20,8 @@ export class PackageDetailsComponent implements OnInit, OnDestroy {
 
   constructor(
     private prefs: PreferencesService,
-    private packages: PackageService
+    private packages: PackageService,
+    private electron: ElectronService
   ) {}
 
   ngOnInit() {
@@ -43,5 +45,9 @@ export class PackageDetailsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
+  }
+
+  openPackage() {
+    this.electron.remote.shell.openExternal(this.package.packageUrl);
   }
 }

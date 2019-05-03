@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Right click on table header to select visible columns
+    - Added some extra columns for your viewing pleasure
+
 ## [0.4.2] 2019-05-02
 
 ### Fixed
@@ -47,8 +52,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Simple handling of the install button on thunderstore.io
-    - For it opens details and marks package for install
-    - NOTE: So far only tested on linux
+  - For it opens details and marks package for install
+  - NOTE: So far only tested on linux
 
 ### Fixed
 
@@ -60,7 +65,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Filter box now has a clear button
 - Verify RoR2 Install path during setup
-    - This used to only happen on preferences page
+  - This used to only happen on preferences page
 - Remember previously installed packages accross app restarts
 
 ## [0.1.1] 2019-04-26
