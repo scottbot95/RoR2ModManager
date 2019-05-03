@@ -30,6 +30,7 @@ import {
 import { PreferencesService } from '../../../core/services/preferences.service';
 import { SelectionModel } from '@angular/cdk/collections';
 import { ElectronService } from '../../../core/services/electron.service';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-package-table',
@@ -46,6 +47,7 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private availableColumns = [
     'select',
+    'installed',
     'icon',
     'id',
     'name',
@@ -58,6 +60,7 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
   displayedColumns = [
     'select',
+    'installed',
     'icon',
     'name',
     'author',
@@ -246,6 +249,14 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
       }))
     ).popup();
   };
+
+  columnDrop(event: CdkDragDrop<string[]>) {
+    moveItemInArray(
+      this.displayedColumns,
+      event.previousIndex,
+      event.currentIndex
+    );
+  }
 
   private selectAllDependencies(pkg: PackageVersion) {
     const toSelect: PackageVersionList = [];

@@ -67,7 +67,7 @@
 
     <!-- Id Column -->
     <ng-container matColumnDef="id">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Id</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header cdkDrag>Id</th>
       <td mat-cell *matCellDef="let row">{{ row.uuid4 }}</td>
     </ng-container>
 
@@ -115,6 +115,14 @@
       </td>
     </ng-container>
 
+    <!-- Installed Version Column -->
+    <ng-container matColumnDef="installed">
+      <th mat-header-cell *matHeaderCellDef>Installed Version</th>
+      <td mat-cell *matCellDef="let row" align="center">
+        {{ row.installedVersion?.version?.version || '-' }}
+      </td>
+    </ng-container>
+
     <!-- Total Downloads Column -->
     <ng-container matColumnDef="downloads">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Total Downloads</th>
@@ -145,8 +153,10 @@
     <tr mat-header-row *matHeaderRowDef="['filter', 'refresh']"></tr>
     <tr
       mat-header-row
+      cdkDropList
       *matHeaderRowDef="displayedColumns"
       (contextmenu)="showColumnSelectMenu()"
+      (cdkDropListDropped)="columnDrop($event)"
     ></tr>
     <tr
       mat-row
