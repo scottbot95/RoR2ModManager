@@ -16,13 +16,13 @@ A simple mod manager for Risk of Rain 2 build using Angular and Electron.
 
 - Browse all mods available from thunderstore.io
 - Handles the install button on thunderstore.io
-  - Currently it just marks package for install
-  - You then have to click apply for install the mod
+    - Currently it just marks package for install
+    - You then have to click apply for install the mod
 - Install and uninstall selected mods
-  - Also installs all necessary dependencies
+    - Also installs all necessary dependencies
 - Update mods (should work but has yet to be tested)
 - Very primative import/export system
-  - Many improvements to come
+    - Many improvements to come
 - Open various useful folder from menu
 - Open config file for (some) installed packages
 
