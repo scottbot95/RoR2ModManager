@@ -69,10 +69,18 @@ export class MockPackageService {
   }
 
   public updatePackage(pkg: Package, version: PackageVersion) {}
+
+  public findPackageFromDependencyString() {}
+  public installProfile() {}
 }
 
 export class MockElectronService {
-  ipcRenderer = { on: () => {}, send: () => {}, removeListener: () => {} };
+  ipcRenderer = {
+    on: () => {},
+    send: () => {},
+    sendTo: () => {},
+    removeListener: () => {}
+  };
   remote = {
     dialog: {
       showOpenDialog: (options: object) => {
@@ -85,7 +93,8 @@ export class MockElectronService {
   };
   fs = {
     createWriteStream: () => {},
-    createReadStream: () => {}
+    createReadStream: () => {},
+    readJson: () => {}
   };
   protocol = {
     registerHttpProtocol: () => {}
@@ -114,12 +123,27 @@ export class MockProfileService {
   registerMenuHandlers() {}
 }
 
-export class MockChangeDetectorRef {
-  detectChanges() {}
-}
-
 @Component({
   selector: 'app-nav-menu',
   template: '<ng-content></ng-content>'
 })
 export class MockNavMenuComponent {}
+
+export class MockWebContents {
+  constructor() {
+    this.id = ++MockWebContents._nextId;
+  }
+  private static _nextId = 0;
+  id: number;
+}
+
+export class MockBrowserWindow {
+  webContents = new MockWebContents();
+  private parent;
+  getParentWindow() {
+    if (!this.parent) this.parent = new MockBrowserWindow();
+    return this.parent;
+  }
+  focus() {}
+  close() {}
+}
