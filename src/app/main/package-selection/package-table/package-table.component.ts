@@ -45,6 +45,7 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
   displayedColumns = [
     'select',
+    'icon',
     'name',
     'author',
     'updated',

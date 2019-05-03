@@ -72,7 +72,7 @@ export class MockPackageService {
 }
 
 export class MockElectronService {
-  ipcRenderer = { on: () => {}, send: () => {} };
+  ipcRenderer = { on: () => {}, send: () => {}, removeListener: () => {} };
   remote = {
     dialog: {
       showOpenDialog: (options: object) => {

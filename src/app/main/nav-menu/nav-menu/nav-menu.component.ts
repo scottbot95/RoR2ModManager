@@ -32,7 +32,6 @@ export class NavMenuComponent implements OnInit {
     this.version = AppConfig.production
       ? version
       : `${version}-${AppConfig.environment}`;
-    console.log(window.location);
   }
 
   goBack() {
