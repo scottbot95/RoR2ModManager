@@ -32,7 +32,7 @@ export class PackageDetailsComponent implements OnInit, OnDestroy {
     this.subscription.add(
       this.packages.selectedPackage.subscribe(pkg => {
         this.package = pkg;
-        this.packageVersion = pkg.latestVersion;
+        this.packageVersion = pkg && pkg.latestVersion;
       })
     );
   }
