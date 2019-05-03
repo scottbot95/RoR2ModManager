@@ -60,6 +60,7 @@ const testSerializedBepInExPack: SerializedPackage = {
   name: testBepInExPackPackage.name,
   owner: testBepInExPackPackage.owner,
   uuid4: testBepInExPackPackage.uuid4,
+  package_url: testBepInExPackPackage.packageUrl,
   installed_version: testBepInExPackPackage.installedVersion.version.version,
   versions: [
     {
@@ -114,7 +115,7 @@ export const testPackage: Package = {
 
 testPackageVersion.pkg = testPackage;
 
-const testSerializedPackage = {
+const testSerializedPackage: SerializedPackage = {
   date_created: testPackage.dateCreated.toISOString(),
   date_updated: testPackage.dateUpdated.toISOString(),
   full_name: testPackage.fullName,
@@ -124,6 +125,7 @@ const testSerializedPackage = {
   name: testPackage.name,
   owner: testPackage.owner,
   uuid4: testPackage.uuid4,
+  package_url: testPackage.packageUrl,
   versions: [
     {
       date_created: testPackageVersion.dateCreated.toISOString(),
