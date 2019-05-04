@@ -1,3 +1,4 @@
+// tslint:disable-next-line:no-unused-variable
 import { app, BrowserWindow, Notification } from 'electron';
 import * as path from 'path';
 import * as Registry from 'winreg';
