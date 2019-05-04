@@ -1,5 +1,5 @@
 {
-  "productName": "RoR2 Mod Manager",
+  "productName": "RoR2ModManager",
   "appId": "com.electron.ror2modmanager",
   "directories": {
     "output": "release/",
