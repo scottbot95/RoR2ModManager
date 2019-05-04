@@ -43,6 +43,6 @@
     "oneClick": false,
     "perMachine": true,
     "include": "build/installer.nsh",
-    "artifactName": "${productName}-Setup-${version}.${ext}"
+    "artifactName": "${name}-setup-${version}.${ext}"
   }
 }
