@@ -29,6 +29,7 @@ export const testBepInExPackPackage = {
   fullName: 'bbepis-BepInExPack',
   latestVersion: testBepInExPackPackageVersion,
   versions: [testBepInExPackPackageVersion],
+  packageUrl: 'https://thunderstore.io/package/bbepis/BepInExPack/',
   totalDownloads: 0,
   requiredBy: new Set()
 };
@@ -63,6 +64,7 @@ export const testPackage: Package = {
   fullName: 'author-TestPackage',
   latestVersion: testPackageVersion,
   versions: [testPackageVersion],
+  packageUrl: 'https://thunderstore.io/package/author/TestPackage/',
   totalDownloads: 0,
   requiredBy: new Set()
 };

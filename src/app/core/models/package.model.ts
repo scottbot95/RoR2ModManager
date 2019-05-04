@@ -15,6 +15,7 @@ export interface SerializedPackage extends SerializablePackageBase {
   maintainers: string[];
   date_updated: string;
   is_pinned: boolean;
+  package_url: string;
   versions: SerializedPackageVersionList;
   installed_version?: string;
 }
@@ -45,6 +46,7 @@ export class Package extends PackageBase {
   maintainers: string[];
   dateUpdated: Date;
   isPinned: boolean;
+  packageUrl: string;
   versions: PackageVersionList;
   latestVersion: PackageVersion;
   totalDownloads: number;
@@ -97,6 +99,7 @@ export const deserializablePackageList = (
       isPinned: serializedPkg.is_pinned,
       maintainers: serializedPkg.maintainers,
       owner: serializedPkg.owner,
+      packageUrl: serializedPkg.package_url,
       totalDownloads: 0,
       uuid4: serializedPkg.uuid4,
       requiredBy: new Set(),
@@ -166,6 +169,7 @@ export const serializePackage = (pkg: Package): SerializedPackage => {
     is_active: pkg.isActive,
     is_pinned: pkg.isPinned,
     maintainers: pkg.maintainers,
+    package_url: pkg.packageUrl,
     name: pkg.name,
     owner: pkg.owner,
     uuid4: pkg.uuid4,

@@ -1,6 +1,6 @@
 {
   "name": "ror2-mod-manager",
-  "version": "0.4.3",
+  "version": "0.5.0",
   "description": "A simple mod manager built using electron. Currently only supports BepInEx mods",
   "homepage": "https://github.com/scottbot95/RoR2ModManager",
   "repository": {
@@ -93,7 +93,7 @@
     "core-js": "2.6.1",
     "dexie": "^2.0.4",
     "electron": "5.0.0",
-    "electron-builder": "20.38.2",
+    "electron-builder": "^20.39.0",
     "electron-reload": "1.3.0",
     "hammerjs": "^2.0.8",
     "inflection": "^1.12.0",
@@ -123,7 +123,9 @@
   },
   "dependencies": {
     "about-window": "^1.12.1",
+    "electron-log": "^3.0.5",
     "electron-store": "^3.2.0",
+    "electron-updater": "^4.0.6",
     "fs-extra": "^7.0.1",
     "glob": "^7.1.3",
     "unzipper": "^0.9.11",

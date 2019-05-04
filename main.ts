@@ -1,4 +1,4 @@
-import { app, BrowserWindow, autoUpdater } from 'electron';
+import { app, BrowserWindow } from 'electron';
 import * as path from 'path';
 import * as Registry from 'winreg';
 
@@ -10,10 +10,7 @@ import { registerIpcListeners } from './electron/ipc';
 import { createBrowserWindow } from './electron/windows';
 import { registerDownloadManager } from './electron/downloads';
 
-const server = 'https://hazel.scottbot95.now.sh';
-const feed = `${server}/update/${process.platform}/${app.getVersion()}`;
-
-autoUpdater.setFeedURL({ url: feed });
+import './electron/autoUpdate';
 
 registerIpcListeners();
 registerDownloadManager({
