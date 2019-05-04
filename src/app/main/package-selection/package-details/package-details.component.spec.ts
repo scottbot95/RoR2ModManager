@@ -7,9 +7,11 @@ import { HumanizePipe } from '../../../shared/humanize.pipe';
 import { PreferencesService } from '../../../core/services/preferences.service';
 import {
   MockPreferencesService,
-  MockPackageService
+  MockPackageService,
+  MockElectronService
 } from '../../../core/services/mocks.spec';
 import { PackageService } from '../../../core/services/package.service';
+import { ElectronService } from '../../../core/services/electron.service';
 
 @Component({
   // tslint:disable-next-line: component-selector
@@ -32,7 +34,8 @@ describe('PackageDetailsComponent', () => {
       imports: [MaterialModule],
       providers: [
         { provide: PreferencesService, useClass: MockPreferencesService },
-        { provide: PackageService, useClass: MockPackageService }
+        { provide: PackageService, useClass: MockPackageService },
+        { provide: ElectronService, useClass: MockElectronService }
       ]
     }).compileComponents();
   }));

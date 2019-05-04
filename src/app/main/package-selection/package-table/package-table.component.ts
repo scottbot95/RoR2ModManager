@@ -4,7 +4,8 @@ import {
   ViewChild,
   OnDestroy,
   Input,
-  OnInit
+  OnInit,
+  ChangeDetectorRef
 } from '@angular/core';
 import { MatPaginator, MatSort } from '@angular/material';
 import { Subscription, Observable } from 'rxjs';
@@ -29,6 +30,7 @@ import {
 import { PreferencesService } from '../../../core/services/preferences.service';
 import { SelectionModel } from '@angular/cdk/collections';
 import { ElectronService } from '../../../core/services/electron.service';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-package-table',
@@ -43,9 +45,22 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
   dataSource: PackageTableDataSource;
   isLoading: boolean;
 
+  private availableColumns = [
+    'select',
+    'installed',
+    'icon',
+    'id',
+    'name',
+    'author',
+    'updated',
+    'latest',
+    'downloads'
+  ];
+
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
   displayedColumns = [
     'select',
+    'installed',
     'icon',
     'name',
     'author',
@@ -64,7 +79,8 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     public packages: PackageService,
     private prefs: PreferencesService,
-    private electron: ElectronService
+    private electron: ElectronService,
+    private changeDetector: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -214,6 +230,33 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!this.dataSource) return false;
     return this.dataSource.filteredData.some(pkg => pkg.dirty);
   };
+
+  showColumnSelectMenu = () => {
+    const activeColumns = new Set(this.displayedColumns);
+    this.electron.remote.Menu.buildFromTemplate(
+      this.availableColumns.map<Electron.MenuItemConstructorOptions>(col => ({
+        label: col[0].toUpperCase() + col.slice(1),
+        type: 'checkbox',
+        checked: activeColumns.has(col),
+        click: () => {
+          if (activeColumns.has(col)) activeColumns.delete(col);
+          else activeColumns.add(col);
+          this.displayedColumns = this.availableColumns.filter(c =>
+            activeColumns.has(c)
+          );
+          this.changeDetector.detectChanges();
+        }
+      }))
+    ).popup();
+  };
+
+  columnDrop(event: CdkDragDrop<string[]>) {
+    moveItemInArray(
+      this.displayedColumns,
+      event.previousIndex,
+      event.currentIndex
+    );
+  }
 
   private selectAllDependencies(pkg: PackageVersion) {
     const toSelect: PackageVersionList = [];

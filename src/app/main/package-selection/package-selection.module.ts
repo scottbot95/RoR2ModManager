@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 import { SharedModule } from '../../shared/shared.module';
 import { PackageTableComponent } from './package-table/package-table.component';
@@ -22,7 +23,8 @@ import { MarkdownModule } from 'ngx-markdown';
     MarkdownModule.forChild(),
     MatSortModule,
     MatPaginatorModule,
-    MatTableModule
+    MatTableModule,
+    DragDropModule
   ]
 })
 export class PackageSelectionModule {}
