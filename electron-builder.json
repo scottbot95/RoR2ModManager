@@ -11,6 +11,9 @@
       "schemes": ["ror2mm"]
     }
   ],
+  "publish": {
+    "provider": "github"
+  },
   "files": [
     "**/*",
     "!**/*.ts",
