@@ -21,8 +21,6 @@ let win: BrowserWindow, serve: boolean;
 const args = process.argv.slice(1);
 serve = args.some(val => val === '--serve');
 
-console.log('Hello!');
-
 const regKey = new Registry({
   hive: Registry.HKCU,
   key: `\\SOFTWARE\\${name}`
