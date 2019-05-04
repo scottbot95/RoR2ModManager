@@ -1,3 +1,5 @@
-<p>
-  found-config-table works!
-</p>
+<mat-list>
+  <mat-list-item *ngFor="let file of configFiles">
+    {{ file.filename }}
+  </mat-list-item>
+</mat-list>
