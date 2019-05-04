@@ -9,6 +9,7 @@ import { PackageList, Package, PackageVersion } from '../models/package.model';
 import { SelectionModel } from '@angular/cdk/collections';
 import { SelectablePackge } from './package.service';
 import { Component } from '@angular/core';
+import * as path from 'path';
 
 export class MockPreferencesService {
   private data: UserPreferences = defaultConfig;
@@ -96,11 +97,13 @@ export class MockElectronService {
     createWriteStream: () => {},
     createReadStream: () => {},
     readJson: () => {},
-    writeJson: () => {}
+    writeJson: () => {},
+    access: () => {}
   };
   protocol = {
     registerHttpProtocol: () => {}
   };
+  path = path;
   isElectron() {
     return false;
   }
