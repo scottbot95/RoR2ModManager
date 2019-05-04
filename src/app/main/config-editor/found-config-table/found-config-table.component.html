@@ -1,5 +1,5 @@
 <mat-list>
-  <mat-list-item *ngFor="let file of configFiles">
+  <mat-list-item *ngFor="let file of configFiles" [routerLink]="file.filename">
     {{ file.filename }}
   </mat-list-item>
 </mat-list>
