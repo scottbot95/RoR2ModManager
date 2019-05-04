@@ -1,5 +1,5 @@
 {
-  "productName": "RoR2 Mod Manager",
+  "productName": "RoR2ModManager",
   "appId": "com.electron.ror2modmanager",
   "directories": {
     "output": "release/",
@@ -11,6 +11,9 @@
       "schemes": ["ror2mm"]
     }
   ],
+  "publish": {
+    "provider": "github"
+  },
   "files": [
     "**/*",
     "!**/*.ts",
@@ -42,6 +45,7 @@
   "nsis": {
     "oneClick": false,
     "perMachine": true,
-    "include": "build/installer.nsh"
+    "include": "build/installer.nsh",
+    "artifactName": "${name}-setup-${version}.${ext}"
   }
 }
