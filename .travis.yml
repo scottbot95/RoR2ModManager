@@ -33,7 +33,6 @@ before_deploy:
 deploy:
   provider: releases
   draft: true
-  prerelease: true
   skip_cleanup: true
   name: $TRAVIS_TAG
   api_key:
@@ -43,6 +42,7 @@ deploy:
     - release/*.exe
     - release/*.AppImage
     - release/*.zip
+    - release/latest.yml
   on:
     tags: true
     repo: scottbot95/RoR2ModManager
