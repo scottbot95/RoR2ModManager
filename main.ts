@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, Notification } from 'electron';
 import * as path from 'path';
 import * as Registry from 'winreg';
 
@@ -11,6 +11,8 @@ import { createBrowserWindow } from './electron/windows';
 import { registerDownloadManager } from './electron/downloads';
 
 import './electron/autoUpdate';
+
+app.setAppUserModelId('com.electron.ror2modmanager');
 
 registerIpcListeners();
 registerDownloadManager({
