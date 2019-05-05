@@ -4,6 +4,7 @@ import { PreferencesService } from '../../../core/services/preferences.service';
 import { ElectronService } from '../../../core/services/electron.service';
 
 import { parse as parseToml } from 'toml';
+import { ConfigParserService } from '../services/config-parser.service';
 
 @Component({
   selector: 'app-editor',
@@ -15,31 +16,12 @@ export class EditorComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private prefs: PreferencesService,
-    private electron: ElectronService
+    private parser: ConfigParserService
   ) {}
 
   async ngOnInit() {
     const filename = this.route.snapshot.paramMap.get('file');
-    const confFile = this.electron.path.join(
-      this.prefs.get('ror2_path'),
-      'BepInEx',
-      'config',
-      filename
-    );
-
-    console.log('loading config file', confFile);
-
-    const result = await this.electron.fs.readFile(confFile);
-    try {
-      this.parsedConfig = parseToml(
-        result.toString('utf8').replace(/^\uFEFF/, '')
-      );
-    } catch (err) {
-      console.error(
-        `Syntax error on line ${err.line}:${err.column}.\n${err.message}`
-      );
-    }
+    this.parsedConfig = await this.parser.parseFile(filename);
     console.log(this.parsedConfig);
   }
 }
