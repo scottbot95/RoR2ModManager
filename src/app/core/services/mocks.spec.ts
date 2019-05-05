@@ -93,6 +93,7 @@ export class MockElectronService {
   isElectron() {
     return false;
   }
+  glob() {}
 }
 
 export class MockDownloadService {
@@ -123,3 +124,7 @@ export class MockChangeDetectorRef {
   template: '<ng-content></ng-content>'
 })
 export class MockNavMenuComponent {}
+
+export class MockConfigParserService {
+  parseFile() {}
+}

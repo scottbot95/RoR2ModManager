@@ -1,6 +1,9 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { EditorComponent } from './editor.component';
+import { RouterTestingModule } from '@angular/router/testing';
+import { ConfigParserService } from '../services/config-parser.service';
+import { MockConfigParserService } from '../../../core/services/mocks.spec';
 
 describe('EditorComponent', () => {
   let component: EditorComponent;
@@ -8,9 +11,15 @@ describe('EditorComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ EditorComponent ]
-    })
-    .compileComponents();
+      declarations: [EditorComponent],
+      imports: [RouterTestingModule],
+      providers: [
+        {
+          provide: ConfigParserService,
+          useClass: MockConfigParserService
+        }
+      ]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
