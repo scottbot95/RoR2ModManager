@@ -1,3 +1,5 @@
-<p>
-  editor works!
-</p>
+<mat-list>
+  <mat-list-item *ngFor="let section of sections">
+    <app-config-section [section]="section"></app-config-section>
+  </mat-list-item>
+</mat-list>

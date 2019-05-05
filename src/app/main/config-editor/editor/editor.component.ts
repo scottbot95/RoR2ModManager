@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { PreferencesService } from '../../../core/services/preferences.service';
-import { ElectronService } from '../../../core/services/electron.service';
-
-import { parse as parseToml } from 'toml';
-import { ConfigParserService } from '../services/config-parser.service';
+import {
+  ConfigParserService,
+  ConfigMap,
+  ConfigMapValue
+} from '../services/config-parser.service';
 
 @Component({
   selector: 'app-editor',
@@ -12,7 +12,8 @@ import { ConfigParserService } from '../services/config-parser.service';
   styleUrls: ['./editor.component.scss']
 })
 export class EditorComponent implements OnInit {
-  parsedConfig: any;
+  parsedConfig: ConfigMap;
+  sections: ConfigMapValue[] = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -22,6 +23,10 @@ export class EditorComponent implements OnInit {
   async ngOnInit() {
     const filename = this.route.snapshot.paramMap.get('file');
     this.parsedConfig = await this.parser.parseFile(filename);
-    console.log(this.parsedConfig);
+    this.sections = Object.keys(this.parsedConfig).map(
+      key => this.parsedConfig[key]
+    );
+
+    console.log(this.sections);
   }
 }
