@@ -14,6 +14,7 @@ export type ConfigValue = number | string | boolean | ConfigMap;
 export interface ConfigMapValue {
   value: ConfigValue;
   type: 'number' | 'string' | 'boolean' | 'object';
+  name: string;
   description?: string;
 }
 
@@ -52,7 +53,7 @@ export class ConfigParserService {
       const keys = title.split('.');
       for (let j = 0; j < keys.length - 1; j++) {
         const key = keys[j];
-        if (!obj[key]) obj[key] = { type: 'object', value: {} };
+        if (!obj[key]) obj[key] = { type: 'object', value: {}, name: key };
 
         if (obj[key].type !== 'object')
           throw new ParseError(
@@ -65,7 +66,8 @@ export class ConfigParserService {
       }
       obj[keys[keys.length - 1]] = {
         type: 'object',
-        value: this.parseSectionBody(body)
+        value: this.parseSectionBody(body),
+        name: keys[keys.length - 1]
       };
       i += 2;
     }
@@ -113,14 +115,15 @@ export class ConfigParserService {
       const rawValue = groups.value;
 
       if (!isNaN(+rawValue)) {
-        body[key] = { type: 'number', value: +rawValue };
+        body[key] = { type: 'number', value: +rawValue, name: key };
       } else if (
         rawValue.toLowerCase() === 'true' ||
         rawValue.toLowerCase() === 'false'
       ) {
         body[key] = {
           type: 'boolean',
-          value: rawValue.toLowerCase() === 'true'
+          value: rawValue.toLowerCase() === 'true',
+          name: key
         };
       } else {
         let str = rawValue;
@@ -129,7 +132,8 @@ export class ConfigParserService {
         }
         body[key] = {
           type: 'string',
-          value: str
+          value: str,
+          name: key
         };
       }
 

@@ -46,7 +46,7 @@ describe('ConfigParserService', () => {
     it('parses a number value', () => {
       const test = 'key = 123';
       const expected: ConfigMap = {
-        key: { type: 'number', value: 123 }
+        key: { type: 'number', value: 123, name: 'key' }
       };
 
       const result = service.parseSectionBody(test);
@@ -57,7 +57,7 @@ describe('ConfigParserService', () => {
     it('parses a boolean value', () => {
       const test = 'key = true';
       const expected: ConfigMap = {
-        key: { type: 'boolean', value: true }
+        key: { type: 'boolean', value: true, name: 'key' }
       };
 
       const result = service.parseSectionBody(test);
@@ -68,7 +68,7 @@ describe('ConfigParserService', () => {
     it('parses unquoted string values', () => {
       const test = 'key = This is a test';
       const expected: ConfigMap = {
-        key: { type: 'string', value: 'This is a test' }
+        key: { type: 'string', value: 'This is a test', name: 'key' }
       };
 
       const result = service.parseSectionBody(test);
@@ -79,7 +79,7 @@ describe('ConfigParserService', () => {
     it('parses quoted string values', () => {
       const test = 'key = "This is a test"';
       const expected: ConfigMap = {
-        key: { type: 'string', value: 'This is a test' }
+        key: { type: 'string', value: 'This is a test', name: 'key' }
       };
 
       const result = service.parseSectionBody(test);
@@ -90,7 +90,7 @@ describe('ConfigParserService', () => {
     it('handles no whitespace around keys/value pairs', () => {
       const test = 'key=true';
       const expected: ConfigMap = {
-        key: { type: 'boolean', value: true }
+        key: { type: 'boolean', value: true, name: 'key' }
       };
 
       const result = service.parseSectionBody(test);
@@ -101,7 +101,7 @@ describe('ConfigParserService', () => {
     it('handles extra whitespace around keys/value pairs', () => {
       const test = 'key   \t=  true';
       const expected: ConfigMap = {
-        key: { type: 'boolean', value: true }
+        key: { type: 'boolean', value: true, name: 'key' }
       };
 
       const result = service.parseSectionBody(test);
@@ -113,10 +113,10 @@ describe('ConfigParserService', () => {
       const test =
         'key1 = true\nkey2 = 123\nkey3 = Some test string\nkey4=false';
       const expected: ConfigMap = {
-        key1: { type: 'boolean', value: true },
-        key2: { type: 'number', value: 123 },
-        key3: { type: 'string', value: 'Some test string' },
-        key4: { type: 'boolean', value: false }
+        key1: { type: 'boolean', value: true, name: 'key1' },
+        key2: { type: 'number', value: 123, name: 'key2' },
+        key3: { type: 'string', value: 'Some test string', name: 'key3' },
+        key4: { type: 'boolean', value: false, name: 'key4' }
       };
 
       const result = service.parseSectionBody(test);
@@ -130,6 +130,7 @@ describe('ConfigParserService', () => {
         key: {
           type: 'boolean',
           value: true,
+          name: 'key',
           description: 'Simple test key that does nothing'
         }
       };
@@ -154,7 +155,8 @@ describe('ConfigParserService', () => {
       const expected: ConfigMap = {
         Foo: {
           type: 'object',
-          value: parsedBody
+          value: parsedBody,
+          name: 'Foo'
         }
       };
 
@@ -171,11 +173,13 @@ describe('ConfigParserService', () => {
       const expected: ConfigMap = {
         Foo: {
           type: 'object',
-          value: parsedBody
+          value: parsedBody,
+          name: 'Foo'
         },
         Foo2: {
           type: 'object',
-          value: parsedBody
+          value: parsedBody,
+          name: 'Foo2'
         }
       };
 
@@ -193,11 +197,13 @@ describe('ConfigParserService', () => {
       const expected: ConfigMap = {
         [parentSectionTitle]: {
           type: 'object',
+          name: parentSectionTitle,
           value: {
             ...parsedBody,
             [childSectionTitle]: {
               type: 'object',
-              value: parsedBody
+              value: parsedBody,
+              name: childSectionTitle
             }
           }
         }
