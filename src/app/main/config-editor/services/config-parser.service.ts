@@ -106,7 +106,8 @@ export class ConfigParserService {
 
       // if it's a comment save it for next loop
       if (line.startsWith('#')) {
-        foundDescription = line.slice(1).trim();
+        foundDescription =
+          (foundDescription || '') + line.slice(1).trim() + '\n';
         continue; // next loop
       }
       const { groups } = line.match(/\s*(?<key>\w*)\s*=\s*(?<value>.*)\s*/);
@@ -138,7 +139,7 @@ export class ConfigParserService {
       }
 
       if (foundDescription) {
-        body[key].description = foundDescription;
+        body[key].description = foundDescription.trim();
         foundDescription = undefined;
       }
     }

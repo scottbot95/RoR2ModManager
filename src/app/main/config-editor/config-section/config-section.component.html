@@ -1,3 +1,46 @@
-<p>
-  config-section works!
-</p>
+<mat-expansion-panel>
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      {{ section.name }}
+    </mat-panel-title>
+    <mat-panel-description *ngIf="section.description">
+      {{ section.description }}
+    </mat-panel-description>
+  </mat-expansion-panel-header>
+
+  <mat-list>
+    <mat-list-item *ngFor="let field of sectionKeys">
+      <span
+        fxLayout="row"
+        fxFlex
+        fxLayoutAlign="center center"
+        *ngIf="field.type !== 'boolean'"
+      >
+        <label [matTooltip]="field.description">
+          {{ field.name }}
+        </label>
+        <span fxFlex></span>
+        <mat-form-field>
+          <input matInput [type]="field.type" [value]="field.value" />
+        </mat-form-field>
+      </span>
+
+      <mat-slide-toggle
+        *ngIf="field.type === 'boolean'"
+        class="fullWidthToggle"
+        labelPosition="before"
+        [matTooltip]="field.description"
+        [checked]="field.value"
+        [class.dirty]="isDirty(toggle, field)"
+        #toggle
+      >
+        {{ field.name | humanize }}
+      </mat-slide-toggle>
+    </mat-list-item>
+  </mat-list>
+
+  <mat-accordion *ngIf="subSections.length">
+    <app-config-section *ngFor="let section of subSections" [section]="section">
+    </app-config-section>
+  </mat-accordion>
+</mat-expansion-panel>

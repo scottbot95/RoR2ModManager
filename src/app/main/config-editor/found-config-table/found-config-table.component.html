@@ -1,5 +1,6 @@
-<mat-list>
+<mat-list *ngIf="configFiles.length">
   <mat-list-item *ngFor="let file of configFiles" [routerLink]="file.filename">
     {{ file.filename }}
   </mat-list-item>
 </mat-list>
+<mat-spinner *ngIf="!configFiles.length"></mat-spinner>

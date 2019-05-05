@@ -5,7 +5,8 @@ import {
   OnChanges,
   SimpleChanges
 } from '@angular/core';
-import { ConfigMap } from '../services/config-parser.service';
+import { ConfigMap, ConfigMapValue } from '../services/config-parser.service';
+import { MatSlideToggle } from '@angular/material';
 
 @Component({
   selector: 'app-config-section',
@@ -13,14 +14,10 @@ import { ConfigMap } from '../services/config-parser.service';
   styleUrls: ['./config-section.component.scss']
 })
 export class ConfigSectionComponent implements OnInit, OnChanges {
-  @Input() section: ConfigMap;
+  @Input() section: ConfigMapValue;
 
-  sectionKeys: {
-    type: string;
-    label: string;
-    value: any;
-    description?: string;
-  }[];
+  sectionKeys: ConfigMapValue[];
+  subSections: ConfigMapValue[];
 
   constructor() {}
 
@@ -28,14 +25,21 @@ export class ConfigSectionComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     const change = changes['section'];
-    const newSection = change.currentValue as ConfigMap;
+    const newSection = change.currentValue as ConfigMapValue;
+    if (newSection.type !== 'object')
+      throw new Error('section must be an objet type');
 
     this.sectionKeys = [];
-    for (const key of Object.keys(newSection)) {
-      const value = newSection[key];
-      this.sectionKeys.push({ label: key, type: typeof value, value });
-    }
+    this.subSections = [];
+    for (const key of Object.keys(newSection.value)) {
+      const value = (newSection.value as ConfigMap)[key];
 
-    console.log(this.sectionKeys);
+      if (value.type !== 'object') this.sectionKeys.push(value);
+      else this.subSections.push(value);
+    }
+  }
+
+  isDirty(input: MatSlideToggle, field: ConfigMapValue) {
+    return input.checked !== field.value;
   }
 }

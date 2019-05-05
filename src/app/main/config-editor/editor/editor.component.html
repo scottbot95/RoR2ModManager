@@ -1,5 +1,12 @@
-<mat-list>
-  <mat-list-item *ngFor="let section of sections">
-    <app-config-section [section]="section"></app-config-section>
-  </mat-list-item>
-</mat-list>
+<span fxLayout="row">
+  <a mat-button routerLink="..">
+    <mat-icon>arrow_back</mat-icon>
+    Back to List
+  </a>
+  <h2>Editing: {{ filename }}</h2>
+</span>
+
+<mat-accordion multi="true">
+  <app-config-section *ngFor="let section of sections" [section]="section">
+  </app-config-section>
+</mat-accordion>

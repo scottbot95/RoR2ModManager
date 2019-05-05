@@ -1,4 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ChangeDetectorRef,
+  ChangeDetectionStrategy
+} from '@angular/core';
 import { PreferencesService } from '../../../core/services/preferences.service';
 import { ElectronService } from '../../../core/services/electron.service';
 import { Package } from '../../../core/models/package.model';
@@ -14,7 +19,7 @@ interface ConfigFile {
   styleUrls: ['./found-config-table.component.scss']
 })
 export class FoundConfigTableComponent implements OnInit {
-  configFiles: ConfigFile[];
+  configFiles: ConfigFile[] = [];
 
   constructor(
     private prefs: PreferencesService,

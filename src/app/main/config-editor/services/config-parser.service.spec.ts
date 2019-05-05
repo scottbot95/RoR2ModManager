@@ -12,7 +12,7 @@ import {
 } from '../../../core/services/mocks.spec';
 import { PreferencesService } from '../../../core/services/preferences.service';
 
-describe('ConfigParserService', () => {
+fdescribe('ConfigParserService', () => {
   let service: ConfigParserService;
 
   beforeEach(() =>
@@ -132,6 +132,24 @@ describe('ConfigParserService', () => {
           value: true,
           name: 'key',
           description: 'Simple test key that does nothing'
+        }
+      };
+
+      const result = service.parseSectionBody(test);
+
+      expect(result).toEqual(expected);
+    });
+
+    it('handles multi-line descriptions from comments', () => {
+      const test =
+        '# Simple test key that does nothing\n# this descriptions is really long\nkey=true';
+      const expected: ConfigMap = {
+        key: {
+          type: 'boolean',
+          value: true,
+          name: 'key',
+          description:
+            'Simple test key that does nothing\nthis descriptions is really long'
         }
       };
 

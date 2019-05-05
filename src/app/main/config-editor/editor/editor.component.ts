@@ -14,6 +14,7 @@ import {
 export class EditorComponent implements OnInit {
   parsedConfig: ConfigMap;
   sections: ConfigMapValue[] = [];
+  filename: string;
 
   constructor(
     private route: ActivatedRoute,
@@ -21,8 +22,8 @@ export class EditorComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    const filename = this.route.snapshot.paramMap.get('file');
-    this.parsedConfig = await this.parser.parseFile(filename);
+    this.filename = this.route.snapshot.paramMap.get('file');
+    this.parsedConfig = await this.parser.parseFile(this.filename);
     this.sections = Object.keys(this.parsedConfig).map(
       key => this.parsedConfig[key]
     );
