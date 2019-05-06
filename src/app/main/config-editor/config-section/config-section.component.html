@@ -1,4 +1,8 @@
-<mat-expansion-panel>
+<mat-expansion-panel
+  [expanded]="expanded"
+  (opened)="changed.emit(true)"
+  (closed)="changed.emit(false)"
+>
   <mat-expansion-panel-header>
     <mat-panel-title>
       {{ section.name }}
@@ -39,10 +43,12 @@
     </mat-list-item>
   </mat-list>
 
-  <mat-accordion *ngIf="subSections.length">
+  <mat-accordion>
     <app-config-section
-      *ngFor="let section of subSections"
-      [section]="section"
+      *ngFor="let section of subSections | keyvalue"
+      [section]="section.value"
+      [expanded]="isOpen[section.key]"
+      (changed)="isOpen[section.key] = $event"
       #sectionEditor
     >
     </app-config-section>

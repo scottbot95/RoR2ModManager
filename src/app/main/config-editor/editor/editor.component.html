@@ -36,8 +36,10 @@
 
 <mat-accordion multi="true">
   <app-config-section
-    *ngFor="let section of sections"
-    [section]="section"
+    *ngFor="let section of parsedConfig | keyvalue"
+    [section]="section.value"
+    [expanded]="isOpen[section.key]"
+    (changed)="isOpen[section.key] = $event"
     #editorSection
   >
   </app-config-section>

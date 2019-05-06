@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ElectronService } from '../../../core/services/electron.service';
 import { PreferencesService } from '../../../core/services/preferences.service';
+import { FixedSizeVirtualScrollStrategy } from '@angular/cdk/scrolling';
 
 export class ParseError extends Error {
   name = 'ParseError';
@@ -73,6 +74,68 @@ export class ConfigParserService {
     }
 
     return result;
+  }
+
+  public async writeConfigMap(config: ConfigMap, filename: string) {
+    const serialized = this.serializeConfigMap(config);
+    const fullPath = this.getConfigPath(filename);
+
+    await this.electron.fs.writeFile(fullPath, serialized);
+  }
+
+  public serializeConfigMap(config: ConfigMap): string {
+    let result = '';
+
+    for (const key of Object.keys(config)) {
+      const section = config[key];
+      result += this.serialzieConfigSection(section);
+    }
+
+    return result;
+  }
+
+  public serialzieConfigSection(
+    section: ConfigMapValue,
+    parentNames?: string
+  ): string {
+    if (section.type !== 'object')
+      throw new Error(
+        `value must be of type section. ${section.type} was provided`
+      );
+
+    const parentPrefix = parentNames ? parentNames + '.' : '';
+    let result = `[${parentPrefix}${section.name}]\n\n`;
+    if (section.description) {
+      result = this.serializeDescription(section.description) + result;
+    }
+    const subSections: string[] = [];
+
+    for (const key of Object.keys(section.value)) {
+      const field = (section.value as ConfigMap)[key];
+      if (field.description) {
+        result += this.serializeDescription(field.description);
+      }
+      if (field.type !== 'object') {
+        result += `${field.name} = ${field.value}\n\n`;
+      } else {
+        subSections.push(
+          this.serialzieConfigSection(field, parentPrefix + section.name)
+        );
+      }
+    }
+
+    for (const sec of subSections) {
+      result += sec;
+    }
+
+    return result;
+  }
+
+  serializeDescription(input: string): string {
+    return input
+      .split(/\n\r?/)
+      .map(l => `# ${l}\n`)
+      .join('');
   }
 
   public getConfigPath(filename?: string) {

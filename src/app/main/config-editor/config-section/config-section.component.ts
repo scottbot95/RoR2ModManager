@@ -5,7 +5,9 @@ import {
   OnChanges,
   SimpleChanges,
   ViewChildren,
-  QueryList
+  QueryList,
+  Output,
+  EventEmitter
 } from '@angular/core';
 import { ConfigMap, ConfigMapValue } from '../services/config-parser.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
@@ -17,15 +19,20 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 })
 export class ConfigSectionComponent implements OnInit, OnChanges {
   @Input() section: ConfigMapValue;
+  @Input() expanded: boolean;
+
+  @Output() changed: EventEmitter<boolean> = new EventEmitter();
 
   @ViewChildren('sectionEditor') childSections: QueryList<
     ConfigSectionComponent
   >;
 
   sectionKeys: ConfigMapValue[];
-  subSections: ConfigMapValue[];
+  subSections: ConfigMap;
 
   form: FormGroup = this.fb.group({});
+
+  isOpen: { [key: string]: boolean } = {};
 
   constructor(private fb: FormBuilder) {}
 
@@ -37,6 +44,7 @@ export class ConfigSectionComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     const change = changes['section'];
+    if (!change) return;
     const newSection = change.currentValue as ConfigMapValue;
     if (newSection.type !== 'object')
       throw new Error(
@@ -44,14 +52,16 @@ export class ConfigSectionComponent implements OnInit, OnChanges {
       );
 
     this.sectionKeys = [];
-    this.subSections = [];
+    this.subSections = {};
 
     for (const key of Object.keys(newSection.value)) {
       const value = (newSection.value as ConfigMap)[key];
 
       if (value.type !== 'object') this.sectionKeys.push(value);
-      else this.subSections.push(value);
+      else this.subSections[key] = value;
     }
+
+    console.log(this.subSections);
   }
 
   isDirty(): boolean {

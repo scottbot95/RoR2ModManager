@@ -14,8 +14,9 @@ import { ConfigSectionComponent } from '../config-section/config-section.compone
 })
 export class EditorComponent implements OnInit {
   parsedConfig: ConfigMap;
-  sections: ConfigMapValue[] = [];
   filename: string;
+
+  isOpen: { [key: string]: boolean } = {};
 
   @ViewChildren('editorSection') sectionEditors: QueryList<
     ConfigSectionComponent
@@ -29,9 +30,7 @@ export class EditorComponent implements OnInit {
   async ngOnInit() {
     this.filename = this.route.snapshot.paramMap.get('file');
     this.parsedConfig = await this.parser.parseFile(this.filename);
-    this.sections = Object.keys(this.parsedConfig).map(
-      key => this.parsedConfig[key]
-    );
+    console.log(this.parsedConfig);
   }
 
   someSectionDirty() {
@@ -44,12 +43,24 @@ export class EditorComponent implements OnInit {
     this.sectionEditors.forEach(sec => sec.reset());
   }
 
-  saveChanges() {
-    const sectionValues: ConfigMap = this.sectionEditors.reduce((acc, sec) => {
-      acc[sec.section.name] = sec.getValues();
-      return acc;
-    }, {});
+  async saveChanges() {
+    const sectionValues: ConfigMap = this.sectionEditors.reduce(
+      (acc, sec) => {
+        acc[sec.section.name] = {
+          name: sec.section.name,
+          type: 'object',
+          value: sec.getValues()
+        };
+        return acc;
+      },
+      <ConfigMap>{}
+    );
 
-    console.log(sectionValues);
+    // this.parser.serializeConfigMap(sectionValues);
+    await this.parser.writeConfigMap(sectionValues, this.filename);
+
+    this.parsedConfig = sectionValues;
+    // Object.assign(this.parsedConfig, sectionValues);
+    this.reset();
   }
 }
