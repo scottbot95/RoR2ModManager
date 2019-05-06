@@ -1,8 +1,6 @@
 import {
   Component,
-  OnInit,
-  ChangeDetectorRef,
-  ChangeDetectionStrategy
+  OnInit
 } from '@angular/core';
 import { PreferencesService } from '../../../core/services/preferences.service';
 import { ElectronService } from '../../../core/services/electron.service';

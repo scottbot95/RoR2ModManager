@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { ElectronService } from '../../../core/services/electron.service';
 import { PreferencesService } from '../../../core/services/preferences.service';
-import { FixedSizeVirtualScrollStrategy } from '@angular/cdk/scrolling';
+import { Package } from '../../../core/models/package.model';
+import { BEPIN_UUID4 } from '../../../core/services/package.service';
 
 export class ParseError extends Error {
   name = 'ParseError';
@@ -210,3 +211,9 @@ export class ConfigParserService {
     return body;
   }
 }
+
+export const getPossibleConfigFilenames = (pkg: Package) => {
+  const filenameBase = `${pkg.owner}.${pkg.name}.cfg`;
+  if (pkg.uuid4 === BEPIN_UUID4) return ['BepInEx.cfg'];
+  else return ['com', 'dev'].map(pre => `${pre}.${filenameBase}`);
+};

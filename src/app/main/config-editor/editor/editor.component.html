@@ -1,13 +1,13 @@
 <div fxLayout="row">
   <div fxLayout="column">
-    <a
+    <button
       mat-button
-      routerLink=".."
       matTooltip="Return to list of known config files"
+      (click)="goBack()"
     >
       <mat-icon>arrow_back</mat-icon>
       Back to List
-    </a>
+    </button>
   </div>
   <h2>Editing: {{ filename }}</h2>
   <span fxFlex></span>

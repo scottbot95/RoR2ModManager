@@ -2,8 +2,7 @@ import { Component, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import {
   ConfigParserService,
-  ConfigMap,
-  ConfigMapValue
+  ConfigMap
 } from '../services/config-parser.service';
 import { ConfigSectionComponent } from '../config-section/config-section.component';
 
@@ -17,6 +16,8 @@ export class EditorComponent implements OnInit {
   filename: string;
 
   isOpen: { [key: string]: boolean } = {};
+
+  goBack = window.history.back;
 
   @ViewChildren('editorSection') sectionEditors: QueryList<
     ConfigSectionComponent

@@ -2,7 +2,6 @@ import { TestBed } from '@angular/core/testing';
 
 import {
   ConfigParserService,
-  ConfigMapValue,
   ConfigMap
 } from './config-parser.service';
 import { ElectronService } from '../../../core/services/electron.service';
