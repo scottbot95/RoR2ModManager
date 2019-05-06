@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - New config editor page
     - Added right click option to jump to config
+- Finally have an icon!
 
 ## [0.5.1] 2019-05-04
 
