@@ -10,7 +10,8 @@ import {
   MatGridListModule,
   MatSlideToggleModule,
   MatFormFieldModule,
-  MatInputModule
+  MatInputModule,
+  MatExpansionModule
 } from '@angular/material';
 
 // Inject hammerjs
@@ -28,7 +29,8 @@ import 'hammerjs';
     MatGridListModule,
     MatSlideToggleModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    MatExpansionModule
   ]
 })
 export class MaterialModule {}
