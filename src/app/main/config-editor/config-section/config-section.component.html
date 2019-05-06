@@ -8,12 +8,13 @@
     </mat-panel-description>
   </mat-expansion-panel-header>
 
-  <mat-list>
+  <mat-list [formGroup]="form">
     <mat-list-item *ngFor="let field of sectionKeys">
       <span
         fxLayout="row"
         fxFlex
         fxLayoutAlign="center center"
+        [class.dirty]="form.get(field.name).dirty"
         *ngIf="field.type !== 'boolean'"
       >
         <label [matTooltip]="field.description">
@@ -21,7 +22,7 @@
         </label>
         <span fxFlex></span>
         <mat-form-field>
-          <input matInput [type]="field.type" [value]="field.value" />
+          <input matInput [type]="field.type" [formControlName]="field.name" />
         </mat-form-field>
       </span>
 
@@ -30,9 +31,8 @@
         class="fullWidthToggle"
         labelPosition="before"
         [matTooltip]="field.description"
-        [checked]="field.value"
-        [class.dirty]="isDirty(toggle, field)"
-        #toggle
+        [class.dirty]="form.get(field.name).dirty"
+        [formControlName]="field.name"
       >
         {{ field.name | humanize }}
       </mat-slide-toggle>
@@ -40,7 +40,11 @@
   </mat-list>
 
   <mat-accordion *ngIf="subSections.length">
-    <app-config-section *ngFor="let section of subSections" [section]="section">
+    <app-config-section
+      *ngFor="let section of subSections"
+      [section]="section"
+      #sectionEditor
+    >
     </app-config-section>
   </mat-accordion>
 </mat-expansion-panel>

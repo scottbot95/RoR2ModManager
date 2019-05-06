@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import {
   ConfigParserService,
   ConfigMap,
   ConfigMapValue
 } from '../services/config-parser.service';
+import { ConfigSectionComponent } from '../config-section/config-section.component';
 
 @Component({
   selector: 'app-editor',
@@ -15,6 +16,10 @@ export class EditorComponent implements OnInit {
   parsedConfig: ConfigMap;
   sections: ConfigMapValue[] = [];
   filename: string;
+
+  @ViewChildren('editorSection') sectionEditors: QueryList<
+    ConfigSectionComponent
+  >;
 
   constructor(
     private route: ActivatedRoute,
@@ -27,7 +32,24 @@ export class EditorComponent implements OnInit {
     this.sections = Object.keys(this.parsedConfig).map(
       key => this.parsedConfig[key]
     );
+  }
 
-    console.log(this.sections);
+  someSectionDirty() {
+    if (this.sectionEditors) {
+      return this.sectionEditors.some(sec => sec.isDirty());
+    }
+  }
+
+  reset() {
+    this.sectionEditors.forEach(sec => sec.reset());
+  }
+
+  saveChanges() {
+    const sectionValues: ConfigMap = this.sectionEditors.reduce((acc, sec) => {
+      acc[sec.section.name] = sec.getValues();
+      return acc;
+    }, {});
+
+    console.log(sectionValues);
   }
 }

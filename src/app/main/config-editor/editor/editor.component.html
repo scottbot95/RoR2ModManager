@@ -1,12 +1,44 @@
-<span fxLayout="row">
-  <a mat-button routerLink="..">
-    <mat-icon>arrow_back</mat-icon>
-    Back to List
-  </a>
+<div fxLayout="row">
+  <div fxLayout="column">
+    <a
+      mat-button
+      routerLink=".."
+      matTooltip="Return to list of known config files"
+    >
+      <mat-icon>arrow_back</mat-icon>
+      Back to List
+    </a>
+  </div>
   <h2>Editing: {{ filename }}</h2>
-</span>
+  <span fxFlex></span>
+  <div fxLayout="column" fxLayoutAlign="center">
+    <button
+      mat-raised-button
+      [disabled]="!someSectionDirty()"
+      matTooltip="Undo all changes"
+      (click)="reset()"
+    >
+      Reset
+    </button>
+  </div>
+  <span class="padding"></span>
+  <div fxLayout="column" fxLayoutAlign="center">
+    <button
+      mat-raised-button
+      [disabled]="!someSectionDirty()"
+      matTooltip="Save changes made to disk"
+      (click)="saveChanges()"
+    >
+      Save
+    </button>
+  </div>
+</div>
 
 <mat-accordion multi="true">
-  <app-config-section *ngFor="let section of sections" [section]="section">
+  <app-config-section
+    *ngFor="let section of sections"
+    [section]="section"
+    #editorSection
+  >
   </app-config-section>
 </mat-accordion>
