@@ -23,6 +23,10 @@ const routes: Routes = [
         path: 'preferences',
         pathMatch: 'full',
         component: PreferencesPageComponent
+      },
+      {
+        path: 'config-editor',
+        loadChildren: './config-editor/config-editor.module#ConfigEditorModule'
       }
     ]
   }

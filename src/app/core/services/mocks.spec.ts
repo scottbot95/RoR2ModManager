@@ -107,6 +107,7 @@ export class MockElectronService {
   isElectron() {
     return false;
   }
+  glob() {}
 }
 
 export class MockDownloadService {
@@ -134,6 +135,7 @@ export class MockProfileService {
 })
 export class MockNavMenuComponent {}
 
+
 export class MockWebContents {
   constructor() {
     this.id = ++MockWebContents._nextId;
@@ -151,4 +153,9 @@ export class MockBrowserWindow {
   }
   focus() {}
   close() {}
+}
+
+export class MockConfigParserService {
+  parseFile() {}
+
 }

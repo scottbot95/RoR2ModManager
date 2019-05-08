@@ -25,6 +25,8 @@ A simple mod manager for Risk of Rain 2 build using Angular and Electron.
     - Many improvements to come
 - Open various useful folder from menu
 - Open config file for (some) installed packages
+- Download updates automatically in the background and apply them on restart
+- Internal config editor for installed mods
 
 ## Getting Started
 

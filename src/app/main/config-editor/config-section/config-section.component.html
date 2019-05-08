@@ -1,0 +1,56 @@
+<mat-expansion-panel
+  [expanded]="expanded"
+  (opened)="changed.emit(true)"
+  (closed)="changed.emit(false)"
+>
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      {{ section.name }}
+    </mat-panel-title>
+    <mat-panel-description *ngIf="section.description">
+      {{ section.description }}
+    </mat-panel-description>
+  </mat-expansion-panel-header>
+
+  <mat-list [formGroup]="form">
+    <mat-list-item *ngFor="let field of sectionKeys">
+      <span
+        fxLayout="row"
+        fxFlex
+        fxLayoutAlign="center center"
+        [class.dirty]="form.get(field.name).dirty"
+        *ngIf="field.type !== 'boolean'"
+      >
+        <label [matTooltip]="field.description">
+          {{ field.name }}
+        </label>
+        <span fxFlex></span>
+        <mat-form-field>
+          <input matInput [type]="field.type" [formControlName]="field.name" />
+        </mat-form-field>
+      </span>
+
+      <mat-slide-toggle
+        *ngIf="field.type === 'boolean'"
+        class="fullWidthToggle"
+        labelPosition="before"
+        [matTooltip]="field.description"
+        [class.dirty]="form.get(field.name).dirty"
+        [formControlName]="field.name"
+      >
+        {{ field.name | humanize }}
+      </mat-slide-toggle>
+    </mat-list-item>
+  </mat-list>
+
+  <mat-accordion>
+    <app-config-section
+      *ngFor="let section of subSections | keyvalue"
+      [section]="section.value"
+      [expanded]="isOpen[section.key]"
+      (changed)="isOpen[section.key] = $event"
+      #sectionEditor
+    >
+    </app-config-section>
+  </mat-accordion>
+</mat-expansion-panel>

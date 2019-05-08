@@ -5,7 +5,8 @@ import {
   OnDestroy,
   Input,
   OnInit,
-  ChangeDetectorRef
+  ChangeDetectorRef,
+  NgZone
 } from '@angular/core';
 import { MatPaginator, MatSort } from '@angular/material';
 import { Subscription, Observable } from 'rxjs';
@@ -24,13 +25,14 @@ import {
 import {
   PackageChangeset,
   PackageService,
-  SelectablePackge,
-  BEPIN_UUID4
+  SelectablePackge
 } from '../../../core/services/package.service';
 import { PreferencesService } from '../../../core/services/preferences.service';
 import { SelectionModel } from '@angular/cdk/collections';
 import { ElectronService } from '../../../core/services/electron.service';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { Router } from '@angular/router';
+import { getPossibleConfigFilenames } from '../../config-editor/services/config-parser.service';
 
 @Component({
   selector: 'app-package-table',
@@ -80,7 +82,9 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
     public packages: PackageService,
     private prefs: PreferencesService,
     private electron: ElectronService,
-    private changeDetector: ChangeDetectorRef
+    private changeDetector: ChangeDetectorRef,
+    private router: Router,
+    private ngZone: NgZone
   ) {}
 
   ngOnInit() {
@@ -167,8 +171,12 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
     if (pkg.installedVersion) {
       this.electron.remote.Menu.buildFromTemplate([
         {
-          label: 'Open config file',
-          click: this.tryOpenPackageConfig(pkg).bind(this)
+          label: 'Open config file (external)',
+          click: this.tryOpenPackageConfig.bind(this)(pkg)
+        },
+        {
+          label: 'Edit config file (internal)',
+          click: this.tryEditConfig.bind(this)(pkg)
         }
       ]).popup();
     }
@@ -176,10 +184,7 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   tryOpenPackageConfig(pkg: Package) {
     const join = this.electron.path.join;
-    const filenameBase = `${pkg.owner}.${pkg.name}.cfg`;
-    let filenames: string[];
-    if (pkg.uuid4 === BEPIN_UUID4) filenames = ['BepInEx.cfg'];
-    else filenames = ['com', 'dev'].map(pre => `${pre}.${filenameBase}`);
+    const filenames = getPossibleConfigFilenames(pkg);
 
     return async () => {
       const dir = join(this.prefs.get('ror2_path'), 'BepInEx', 'config');
@@ -200,6 +205,30 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
           `Could not find config file for ${pkg.name}`
         );
       }
+    };
+  }
+
+  tryEditConfig(pkg: Package) {
+    const join = this.electron.path.join;
+    const filenames = getPossibleConfigFilenames(pkg);
+
+    return async () => {
+      const dir = join(this.prefs.get('ror2_path'), 'BepInEx', 'config');
+
+      for (const file of filenames) {
+        const testPath = join(dir, file);
+        if (await this.electron.fs.pathExists(testPath)) {
+          this.ngZone.run(() => {
+            this.router.navigate(['/config-editor/' + file]);
+          });
+          break;
+        }
+      }
+
+      this.electron.remote.dialog.showErrorBox(
+        'File not found',
+        `Could not find config file for ${pkg.name}`
+      );
     };
   }
 

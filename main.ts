@@ -1,4 +1,5 @@
-import { app, BrowserWindow, autoUpdater } from 'electron';
+// tslint:disable-next-line:no-unused-variable
+import { app, BrowserWindow, Notification } from 'electron';
 import * as path from 'path';
 import * as Registry from 'winreg';
 
@@ -10,10 +11,9 @@ import { registerIpcListeners } from './electron/ipc';
 import { createBrowserWindow } from './electron/windows';
 import { registerDownloadManager } from './electron/downloads';
 
-const server = 'https://hazel.scottbot95.now.sh';
-const feed = `${server}/update/${process.platform}/${app.getVersion()}`;
+import './electron/autoUpdate';
 
-autoUpdater.setFeedURL({ url: feed });
+app.setAppUserModelId('com.electron.ror2modmanager');
 
 registerIpcListeners();
 registerDownloadManager({
