@@ -7,8 +7,13 @@ import {
   MockPackageService
 } from '../../core/services/mocks.spec';
 import { PackageService } from '../../core/services/package.service';
+import { testBepInExPackPackage } from '../../core/models/package.model.spec';
 
 describe('ProfileService', () => {
+  let electron: MockElectronService;
+  let packages: MockPackageService;
+  let service: ProfileService;
+
   beforeEach(() =>
     TestBed.configureTestingModule({
       providers: [
@@ -19,8 +24,73 @@ describe('ProfileService', () => {
     })
   );
 
+  beforeEach(() => {
+    electron = TestBed.get(ElectronService);
+    packages = TestBed.get(PackageService);
+    service = TestBed.get(ProfileService);
+
+    packages.allPackages$.next([testBepInExPackPackage]);
+  });
+
   it('should be created', () => {
-    const service: ProfileService = TestBed.get(ProfileService);
     expect(service).toBeTruthy();
+  });
+
+  it('should update its package list', () => {
+    expect((service as any).allPackages).toEqual([testBepInExPackPackage]);
+  });
+
+  it('should properly register ipc listeners', () => {
+    const spy = spyOn(electron.ipcRenderer, 'on');
+
+    service.registerMenuHandlers();
+
+    expect(spy).toHaveBeenCalledWith('importProfile', jasmine.any(Function));
+    expect(spy).toHaveBeenCalledWith('exportProfile', jasmine.any(Function));
+  });
+
+  it('sends message on show open dialog', () => {
+    const spy = spyOn(electron.ipcRenderer, 'send');
+
+    service.showImportDialog();
+
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenCalledWith('openDialog', 'importProfile', true);
+  });
+
+  it('calls `dialog.showSaveDialog` on export', () => {
+    const spy = spyOn(electron.remote.dialog, 'showSaveDialog');
+    spyOn(electron.remote, 'getCurrentWindow').and.returnValue(
+      'current window!'
+    );
+
+    service.showExportDialog();
+
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenCalledWith(
+      'current window!',
+      jasmine.any(Object),
+      jasmine.any(Function)
+    );
+  });
+
+  it('exports to a file', () => {
+    const spy = spyOn(electron.fs, 'writeJson');
+    const filename = 'foobar.json';
+
+    (service as any).exportToFile(filename);
+
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenCalledWith(filename, [
+      testBepInExPackPackage.installedVersion.fullName
+    ]);
+  });
+
+  it('does nothing if export dialog is closed', () => {
+    const spy = spyOn(electron.fs, 'writeJson');
+
+    (service as any).exportToFile();
+
+    expect(spy).toHaveBeenCalledTimes(0);
   });
 });

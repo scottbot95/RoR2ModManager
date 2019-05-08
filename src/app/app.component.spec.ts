@@ -47,4 +47,14 @@ describe('AppComponent', () => {
   it('should create the app', async(() => {
     expect(component).toBeTruthy();
   }));
+
+  it('should not crash in electron mode', () => {
+    const electron: ElectronService = TestBed.get(ElectronService);
+    spyOn(electron, 'isElectron').and.returnValue(true);
+    fixture = TestBed.createComponent(AppComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+
+    expect(component).toBeTruthy();
+  });
 });

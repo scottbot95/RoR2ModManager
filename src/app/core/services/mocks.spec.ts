@@ -9,6 +9,7 @@ import { PackageList, Package, PackageVersion } from '../models/package.model';
 import { SelectionModel } from '@angular/cdk/collections';
 import { SelectablePackge } from './package.service';
 import { Component } from '@angular/core';
+import * as path from 'path';
 
 export class MockPreferencesService {
   private data: UserPreferences = defaultConfig;
@@ -69,27 +70,40 @@ export class MockPackageService {
   }
 
   public updatePackage(pkg: Package, version: PackageVersion) {}
+
+  public findPackageFromDependencyString() {}
+  public installProfile() {}
 }
 
 export class MockElectronService {
-  ipcRenderer = { on: () => {}, send: () => {}, removeListener: () => {} };
+  ipcRenderer = {
+    on: () => {},
+    send: () => {},
+    sendTo: () => {},
+    removeListener: () => {}
+  };
   remote = {
     dialog: {
       showOpenDialog: (options: object) => {
         return ['C:\\fakepath'];
       },
-      showMessageBox: () => {}
+      showMessageBox: () => {},
+      showSaveDialog: () => {}
     },
     require: (module: string) => ({}),
     getCurrentWindow: () => {}
   };
   fs = {
     createWriteStream: () => {},
-    createReadStream: () => {}
+    createReadStream: () => {},
+    readJson: () => {},
+    writeJson: () => {},
+    access: () => {}
   };
   protocol = {
     registerHttpProtocol: () => {}
   };
+  path = path;
   isElectron() {
     return false;
   }
@@ -115,16 +129,33 @@ export class MockProfileService {
   registerMenuHandlers() {}
 }
 
-export class MockChangeDetectorRef {
-  detectChanges() {}
-}
-
 @Component({
   selector: 'app-nav-menu',
   template: '<ng-content></ng-content>'
 })
 export class MockNavMenuComponent {}
 
+
+export class MockWebContents {
+  constructor() {
+    this.id = ++MockWebContents._nextId;
+  }
+  private static _nextId = 0;
+  id: number;
+}
+
+export class MockBrowserWindow {
+  webContents = new MockWebContents();
+  private parent;
+  getParentWindow() {
+    if (!this.parent) this.parent = new MockBrowserWindow();
+    return this.parent;
+  }
+  focus() {}
+  close() {}
+}
+
 export class MockConfigParserService {
   parseFile() {}
+
 }

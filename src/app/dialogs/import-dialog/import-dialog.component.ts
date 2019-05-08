@@ -1,9 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ElectronService } from '../../core/services/electron.service';
 import { PackageVersionList } from '../../core/models/package.model';
-import {
-  PackageService
-} from '../../core/services/package.service';
+import { PackageService } from '../../core/services/package.service';
 import { PROFILE_EXTENSIONS } from '../../profile/constants';
 import { PackageProfile } from '../../core/models/profile.model';
 
@@ -60,8 +58,10 @@ export class ImportDialogComponent implements OnInit {
               case 'SyntaxError':
                 this.errors = ['Cannot parse profile file'];
                 break;
+              default:
+                this.errors = [err.message || err];
+                break;
             }
-            this.errors = [err.message || err];
             this.packages = undefined;
             this.profile = [];
           } finally {
