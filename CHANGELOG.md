@@ -11,6 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- New config editor page
+    - Added right click option to jump to config
+- Finally have an icon!
+
+## [0.5.1] 2019-05-04
+
+### Added
+
 - Right click on table header to select visible columns
     - Added some extra columns for your viewing pleasure
 - Mod manager will now download updates automatically

@@ -2,6 +2,7 @@ import { Menu, BrowserWindow, shell } from 'electron';
 import openAboutWindow from 'about-window';
 import * as path from 'path';
 import { prefs } from './prefs';
+import { bugs } from '../package.json';
 
 const openRoR2Directory = (dir: string = '') => {
   const openPath = path.join(prefs.get('ror2_path') as string, dir);
@@ -64,6 +65,16 @@ const template: Electron.MenuItemConstructorOptions[] = [
   {
     role: 'help',
     submenu: [
+      {
+        label: 'Report a bug',
+        click: () => {
+          shell.openExternal(bugs.url);
+        }
+      },
+      {
+        type: 'separator'
+      },
+
       {
         role: 'about',
         click: () => {
