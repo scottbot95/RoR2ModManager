@@ -1,9 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import {
-  ConfigParserService,
-  ConfigMap
-} from './config-parser.service';
+import { ConfigParserService, ConfigMap } from './config-parser.service';
 import { ElectronService } from '../../../core/services/electron.service';
 import {
   MockElectronService,
@@ -11,7 +8,7 @@ import {
 } from '../../../core/services/mocks.spec';
 import { PreferencesService } from '../../../core/services/preferences.service';
 
-fdescribe('ConfigParserService', () => {
+describe('ConfigParserService', () => {
   let service: ConfigParserService;
 
   beforeEach(() =>
