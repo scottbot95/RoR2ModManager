@@ -21,13 +21,9 @@ export class ProfileService {
   }
 
   public registerMenuHandlers() {
-    this.electron.ipcRenderer.on('importProfile', event =>
-      this.showImportDialog()
-    );
+    this.electron.ipcRenderer.on('importProfile', this.showImportDialog);
 
-    this.electron.ipcRenderer.on('exportProfile', event =>
-      this.showExportDialog()
-    );
+    this.electron.ipcRenderer.on('exportProfile', this.showExportDialog);
   }
 
   public showImportDialog() {
