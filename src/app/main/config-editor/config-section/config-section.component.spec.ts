@@ -6,7 +6,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { HumanizePipe } from '../../../shared/humanize.pipe';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { Component } from '@angular/core';
-import { ConfigMap, ConfigMapValue } from '../services/config-parser.service';
+import { ConfigMapValue } from '../services/config-parser.service';
 import { By } from '@angular/platform-browser';
 
 @Component({
