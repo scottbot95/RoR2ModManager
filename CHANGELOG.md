@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Checks for updates to mod manager on a confiurable interval
+
 ### Fixed
 
 - List of available sometimes wouldn't finish loading (see [#71](https://github.com/scottbot95/RoR2ModManager/issues/71))

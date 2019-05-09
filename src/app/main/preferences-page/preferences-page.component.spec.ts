@@ -50,8 +50,8 @@ describe('PreferencesPageComponent', () => {
     component.humanizePackageNames.setValue(true);
     expect(prefSetSpy).toHaveBeenCalledWith('humanizePackageNames', true);
 
-    component.checkForUpdates.setValue(true);
-    expect(prefSetSpy).toHaveBeenCalledWith('checkUpdatesOnStart', true);
+    component.checkForPackageUpdates.setValue(true);
+    expect(prefSetSpy).toHaveBeenCalledWith('updatePackagesOnStart', true);
   });
 
   describe('RoR2 Path Dialog', () => {

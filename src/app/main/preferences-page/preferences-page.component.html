@@ -64,11 +64,34 @@
           <mat-slide-toggle
             class="fullWidthToggle"
             labelPosition="before"
-            [formControl]="checkForUpdates"
+            [formControl]="checkForPackageUpdates"
             matTooltip="Check for updates on start?"
           >
             Check for updates on start
           </mat-slide-toggle>
+        </mat-list-item>
+      </mat-list>
+    </mat-card>
+  </section>
+  <section section="appUpdates">
+    <h2>App Updates</h2>
+    <mat-card>
+      <mat-list>
+        <mat-list-item>
+          <label>
+            Check for Updates Interval
+          </label>
+          <span fxFlex></span>
+          <mat-form-field>
+            <input
+              matInput
+              type="number"
+              [formControl]="appUpdateCheckInterval"
+            />
+            <span matSuffix>
+              seconds
+            </span>
+          </mat-form-field>
         </mat-list-item>
       </mat-list>
     </mat-card>

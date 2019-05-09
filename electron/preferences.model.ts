@@ -7,7 +7,9 @@ export interface UserPreferences {
   ror2_path?: string;
   respectPinned: boolean;
   humanizePackageNames: boolean;
-  checkUpdatesOnStart: boolean;
+  updatePackagesOnStart: boolean;
+
+  appUpdateCheckInterval: number;
 }
 
 interface SchemaItem {
@@ -46,6 +48,11 @@ export const preferencesSchema = <Schema>{
   },
   darkMode: {
     type: 'boolean'
+  },
+  appUpdateCheckInterval: {
+    type: 'number',
+    minimum: 0,
+    default: 300
   }
 };
 
@@ -53,5 +60,6 @@ export const defaultConfig: UserPreferences = {
   windowBounds: { width: 800, height: 600, x: 0, y: 0 },
   respectPinned: true,
   humanizePackageNames: true,
-  checkUpdatesOnStart: true
+  updatePackagesOnStart: true,
+  appUpdateCheckInterval: 300
 };
