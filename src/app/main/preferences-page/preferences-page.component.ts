@@ -21,9 +21,15 @@ export class PreferencesPageComponent implements OnInit, OnDestroy {
   humanizePackageNames = this.fb.control(
     this.prefs.get('humanizePackageNames')
   );
-  checkForUpdates = this.fb.control(this.prefs.get('checkUpdatesOnStart'));
+  checkForPackageUpdates = this.fb.control(
+    this.prefs.get('updatePackagesOnStart')
+  );
 
   ror2Path = this.prefs.get('ror2_path');
+
+  appUpdateCheckInterval = this.fb.control(
+    this.prefs.get('appUpdateCheckInterval')
+  );
 
   private subscription = new Subscription();
 
@@ -53,8 +59,15 @@ export class PreferencesPageComponent implements OnInit, OnDestroy {
     );
 
     this.subscription.add(
-      this.checkForUpdates.valueChanges.subscribe(newValue => {
-        this.prefs.set('checkUpdatesOnStart', newValue);
+      this.checkForPackageUpdates.valueChanges.subscribe(newValue => {
+        this.prefs.set('updatePackagesOnStart', newValue);
+      })
+    );
+
+    this.subscription.add(
+      this.appUpdateCheckInterval.valueChanges.subscribe(newValue => {
+        this.prefs.set('appUpdateCheckInterval', newValue);
+        console.log(typeof newValue);
       })
     );
   }

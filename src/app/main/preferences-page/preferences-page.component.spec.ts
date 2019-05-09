@@ -11,6 +11,7 @@ import {
 import { ElectronService } from '../../core/services/electron.service';
 import { join } from 'path';
 import { prefs } from '../../../../electron/prefs';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('PreferencesPageComponent', () => {
   let component: PreferencesPageComponent;
@@ -20,7 +21,7 @@ describe('PreferencesPageComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [PreferencesPageComponent],
-      imports: [SharedModule, ReactiveFormsModule],
+      imports: [SharedModule, ReactiveFormsModule, NoopAnimationsModule],
       providers: [
         { provide: PreferencesService, useClass: MockPreferencesService },
         { provide: ElectronService, useClass: MockElectronService }
@@ -50,8 +51,8 @@ describe('PreferencesPageComponent', () => {
     component.humanizePackageNames.setValue(true);
     expect(prefSetSpy).toHaveBeenCalledWith('humanizePackageNames', true);
 
-    component.checkForUpdates.setValue(true);
-    expect(prefSetSpy).toHaveBeenCalledWith('checkUpdatesOnStart', true);
+    component.checkForPackageUpdates.setValue(true);
+    expect(prefSetSpy).toHaveBeenCalledWith('updatePackagesOnStart', true);
   });
 
   describe('RoR2 Path Dialog', () => {

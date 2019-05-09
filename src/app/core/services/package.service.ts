@@ -52,7 +52,7 @@ export class PackageService {
   ) {
     this.registerHttpProtocol();
 
-    if (this.prefs.get('checkUpdatesOnStart')) {
+    if (this.prefs.get('updatePackagesOnStart')) {
       this.downloadPackageList();
     } else {
       this.loadPackagesFromCache()
