@@ -7,7 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.6.2] 2019.05-08
+### Fixed
+
+- List of available sometimes wouldn't finish loading (see [#71](https://github.com/scottbot95/RoR2ModManager/issues/71))
+
+## [0.6.2] 2019-05-08
 
 ### Fixed
 
@@ -103,7 +107,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial alpha release
 
 [unreleased]: https://github.com/scottbot95/RoR2ModManager/compare/v0.6.2...HEAD
-[0.6.1]: https://github.com/scottbot95/RoR2ModManager/compare/v0.6.1...v0.6.2
+[0.6.2]: https://github.com/scottbot95/RoR2ModManager/compare/v0.6.1...v0.6.2
 [0.6.1]: https://github.com/scottbot95/RoR2ModManager/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/scottbot95/RoR2ModManager/compare/v0.5.1...v0.6.0
 [0.5.1]: https://github.com/scottbot95/RoR2ModManager/compare/v0.4.1...v0.5.1
