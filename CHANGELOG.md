@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - List of available sometimes wouldn't finish loading (see [#71](https://github.com/scottbot95/RoR2ModManager/issues/71))
+- Unnecessarily showing error message on start
 
 ## [0.6.2] 2019-05-08
 
