@@ -1,5 +1,5 @@
 // tslint:disable-next-line:no-unused-variable
-import { app, BrowserWindow, Notification } from 'electron';
+import { app, BrowserWindow, Notification, dialog } from 'electron';
 import * as path from 'path';
 import * as Registry from 'winreg';
 
@@ -25,7 +25,7 @@ const args = process.argv.slice(1);
 serve = args.some(val => val === '--serve');
 
 const regKey = new Registry({
-  hive: Registry.HKCU,
+  hive: Registry.HKLM,
   key: `\\SOFTWARE\\${name}`
 });
 
@@ -36,6 +36,8 @@ regKey.get('RoR2Dir', (err, result) => {
     prefs.set('ror2_path', result.value);
 
     // leave it in registry in case we reinstall
+  } else {
+    dialog.showErrorBox('Cannot read registry', err.message);
   }
 });
 
