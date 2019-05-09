@@ -221,7 +221,7 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
           this.ngZone.run(() => {
             this.router.navigate(['/config-editor/' + file]);
           });
-          break;
+          return;
         }
       }
 
