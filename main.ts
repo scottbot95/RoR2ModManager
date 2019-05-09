@@ -37,7 +37,19 @@ regKey.get('RoR2Dir', (err, result) => {
 
     // leave it in registry in case we reinstall
   } else {
-    dialog.showErrorBox('Cannot read registry', err.message);
+    const prefPath = prefs.get('ror2_path') as string;
+    if (prefPath) {
+      // migratiing from bugged version where reading from registry didn't work
+      regKey.set(
+        'RoR2Dir',
+        Registry.REG_SZ,
+        prefPath,
+        console.error.bind(console)
+      );
+    } else {
+      // installer goofed somehow
+      dialog.showErrorBox('Cannot read registry', err.message);
+    }
   }
 });
 
