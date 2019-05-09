@@ -1,7 +1,4 @@
-import {
-  Component,
-  OnInit
-} from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
 import { PreferencesService } from '../../../core/services/preferences.service';
 import { ElectronService } from '../../../core/services/electron.service';
 import { Package } from '../../../core/models/package.model';
@@ -21,7 +18,9 @@ export class FoundConfigTableComponent implements OnInit {
 
   constructor(
     private prefs: PreferencesService,
-    private electron: ElectronService
+    private electron: ElectronService,
+    private changeDetector: ChangeDetectorRef,
+    private ngZone: NgZone
   ) {}
 
   ngOnInit() {
@@ -31,6 +30,7 @@ export class FoundConfigTableComponent implements OnInit {
         this.configFiles = matches.map(file => ({
           filename: this.electron.path.basename(file)
         }));
+        this.ngZone.run(() => this.changeDetector.detectChanges());
       }
     );
   }
