@@ -41,7 +41,11 @@ regKey.get('RoR2Dir', (err, result) => {
     prefs.get('ror2_path') === ''
   ) {
     // installer goofed somehow
-    dialog.showErrorBox('Cannot read registry', err.message);
+    dialog.showErrorBox(
+      'Cannot read registry',
+      'Failed to read Risk of Rain 2 install folder.\n\n' +
+        'Please set manually in preferences'
+    );
   }
 });
 
