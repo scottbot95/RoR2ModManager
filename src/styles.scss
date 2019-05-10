@@ -17,6 +17,12 @@ body {
   }
 }
 
+.fullWidthCardHeader {
+  div {
+    flex-grow: 1;
+  }
+}
+
 .clickable {
   cursor: pointer;
 }

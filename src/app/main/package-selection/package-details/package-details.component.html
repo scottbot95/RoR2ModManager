@@ -6,7 +6,7 @@
   <mat-card-footer>
    -->
 <mat-card *ngIf="package">
-  <mat-card-header>
+  <mat-card-header class="fullWidthCardHeader">
     <mat-card-title fxLayout="row">
       {{ package.name | humanize: shouldHumanize }}
       <small> by {{ package.owner }} </small>
