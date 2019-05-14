@@ -12,9 +12,10 @@ import {
 } from '@angular/material';
 import { PackageDetailsComponent } from './package-details/package-details.component';
 import { MarkdownModule } from 'ngx-markdown';
-import { StepTwoComponent } from './step-two/step-two.component';
-import { StepOneComponent } from './step-one/step-one.component';
-import { StepThreeComponent } from './step-three/step-three.component';
+import { StepTwoComponent } from './packages-page/step-two/step-two.component';
+import { StepOneComponent } from './packages-page/step-one/step-one.component';
+import { StepThreeComponent } from './packages-page/step-three/step-three.component';
+import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
 
 @NgModule({
   declarations: [
@@ -33,6 +34,9 @@ import { StepThreeComponent } from './step-three/step-three.component';
     MatTableModule,
     MatStepperModule,
     DragDropModule
+  ],
+  providers: [
+    { provide: STEPPER_GLOBAL_OPTIONS, useValue: { showError: true } }
   ]
 })
 export class PackageSelectionModule {}

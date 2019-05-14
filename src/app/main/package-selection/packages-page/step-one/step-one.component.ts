@@ -9,7 +9,7 @@ import {
 import {
   PackageChangeset,
   PackageService
-} from '../../../core/services/package.service';
+} from '../../../../core/services/package.service';
 
 const packageChangesValidator = (group: FormGroup): ValidationErrors => {
   const changes: PackageChangeset = group.value;

@@ -1,0 +1,28 @@
+<ng-container *ngIf="!formStep1.pristine && !formStep1.valid">
+  <mat-error>Errors:</mat-error>
+  <ul>
+    <mat-error *ngFor="let error of formStep1.errors | keyvalue">
+      <li>
+        {{ error.value }}
+      </li>
+    </mat-error>
+  </ul>
+</ng-container>
+
+<form fxLayout="column" fxLayout.gt-md="row" [formGroup]="formStep1">
+  <button hidden matStepperNext #nextButton></button>
+  <!-- <div fxLayout="column"> -->
+  <app-package-table
+    fxFlex="1 0 0%"
+    [formGroup]="formStep1"
+    [applyChanges]="nextPage"
+  >
+  </app-package-table>
+
+  <!-- </div> -->
+
+  <app-package-details
+    *ngIf="selectedPackage | async"
+    fxFlex="1 0 0%"
+  ></app-package-details>
+</form>
