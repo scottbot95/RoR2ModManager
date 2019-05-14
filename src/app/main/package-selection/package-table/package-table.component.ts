@@ -148,6 +148,7 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.subscription.add(
       this.installedPackages.subscribe(pkgs => {
         console.log('Selecting installed packages', pkgs);
+        this.changes = new PackageChangeset();
         this.selection.select(...pkgs);
         if (this.dataSource && this.dataSource.hasData())
           this.dataSource.data.forEach(pkg => {
