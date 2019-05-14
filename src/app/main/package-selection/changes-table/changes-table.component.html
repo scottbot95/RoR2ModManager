@@ -1,0 +1,45 @@
+<table
+  mat-table
+  [dataSource]="dataSource"
+  class="mat-elevation-z8 full-width-table"
+  matSort
+  matSortActive="name"
+>
+  <!-- Name Column -->
+  <ng-container matColumnDef="name">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+    <td mat-cell *matCellDef="let pkg">
+      {{ pkg.name | humanize: shouldHumanize }}
+    </td>
+  </ng-container>
+
+  <!-- Author Column -->
+  <ng-container matColumnDef="author">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Author</th>
+    <td mat-cell *matCellDef="let pkg">
+      {{ pkg.author | humanize: shouldHumanize }}
+    </td>
+  </ng-container>
+
+  <!-- Action Column -->
+  <ng-container matColumnDef="action">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Action</th>
+    <td mat-cell *matCellDef="let pkg">{{ pkg.action | humanize }}</td>
+  </ng-container>
+
+  <!-- Installed Version Column -->
+  <ng-container matColumnDef="installedVersion">
+    <th mat-header-cell *matHeaderCellDef>Installed Version</th>
+    <td mat-cell *matCellDef="let pkg">{{ pkg.installedVersion || '-' }}</td>
+  </ng-container>
+
+  <!-- VersionToInstall Column -->
+  <ng-container matColumnDef="versionToInstall">
+    <th mat-header-cell *matHeaderCellDef>Version To Install</th>
+    <td mat-cell *matCellDef="let pkg">{{ pkg.versionToInstall || '-' }}</td>
+  </ng-container>
+
+  <!-- Row Definitions -->
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let pkg; columns: displayedColumns"></tr>
+</table>

@@ -1,19 +1,13 @@
 <form fxLayout="column" [formGroup]="formStep2">
-  <h3>To Install/Update</h3>
-  <mat-list>
-    <mat-list-item *ngFor="let pkg of changes?.updated">
-      {{ pkg.name }}
-    </mat-list-item>
-  </mat-list>
-  <h3>To Remove</h3>
-  <mat-list>
-    <mat-list-item *ngFor="let pkg of changes?.removed">
-      {{ pkg.name }}
-    </mat-list-item>
-  </mat-list>
-  <mat-checkbox formControlName="confirmed">
+  <app-changes-table></app-changes-table>
+  <mat-checkbox formControlName="confirmed" class="padding2-top">
     Apply these changes
   </mat-checkbox>
+  <mat-error
+    *ngIf="formStep2.invalid && (formStep2.dirty || formStep2.touched)"
+  >
+    Please check to confirm changes
+  </mat-error>
   <span fxLayout>
     <button mat-button matStepperPrevious>Back</button>
     <button mat-button matStepperNext>Next</button>

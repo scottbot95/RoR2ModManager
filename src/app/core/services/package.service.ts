@@ -43,7 +43,9 @@ export class PackageService {
   public selectedPackage = new BehaviorSubject<Package>(undefined);
   public selection = new SelectionModel<SelectablePackge>(true, []);
 
-  public pendingChanges = new BehaviorSubject<PackageChangeset>(null);
+  public pendingChanges = new BehaviorSubject<PackageChangeset>(
+    new PackageChangeset()
+  );
 
   constructor(
     private download: DownloadService,
