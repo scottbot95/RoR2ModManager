@@ -11,7 +11,8 @@ import {
   MatSlideToggleModule,
   MatFormFieldModule,
   MatInputModule,
-  MatExpansionModule
+  MatExpansionModule,
+  MatProgressBarModule
 } from '@angular/material';
 
 // Inject hammerjs
@@ -25,6 +26,7 @@ import 'hammerjs';
     MatTooltipModule,
     MatCheckboxModule,
     MatProgressSpinnerModule,
+    MatProgressBarModule,
     MatCardModule,
     MatGridListModule,
     MatSlideToggleModule,

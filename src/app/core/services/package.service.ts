@@ -193,7 +193,9 @@ export class PackageService {
 
   public updatePackage(pkg: Package, version: PackageVersion) {}
 
-  public async applyChanges(changeset: PackageChangeset) {
+  public async applyChanges(
+    changeset: PackageChangeset = this.pendingChanges.value
+  ) {
     console.log('Applying package changeset', changeset);
     // Add packages that have an old version installed to remove list
     changeset.updated.forEach(update => {

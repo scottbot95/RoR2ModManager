@@ -1,12 +1,12 @@
-<mat-horizontal-stepper [linear]="true">
-  <mat-step [stepControl]="formStepOne">
+<mat-horizontal-stepper [linear]="true" #stepper>
+  <mat-step [stepControl]="formStepOne" [editable]="editable">
     <ng-template matStepLabel>
       Select Packages
     </ng-template>
     <app-step-one></app-step-one>
   </mat-step>
 
-  <mat-step [stepControl]="formStepTwo">
+  <mat-step [stepControl]="formStepTwo" [editable]="editable">
     <ng-template matStepLabel>
       Confirm Changes
     </ng-template>
@@ -17,6 +17,10 @@
     <ng-template matStepLabel>
       Applying Changes
     </ng-template>
-    <app-step-three></app-step-three>
+    <app-step-three
+      (done)="editable = true"
+      (reset)="stepper.reset()"
+      [visible]="!animating && currentStep === 2"
+    ></app-step-three>
   </mat-step>
 </mat-horizontal-stepper>
