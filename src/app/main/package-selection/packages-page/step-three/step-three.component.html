@@ -1,4 +1,14 @@
+<ul *ngIf="formStep3.invalid">
+  <mat-error>
+    <li *ngFor="let error of formStep3.errors | keyvalue">
+      {{ error.value }}
+    </li>
+  </mat-error>
+</ul>
 <mat-progress-bar mode="indeterminate" *ngIf="working"></mat-progress-bar>
-<button *ngIf="complete" mat-raised-button (click)="reset.emit()">
-  Back to Package List
-</button>
+<ng-container *ngIf="complete">
+  <p>Done!</p>
+  <button mat-raised-button (click)="reset.emit()">
+    Back to Package List
+  </button>
+</ng-container>

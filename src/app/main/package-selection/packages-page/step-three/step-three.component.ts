@@ -41,12 +41,12 @@ export class StepThreeComponent implements OnInit, OnChanges {
     console.log('Applying changes');
     this.working = true;
     this.complete = false;
-    // setTimeout(() => {
-    //   this.done.emit();
-    //   this.working = false;
-    //   this.complete = true;
-    // }, 2000);
-    await this.packages.applyChanges();
+    try {
+      await this.packages.applyChanges();
+    } catch (err) {
+      const name = err.name || 'Error';
+      this.formStep3.setErrors({ [name]: err.message || err });
+    }
     this.done.emit();
     this.working = false;
     this.complete = true;
