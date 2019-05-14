@@ -7,7 +7,6 @@ import { PackagesPageComponent } from './packages-page/packages-page.component';
 import {
   MatSortModule,
   MatPaginatorModule,
-  MatTableModule,
   MatStepperModule
 } from '@angular/material';
 import { PackageDetailsComponent } from './package-details/package-details.component';
@@ -32,7 +31,6 @@ import { ChangesTableComponent } from './changes-table/changes-table.component';
     MarkdownModule.forChild(),
     MatSortModule,
     MatPaginatorModule,
-    MatTableModule,
     MatStepperModule,
     DragDropModule
   ]

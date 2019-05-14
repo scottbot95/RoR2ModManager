@@ -7,7 +7,7 @@ import { Observable, of, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PackageList, Package, PackageVersion } from '../models/package.model';
 import { SelectionModel } from '@angular/cdk/collections';
-import { SelectablePackge } from './package.service';
+import { SelectablePackge, PackageChangeset } from './package.service';
 import { Component } from '@angular/core';
 import * as path from 'path';
 
@@ -56,6 +56,10 @@ export class MockPackageService {
 
   selection = new SelectionModel<SelectablePackge>();
   selectedPackage = new BehaviorSubject<Package>(undefined);
+
+  public pendingChanges = new BehaviorSubject<PackageChangeset>(
+    new PackageChangeset()
+  );
 
   installPackage(pkg: Package, version: PackageVersion) {
     this.installedPackages$.next([...this.installedPackages$.value, pkg]);
@@ -135,7 +139,6 @@ export class MockProfileService {
 })
 export class MockNavMenuComponent {}
 
-
 export class MockWebContents {
   constructor() {
     this.id = ++MockWebContents._nextId;
@@ -157,5 +160,4 @@ export class MockBrowserWindow {
 
 export class MockConfigParserService {
   parseFile() {}
-
 }
