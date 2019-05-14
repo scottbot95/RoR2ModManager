@@ -11,7 +11,7 @@ import {
 import { MatPaginator, MatSort } from '@angular/material';
 import { Subscription, Observable } from 'rxjs';
 import { delay } from 'rxjs/operators';
-import { FormControl } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 import {
   PackageTableDataSource,
   calcPackageDirty
@@ -42,10 +42,13 @@ import { getPossibleConfigFilenames } from '../../config-editor/services/config-
 export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  @Input() applyChanges: (selection: PackageChangeset) => void;
-  @Input() installedPackages: Observable<PackageList>;
+  @Input() formGroup: FormGroup;
+  @Input() applyChanges: (changes: PackageChangeset) => void;
+
   dataSource: PackageTableDataSource;
   isLoading: boolean;
+
+  installedPackages: Observable<PackageList>;
 
   private availableColumns = [
     'select',
@@ -78,6 +81,8 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private subscription = new Subscription();
 
+  private changes = new PackageChangeset();
+
   constructor(
     public packages: PackageService,
     private prefs: PreferencesService,
@@ -89,6 +94,7 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     this.selection = this.packages.selection;
+    this.installedPackages = this.packages.installedPackages$;
 
     // this.subscription.add(1)
     this.refreshPackages = this.refreshPackages.bind(this);
@@ -112,23 +118,42 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.selection.changed.pipe(delay(0)).subscribe(changed => {
         changed.added.forEach(pkg => {
           pkg.selected = true;
-          calcPackageDirty(pkg);
+          pkg.dirty = calcPackageDirty(pkg);
           this.selectAllDependencies(pkg.latestVersion);
+          if (this.changes.removed.has(pkg)) {
+            this.changes.removed.delete(pkg);
+          } else if (pkg.dirty) {
+            this.changes.updated.add(pkg.latestVersion);
+          }
         });
         changed.removed.forEach(pkg => {
           pkg.selected = false;
-          calcPackageDirty(pkg);
+          pkg.dirty = calcPackageDirty(pkg);
           this.deselectAvailDependencies(pkg.latestVersion);
+          if (this.changes.updated.has(pkg.latestVersion)) {
+            this.changes.updated.delete(pkg.latestVersion);
+          } else if (pkg.dirty) {
+            this.changes.removed.add(pkg);
+          }
         });
+
+        this.packages.pendingChanges.next(this.changes);
+        this.formGroup.patchValue(this.changes);
+        if (this.changes.updated.size > 0 || this.changes.removed.size > 0) {
+          this.formGroup.markAsDirty();
+        }
       })
     );
 
     this.subscription.add(
       this.installedPackages.subscribe(pkgs => {
         console.log('Selecting installed packages', pkgs);
+        this.changes = new PackageChangeset();
         this.selection.select(...pkgs);
         if (this.dataSource && this.dataSource.hasData())
-          this.dataSource.data.forEach(pkg => calcPackageDirty(pkg));
+          this.dataSource.data.forEach(pkg => {
+            pkg.dirty = calcPackageDirty(pkg);
+          });
       })
     );
   }
@@ -233,22 +258,27 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   handleApplyChanges() {
-    const added = new Set<Package>();
-    const removed = new Set<Package>();
-    this.dataSource.data.forEach(pkg => {
-      if (pkg.dirty) {
-        if (pkg.selected) {
-          added.add(pkg);
-        } else {
-          removed.add(pkg);
-        }
-      }
-    });
+    // const added = new Set<Package>();
+    // const removed = new Set<Package>();
+    // this.dataSource.data.forEach(pkg => {
+    //   if (pkg.dirty) {
+    //     if (pkg.selected) {
+    //       added.add(pkg);
+    //     } else {
+    //       removed.add(pkg);
+    //     }
+    //   }
+    // });
 
-    const changes = new PackageChangeset();
-    changes.removed = removed;
-    changes.updated = new Set(Array.from(added).map(pkg => pkg.latestVersion));
-    this.applyChanges(changes);
+    // const changes = new PackageChangeset();
+    // changes.removed = removed;
+    // changes.updated = new Set(Array.from(added).map(pkg => pkg.latestVersion));
+    // this.formGroup.patchValue(changes);
+    // this.formGroup.markAsDirty();
+    // this.packages.pendingChanges.next(changes);
+
+    if (this.applyChanges) this.applyChanges(this.changes);
+    // this.packages.applyChanges(changes);
   }
 
   refreshPackages() {

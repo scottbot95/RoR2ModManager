@@ -7,23 +7,31 @@ import { PackagesPageComponent } from './packages-page/packages-page.component';
 import {
   MatSortModule,
   MatPaginatorModule,
-  MatTableModule
+  MatStepperModule
 } from '@angular/material';
 import { PackageDetailsComponent } from './package-details/package-details.component';
 import { MarkdownModule } from 'ngx-markdown';
+import { StepTwoComponent } from './packages-page/step-two/step-two.component';
+import { StepOneComponent } from './packages-page/step-one/step-one.component';
+import { StepThreeComponent } from './packages-page/step-three/step-three.component';
+import { ChangesTableComponent } from './changes-table/changes-table.component';
 
 @NgModule({
   declarations: [
     PackageTableComponent,
     PackagesPageComponent,
-    PackageDetailsComponent
+    PackageDetailsComponent,
+    StepOneComponent,
+    StepTwoComponent,
+    StepThreeComponent,
+    ChangesTableComponent
   ],
   imports: [
     SharedModule,
     MarkdownModule.forChild(),
     MatSortModule,
     MatPaginatorModule,
-    MatTableModule,
+    MatStepperModule,
     DragDropModule
   ]
 })

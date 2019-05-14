@@ -1,10 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import {
-  MatPaginatorModule,
-  MatSortModule,
-  MatTableModule
-} from '@angular/material';
+import { MatPaginatorModule, MatSortModule } from '@angular/material';
 import { HttpClient } from '@angular/common/http';
 
 import { PackageTableComponent } from './package-table.component';
@@ -30,8 +26,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 
 @Component({
   selector: 'app-test-host',
-  template:
-    '<app-package-table [installedPackages]="installedPackages"></app-package-table>'
+  template: '<app-package-table ></app-package-table>'
 })
 class TestHostComponent {
   installedPackages = of([]);
@@ -62,7 +57,6 @@ describe('PackageTableComponent', () => {
         MaterialModule,
         MatPaginatorModule,
         MatSortModule,
-        MatTableModule,
         ReactiveFormsModule,
         RouterTestingModule
       ],

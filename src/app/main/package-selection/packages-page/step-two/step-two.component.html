@@ -1,0 +1,15 @@
+<form fxLayout="column" [formGroup]="formStep2">
+  <app-changes-table></app-changes-table>
+  <mat-checkbox formControlName="confirmed" class="padding2-top">
+    Apply these changes
+  </mat-checkbox>
+  <mat-error
+    *ngIf="formStep2.invalid && (formStep2.dirty || formStep2.touched)"
+  >
+    Please check to confirm changes
+  </mat-error>
+  <span fxLayout>
+    <button mat-button matStepperPrevious>Back</button>
+    <button mat-button matStepperNext>Next</button>
+  </span>
+</form>

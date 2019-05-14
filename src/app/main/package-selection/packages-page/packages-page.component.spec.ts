@@ -1,27 +1,31 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PackagesPageComponent } from './packages-page.component';
-import { Component, Input } from '@angular/core';
-import { Package } from '../../../core/models/package.model';
 import { PackageService } from '../../../core/services/package.service';
 import { MockPackageService } from '../../../core/services/mocks.spec';
+import { MaterialModule } from '../../../shared/material.module';
+import { MatStepperModule } from '@angular/material';
+import { Component, Input } from '@angular/core';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 @Component({
-  selector: 'app-package-table',
-  template: '<p>Mock Package Table Component</p>'
+  selector: 'app-step-one',
+  template: '<p>Mock Step One</p>'
 })
-class MockPackageTableComponent {
-  @Input() applyChanges: (...args: any[]) => void;
-  @Input() installedPackages: Set<Package>;
-  @Input() showDetails: (pkg: Package) => void;
-}
+class MockStepOneComponent {}
 
 @Component({
-  selector: 'app-package-details',
-  template: '<p>Mock Package Details Component</p>'
+  selector: 'app-step-two',
+  template: '<p>Mock Step Two</p>'
 })
-class MockPackageDetailsComponent {
-  @Input() package: Package;
+class MockStepTwoComponent {}
+
+@Component({
+  selector: 'app-step-three',
+  template: '<p>Mock Step Three</p>'
+})
+class MockStepThreeComponent {
+  @Input() visible: boolean;
 }
 
 describe('PackagesPageComponent', () => {
@@ -32,9 +36,11 @@ describe('PackagesPageComponent', () => {
     TestBed.configureTestingModule({
       declarations: [
         PackagesPageComponent,
-        MockPackageTableComponent,
-        MockPackageDetailsComponent
+        MockStepOneComponent,
+        MockStepTwoComponent,
+        MockStepThreeComponent
       ],
+      imports: [MaterialModule, MatStepperModule, NoopAnimationsModule],
       providers: [{ provide: PackageService, useClass: MockPackageService }]
     }).compileComponents();
   }));

@@ -43,6 +43,10 @@ export class PackageService {
   public selectedPackage = new BehaviorSubject<Package>(undefined);
   public selection = new SelectionModel<SelectablePackge>(true, []);
 
+  public pendingChanges = new BehaviorSubject<PackageChangeset>(
+    new PackageChangeset()
+  );
+
   constructor(
     private download: DownloadService,
     private electron: ElectronService,
@@ -189,7 +193,9 @@ export class PackageService {
 
   public updatePackage(pkg: Package, version: PackageVersion) {}
 
-  public async applyChanges(changeset: PackageChangeset) {
+  public async applyChanges(
+    changeset: PackageChangeset = this.pendingChanges.value
+  ) {
     console.log('Applying package changeset', changeset);
     // Add packages that have an old version installed to remove list
     changeset.updated.forEach(update => {

@@ -1,11 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import {
-  PackageService,
-  PackageChangeset
-} from '../../../core/services/package.service';
-import { Observable } from 'rxjs';
-import { PackageList, Package } from '../../../core/models/package.model';
-import { map, tap } from 'rxjs/operators';
+import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { StepOneComponent } from './step-one/step-one.component';
+import { StepTwoComponent } from './step-two/step-two.component';
+import { StepThreeComponent } from './step-three/step-three.component';
+import { MatStepper } from '@angular/material';
+import { StepperSelectionEvent } from '@angular/cdk/stepper';
 
 @Component({
   selector: 'app-packages-page',
@@ -15,24 +14,56 @@ import { map, tap } from 'rxjs/operators';
     style: 'display:flex;flex-direction:column;flex-grow:1;'
   }
 })
-export class PackagesPageComponent implements OnInit {
-  installedPackages$: Observable<
-    PackageList
-  > = this.service.installedPackages$.pipe(
-    tap(pkgs => console.log(pkgs)),
-    map(pkgs => pkgs.map(pkg => pkg.installedVersion.pkg))
-  );
+export class PackagesPageComponent implements OnInit, OnDestroy {
+  @ViewChild(StepOneComponent) stepOneComponent: StepOneComponent;
+  @ViewChild(StepTwoComponent) stepTwoComponent: StepTwoComponent;
+  @ViewChild(StepThreeComponent) stepThreeComponent: StepThreeComponent;
+  @ViewChild(MatStepper) stepper: MatStepper;
 
-  selectedPackage: Observable<Package>;
+  editable = true;
 
-  constructor(private service: PackageService) {}
+  currentStep = 0;
+  animating = true;
+
+  private subscription = new Subscription();
+
+  constructor() {}
 
   ngOnInit() {
-    this.selectedPackage = this.service.selectedPackage;
+    this.subscription.add(
+      this.stepper.selectionChange.subscribe((event: StepperSelectionEvent) => {
+        this.animating = true;
+        this.currentStep = event.selectedIndex;
+        if (this.currentStep === 2) {
+          this.editable = false;
+        }
+      })
+    );
+
+    this.subscription.add(
+      this.stepper.animationDone.subscribe(() => {
+        this.animating = false;
+      })
+    );
   }
 
-  applyChanges = (changes: PackageChangeset) => {
-    // install new packages
-    this.service.applyChanges(changes);
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
+
+  get formStepOne() {
+    return this.stepOneComponent ? this.stepOneComponent.formStep1 : null;
+  }
+
+  get formStepTwo() {
+    return this.stepTwoComponent ? this.stepTwoComponent.formStep2 : null;
+  }
+
+  get formStepThree() {
+    return this.stepThreeComponent ? this.stepThreeComponent.formStep3 : null;
+  }
+
+  reset = () => {
+    this.stepper.reset();
   };
 }
