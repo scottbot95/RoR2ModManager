@@ -81,6 +81,8 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private subscription = new Subscription();
 
+  private changes = new PackageChangeset();
+
   constructor(
     public packages: PackageService,
     private prefs: PreferencesService,
@@ -118,12 +120,28 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
           pkg.selected = true;
           pkg.dirty = calcPackageDirty(pkg);
           this.selectAllDependencies(pkg.latestVersion);
+          if (this.changes.removed.has(pkg)) {
+            this.changes.removed.delete(pkg);
+          } else if (pkg.dirty) {
+            this.changes.updated.add(pkg.latestVersion);
+          }
         });
         changed.removed.forEach(pkg => {
           pkg.selected = false;
           pkg.dirty = calcPackageDirty(pkg);
           this.deselectAvailDependencies(pkg.latestVersion);
+          if (this.changes.updated.has(pkg.latestVersion)) {
+            this.changes.updated.delete(pkg.latestVersion);
+          } else if (pkg.dirty) {
+            this.changes.removed.add(pkg);
+          }
         });
+
+        this.packages.pendingChanges.next(this.changes);
+        this.formGroup.patchValue(this.changes);
+        if (this.changes.updated.size > 0 || this.changes.removed.size > 0) {
+          this.formGroup.markAsDirty();
+        }
       })
     );
 
@@ -239,26 +257,26 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   handleApplyChanges() {
-    const added = new Set<Package>();
-    const removed = new Set<Package>();
-    this.dataSource.data.forEach(pkg => {
-      if (pkg.dirty) {
-        if (pkg.selected) {
-          added.add(pkg);
-        } else {
-          removed.add(pkg);
-        }
-      }
-    });
+    // const added = new Set<Package>();
+    // const removed = new Set<Package>();
+    // this.dataSource.data.forEach(pkg => {
+    //   if (pkg.dirty) {
+    //     if (pkg.selected) {
+    //       added.add(pkg);
+    //     } else {
+    //       removed.add(pkg);
+    //     }
+    //   }
+    // });
 
-    const changes = new PackageChangeset();
-    changes.removed = removed;
-    changes.updated = new Set(Array.from(added).map(pkg => pkg.latestVersion));
-    this.formGroup.patchValue(changes);
-    this.formGroup.markAsDirty();
-    this.packages.pendingChanges.next(changes);
+    // const changes = new PackageChangeset();
+    // changes.removed = removed;
+    // changes.updated = new Set(Array.from(added).map(pkg => pkg.latestVersion));
+    // this.formGroup.patchValue(changes);
+    // this.formGroup.markAsDirty();
+    // this.packages.pendingChanges.next(changes);
 
-    if (this.applyChanges) this.applyChanges(changes);
+    if (this.applyChanges) this.applyChanges(this.changes);
     // this.packages.applyChanges(changes);
   }
 

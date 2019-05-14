@@ -30,6 +30,8 @@ export class StepOneComponent implements OnInit {
 
   @ViewChild('nextButton') nextButton: ElementRef;
 
+  showErrors = false;
+
   constructor(private fb: FormBuilder, private packages: PackageService) {}
 
   ngOnInit() {
@@ -39,6 +41,7 @@ export class StepOneComponent implements OnInit {
   }
 
   nextPage = () => {
+    this.showErrors = true;
     if (this.nextButton.nativeElement.click)
       this.nextButton.nativeElement.click();
   };

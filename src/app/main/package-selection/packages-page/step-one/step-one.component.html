@@ -1,4 +1,4 @@
-<ng-container *ngIf="!formStep1.pristine && !formStep1.valid">
+<ng-container *ngIf="showErrors && !formStep1.pristine && !formStep1.valid">
   <mat-error>Errors:</mat-error>
   <ul>
     <mat-error *ngFor="let error of formStep1.errors | keyvalue">
