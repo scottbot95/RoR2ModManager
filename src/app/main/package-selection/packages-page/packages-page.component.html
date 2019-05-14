@@ -1,12 +1,22 @@
-<div fxLayout="column" fxLayout.gt-md="row">
-  <app-package-table
-    [applyChanges]="applyChanges"
-    [installedPackages]="installedPackages$"
-    fxFlex
-  ></app-package-table>
+<mat-horizontal-stepper [linear]="true">
+  <mat-step [stepControl]="formStepOne">
+    <ng-template matStepLabel>
+      Select Packages
+    </ng-template>
+    <app-step-one></app-step-one>
+  </mat-step>
 
-  <app-package-details
-    *ngIf="selectedPackage | async"
-    fxFlex
-  ></app-package-details>
-</div>
+  <mat-step [stepControl]="formStepTwo">
+    <ng-template matStepLabel>
+      Confirm Changes
+    </ng-template>
+    <app-step-two></app-step-two>
+  </mat-step>
+
+  <mat-step [stepControl]="formStepThree">
+    <ng-template matStepLabel>
+      Applying Changes
+    </ng-template>
+    <app-step-three></app-step-three>
+  </mat-step>
+</mat-horizontal-stepper>

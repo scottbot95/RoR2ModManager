@@ -11,7 +11,7 @@ import {
 import { MatPaginator, MatSort } from '@angular/material';
 import { Subscription, Observable } from 'rxjs';
 import { delay } from 'rxjs/operators';
-import { FormControl } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 import {
   PackageTableDataSource,
   calcPackageDirty
@@ -42,10 +42,13 @@ import { getPossibleConfigFilenames } from '../../config-editor/services/config-
 export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  @Input() applyChanges: (selection: PackageChangeset) => void;
-  @Input() installedPackages: Observable<PackageList>;
+  @Input() formGroup: FormGroup;
+  @Input() applyChanges: (changes: PackageChangeset) => void;
+
   dataSource: PackageTableDataSource;
   isLoading: boolean;
+
+  installedPackages: Observable<PackageList>;
 
   private availableColumns = [
     'select',
@@ -89,6 +92,7 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     this.selection = this.packages.selection;
+    this.installedPackages = this.packages.installedPackages$;
 
     // this.subscription.add(1)
     this.refreshPackages = this.refreshPackages.bind(this);
@@ -112,12 +116,12 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.selection.changed.pipe(delay(0)).subscribe(changed => {
         changed.added.forEach(pkg => {
           pkg.selected = true;
-          calcPackageDirty(pkg);
+          pkg.dirty = calcPackageDirty(pkg);
           this.selectAllDependencies(pkg.latestVersion);
         });
         changed.removed.forEach(pkg => {
           pkg.selected = false;
-          calcPackageDirty(pkg);
+          pkg.dirty = calcPackageDirty(pkg);
           this.deselectAvailDependencies(pkg.latestVersion);
         });
       })
@@ -128,7 +132,9 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
         console.log('Selecting installed packages', pkgs);
         this.selection.select(...pkgs);
         if (this.dataSource && this.dataSource.hasData())
-          this.dataSource.data.forEach(pkg => calcPackageDirty(pkg));
+          this.dataSource.data.forEach(pkg => {
+            pkg.dirty = calcPackageDirty(pkg);
+          });
       })
     );
   }
@@ -248,7 +254,12 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
     const changes = new PackageChangeset();
     changes.removed = removed;
     changes.updated = new Set(Array.from(added).map(pkg => pkg.latestVersion));
-    this.applyChanges(changes);
+    this.formGroup.patchValue(changes);
+    this.formGroup.markAsDirty();
+    console.log(this.formGroup);
+
+    if (this.applyChanges) this.applyChanges(changes);
+    // this.packages.applyChanges(changes);
   }
 
   refreshPackages() {

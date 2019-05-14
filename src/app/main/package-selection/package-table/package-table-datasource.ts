@@ -17,11 +17,12 @@ import {
 
 export const calcPackageDirty = (pkg: SelectablePackge) => {
   if (pkg.selected) {
-    pkg.dirty =
+    return (
       !pkg.installedVersion ||
-      pkg.latestVersion.version.compare(pkg.installedVersion.version) > 0;
+      pkg.latestVersion.version.compare(pkg.installedVersion.version) > 0
+    );
   } else {
-    pkg.dirty = !!pkg.installedVersion;
+    return !!pkg.installedVersion;
   }
 };
 

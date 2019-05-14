@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import {
   PackageService,
   PackageChangeset
@@ -6,6 +6,8 @@ import {
 import { Observable } from 'rxjs';
 import { PackageList, Package } from '../../../core/models/package.model';
 import { map, tap } from 'rxjs/operators';
+import { StepOneComponent } from '../step-one/step-one.component';
+import { StepTwoComponent } from '../step-two/step-two.component';
 
 @Component({
   selector: 'app-packages-page',
@@ -15,24 +17,17 @@ import { map, tap } from 'rxjs/operators';
     style: 'display:flex;flex-direction:column;flex-grow:1;'
   }
 })
-export class PackagesPageComponent implements OnInit {
-  installedPackages$: Observable<
-    PackageList
-  > = this.service.installedPackages$.pipe(
-    tap(pkgs => console.log(pkgs)),
-    map(pkgs => pkgs.map(pkg => pkg.installedVersion.pkg))
-  );
+export class PackagesPageComponent {
+  @ViewChild(StepOneComponent) stepOneComponent: StepOneComponent;
+  @ViewChild(StepTwoComponent) stepTwoComponent: StepTwoComponent;
 
-  selectedPackage: Observable<Package>;
+  constructor() {}
 
-  constructor(private service: PackageService) {}
-
-  ngOnInit() {
-    this.selectedPackage = this.service.selectedPackage;
+  get formStepOne() {
+    return this.stepOneComponent ? this.stepOneComponent.formStep1 : null;
   }
 
-  applyChanges = (changes: PackageChangeset) => {
-    // install new packages
-    this.service.applyChanges(changes);
-  };
+  get formStepTwo() {
+    return this.stepTwoComponent ? this.stepTwoComponent.formStep2 : null;
+  }
 }
