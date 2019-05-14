@@ -10,7 +10,7 @@
     <ng-template matStepLabel>
       Confirm Changes
     </ng-template>
-    <app-step-two></app-step-two>
+    <app-step-two (confirmed)="editable = !$event"></app-step-two>
   </mat-step>
 
   <mat-step [stepControl]="formStepThree">
@@ -18,8 +18,7 @@
       Applying Changes
     </ng-template>
     <app-step-three
-      (done)="editable = true"
-      (reset)="stepper.reset()"
+      (reset)="reset()"
       [visible]="!animating && currentStep === 2"
     ></app-step-three>
   </mat-step>

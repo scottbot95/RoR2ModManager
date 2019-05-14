@@ -1,11 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-  AbstractControl,
-  ValidationErrors
-} from '@angular/forms';
+import { FormBuilder, FormGroup, ValidationErrors } from '@angular/forms';
 import {
   PackageChangeset,
   PackageService
@@ -13,6 +7,9 @@ import {
 
 const packageChangesValidator = (group: FormGroup): ValidationErrors => {
   const changes: PackageChangeset = group.value;
+  if (!changes || !changes.removed || !changes.updated) {
+    return;
+  }
   const totalChanges = changes.updated.size + changes.removed.size;
   return totalChanges === 0
     ? { packageChanges: 'Changes must be selected to apply them' }

@@ -1,4 +1,10 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  Output,
+  EventEmitter
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {
   PackageService,
@@ -15,6 +21,8 @@ export class StepTwoComponent implements OnInit, OnDestroy {
   public formStep2: FormGroup;
   public changes: PackageChangeset;
 
+  @Output() confirmed = new EventEmitter<boolean>();
+
   private subscription = new Subscription();
 
   constructor(private fb: FormBuilder, private packages: PackageService) {}
@@ -30,6 +38,12 @@ export class StepTwoComponent implements OnInit, OnDestroy {
           this.changes = changes;
         }
       })
+    );
+
+    this.subscription.add(
+      this.formStep2
+        .get('confirmed')
+        .valueChanges.subscribe(this.confirmed.next.bind(this.confirmed))
     );
   }
 

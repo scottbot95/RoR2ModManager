@@ -15,7 +15,6 @@ import { MarkdownModule } from 'ngx-markdown';
 import { StepTwoComponent } from './packages-page/step-two/step-two.component';
 import { StepOneComponent } from './packages-page/step-one/step-one.component';
 import { StepThreeComponent } from './packages-page/step-three/step-three.component';
-import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
 import { ChangesTableComponent } from './changes-table/changes-table.component';
 
 @NgModule({

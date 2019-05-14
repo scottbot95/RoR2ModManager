@@ -6,8 +6,7 @@ import {
   AfterViewInit
 } from '@angular/core';
 import { PackageService } from '../../../core/services/package.service';
-import { map } from 'rxjs/operators';
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { MatTableDataSource, MatSort } from '@angular/material';
 import { PreferencesService } from '../../../core/services/preferences.service';
 

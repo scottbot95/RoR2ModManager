@@ -1,11 +1,5 @@
 import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
-import {
-  PackageService,
-  PackageChangeset
-} from '../../../core/services/package.service';
-import { Observable, Subscription } from 'rxjs';
-import { PackageList, Package } from '../../../core/models/package.model';
-import { map, tap } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 import { StepOneComponent } from './step-one/step-one.component';
 import { StepTwoComponent } from './step-two/step-two.component';
 import { StepThreeComponent } from './step-three/step-three.component';
@@ -68,4 +62,8 @@ export class PackagesPageComponent implements OnInit, OnDestroy {
   get formStepThree() {
     return this.stepThreeComponent ? this.stepThreeComponent.formStep3 : null;
   }
+
+  reset = () => {
+    this.stepper.reset();
+  };
 }

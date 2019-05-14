@@ -1,4 +1,4 @@
 <mat-progress-bar mode="indeterminate" *ngIf="working"></mat-progress-bar>
-<button *ngIf="!working" mat-raised-button (click)="reset.emit()">
+<button *ngIf="complete" mat-raised-button (click)="reset.emit()">
   Back to Package List
 </button>
