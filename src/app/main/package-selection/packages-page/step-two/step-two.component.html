@@ -1,4 +1,21 @@
-<form fxLayout="column" fxLayout.gt-md="row" [formGroup]="formStep2">
-  <button mat-button matStepperPrevious>Back</button>
-  <button mat-button matStepperNext>Next</button>
+<form fxLayout="column" [formGroup]="formStep2">
+  <h3>To Install/Update</h3>
+  <mat-list>
+    <mat-list-item *ngFor="let pkg of changes?.updated">
+      {{ pkg.name }}
+    </mat-list-item>
+  </mat-list>
+  <h3>To Remove</h3>
+  <mat-list>
+    <mat-list-item *ngFor="let pkg of changes?.removed">
+      {{ pkg.name }}
+    </mat-list-item>
+  </mat-list>
+  <mat-checkbox formControlName="confirmed">
+    Apply these changes
+  </mat-checkbox>
+  <span fxLayout>
+    <button mat-button matStepperPrevious>Back</button>
+    <button mat-button matStepperNext>Next</button>
+  </span>
 </form>

@@ -34,9 +34,6 @@ import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
     MatTableModule,
     MatStepperModule,
     DragDropModule
-  ],
-  providers: [
-    { provide: STEPPER_GLOBAL_OPTIONS, useValue: { showError: true } }
   ]
 })
 export class PackageSelectionModule {}

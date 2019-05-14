@@ -256,7 +256,7 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
     changes.updated = new Set(Array.from(added).map(pkg => pkg.latestVersion));
     this.formGroup.patchValue(changes);
     this.formGroup.markAsDirty();
-    console.log(this.formGroup);
+    this.packages.pendingChanges.next(changes);
 
     if (this.applyChanges) this.applyChanges(changes);
     // this.packages.applyChanges(changes);
