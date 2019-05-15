@@ -15,7 +15,6 @@ import { StepTwoComponent } from './packages-page/step-two/step-two.component';
 import { StepOneComponent } from './packages-page/step-one/step-one.component';
 import { StepThreeComponent } from './packages-page/step-three/step-three.component';
 import { ChangesTableComponent } from './changes-table/changes-table.component';
-import { ScrollToModule } from '@nicky-lenaers/ngx-scroll-to';
 
 @NgModule({
   declarations: [

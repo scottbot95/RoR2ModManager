@@ -6,8 +6,6 @@ import {
   Input,
   OnChanges,
   SimpleChanges,
-  ViewChild,
-  ElementRef,
   OnDestroy
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
