@@ -56,7 +56,7 @@ export class StepThreeComponent implements OnInit, OnChanges, OnDestroy {
     );
 
     this.subscription.add(
-      this.packages.applyPerctnage$.subscribe(progress => {
+      this.packages.applyPercentage$.subscribe(progress => {
         this.progress = progress * 100;
       })
     );

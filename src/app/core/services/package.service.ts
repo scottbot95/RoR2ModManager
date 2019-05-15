@@ -51,7 +51,7 @@ export class PackageService {
   private log: ReplaySubject<string>;
 
   private applyPercentageSource = new BehaviorSubject<number>(null);
-  public applyPerctnage$ = this.applyPercentageSource.asObservable();
+  public applyPercentage$ = this.applyPercentageSource.asObservable();
 
   private totalSteps = 0;
   private stepsComplete = 0;
