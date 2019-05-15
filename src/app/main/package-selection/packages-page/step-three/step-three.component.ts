@@ -5,10 +5,14 @@ import {
   EventEmitter,
   Input,
   OnChanges,
-  SimpleChanges
+  SimpleChanges,
+  ViewChild,
+  ElementRef
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { PackageService } from '../../../../core/services/package.service';
+import { Subscription } from 'rxjs';
+import { ScrollToService } from '@nicky-lenaers/ngx-scroll-to';
 
 @Component({
   selector: 'app-step-three',
@@ -25,10 +29,27 @@ export class StepThreeComponent implements OnInit, OnChanges {
   working = false;
   complete = false;
 
-  constructor(private fb: FormBuilder, private packages: PackageService) {}
+  logs: string[];
+
+  constructor(
+    private fb: FormBuilder,
+    private packages: PackageService,
+    private scrollToService: ScrollToService
+  ) {}
 
   ngOnInit() {
     this.formStep3 = this.fb.group({});
+
+    let logSub: Subscription;
+    this.packages.log$.subscribe(log => {
+      if (logSub) logSub.unsubscribe();
+      this.logs = [];
+      logSub = log.subscribe(row => {
+        console.log(row);
+        this.logs.push(row);
+        this.scrollToService.scrollTo({ target: 'bottom', duration: 250 });
+      });
+    });
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -50,5 +71,10 @@ export class StepThreeComponent implements OnInit, OnChanges {
     this.done.emit();
     this.working = false;
     this.complete = true;
+  }
+
+  back() {
+    this.reset.emit();
+    this.packages.clearLog();
   }
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
 import {
   PackageVersion,
   Package,
@@ -47,6 +47,9 @@ export class PackageService {
     new PackageChangeset()
   );
 
+  public log$ = new ReplaySubject<ReplaySubject<string>>(1);
+  private log: ReplaySubject<string>;
+
   constructor(
     private download: DownloadService,
     private electron: ElectronService,
@@ -55,6 +58,11 @@ export class PackageService {
     private db: DatabaseService
   ) {
     this.registerHttpProtocol();
+
+    this.log$.next(new ReplaySubject<string>());
+    this.log$.subscribe(log => {
+      this.log = log;
+    });
 
     if (this.prefs.get('updatePackagesOnStart')) {
       this.downloadPackageList();
@@ -72,6 +80,10 @@ export class PackageService {
           this.downloadPackageList();
         });
     }
+  }
+
+  public clearLog() {
+    this.log$.next(new ReplaySubject<string>());
   }
 
   public async loadPackagesFromCache(): Promise<SelectablePackge[]> {
@@ -115,23 +127,25 @@ export class PackageService {
       pkg.pkg.uuid4 !== BEPIN_UUID4 &&
       !pkg.dependencies.some(dep => dep.pkg.uuid4 === BEPIN_UUID4)
     ) {
-      console.warn(
-        `Skipping package ${pkg.fullName} as it's not a Bepis package`
-      );
-      this.electron.remote.dialog.showMessageBox(
-        this.electron.remote.getCurrentWindow(),
-        {
-          type: 'warning',
-          title: 'Skipping package',
-          message: `${
-            pkg.fullName
-          } is not a Bepis package. This is currently unsupported, as such it will be skipped`,
-          buttons: ['Ok']
-        }
-      );
+      const message = `Skipping package ${
+        pkg.fullName
+      } as it's not a Bepis package`;
+      console.warn(message);
+      this.log.next(message);
+      // this.electron.remote.dialog.showMessageBox(
+      //   this.electron.remote.getCurrentWindow(),
+      //   {
+      //     type: 'warning',
+      //     title: 'Skipping package',
+      //     message: `${
+      //       pkg.fullName
+      //     } is not a Bepis package. This is currently unsupported, as such it will be skipped`,
+      //     buttons: ['Ok']
+      //   }
+      // );
       return;
     }
-
+    this.log.next(`Downloading ${pkg.name}...`);
     const zipPath = await this.download.download(pkg);
     // Dirty hack because the specs really didn't like this
     if (this.electron.isElectron()) {
@@ -141,6 +155,7 @@ export class PackageService {
       else await this.installBepInPlugin(fileStream, pkg.pkg.fullName);
     }
 
+    this.log.next(`Finished installing ${pkg.name}`);
     pkg.pkg.installedVersion = pkg;
 
     await this.db.updatePackage(pkg.pkg.uuid4, {
@@ -155,6 +170,7 @@ export class PackageService {
 
   // TODO use InstalledPackage here and add installedPath to InstalledPackage
   public async uninstallPackage(pkg: Package) {
+    this.log.next(`Removing ${pkg.name}...`);
     if (pkg.uuid4 === BEPIN_UUID4) {
       await Promise.all([
         this.electron.fs.remove(
@@ -183,6 +199,8 @@ export class PackageService {
 
     await this.db.updatePackage(pkg.uuid4, { installed_version: null });
 
+    this.log.next(`Finished removing ${pkg.name}`);
+
     return pkg.uuid4;
     // this.installedPackagesSource.next(
     //   this.installedPackagesSource.value.filter(
@@ -197,6 +215,7 @@ export class PackageService {
     changeset: PackageChangeset = this.pendingChanges.value
   ) {
     console.log('Applying package changeset', changeset);
+    this.log.next('Applying changes...');
     // Add packages that have an old version installed to remove list
     changeset.updated.forEach(update => {
       const existing = this.installedPackagesSource.value.find(
@@ -207,6 +226,7 @@ export class PackageService {
       }
     });
 
+    this.log.next('Uninstalling packages marked for removal...');
     // uninstall old packages
     const uuids = await Promise.all(
       Array.from(changeset.removed).map(toRemove =>
@@ -214,6 +234,7 @@ export class PackageService {
       )
     );
     console.log('Removed packages', uuids);
+    this.log.next('Finished uninstalling packages!');
 
     this.installedPackagesSource.next(
       this.installedPackagesSource.value.filter(
@@ -221,12 +242,15 @@ export class PackageService {
       )
     );
 
+    this.log.next('Installing packages...');
     // install new packages
     await Promise.all(
       Array.from(changeset.updated).map(toInstall =>
         this.installPackage(toInstall)
       )
     );
+
+    this.log.next('Finished installing packages!');
   }
 
   public installProfile(
@@ -287,7 +311,7 @@ export class PackageService {
       this.getBepInExPluginPath(),
       plugin_dir
     );
-
+    this.log.next(`Extracting to BepInEx/plugins/${plugin_dir}`);
     return this.extractZip(fileStream, install_dir);
   }
 
@@ -303,7 +327,9 @@ export class PackageService {
       'BepInExPack'
     );
     // extract zip
+    this.log.next(`Extracting BepInEx...`);
     await this.extractZip(fileStream, tmp_path);
+    this.log.next(`Installing BepInEx...`);
     return new Promise((resolve, reject) => {
       glob(
         'BepInExPack/**/*',
