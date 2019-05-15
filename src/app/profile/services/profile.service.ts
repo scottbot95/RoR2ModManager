@@ -3,7 +3,6 @@ import { ElectronService } from '../../core/services/electron.service';
 import { PackageService } from '../../core/services/package.service';
 import {
   Package,
-  PackageList,
   PackageVersionList
 } from '../../core/models/package.model';
 import { PROFILE_EXTENSIONS } from '../constants';

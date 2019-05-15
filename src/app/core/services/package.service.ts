@@ -18,7 +18,6 @@ import { Selectable } from '../models/selectable.model';
 export interface SelectablePackge extends Selectable, Package {}
 
 import { protocols } from '../../../../package.json';
-import { PackageProfile } from '../models/profile.model';
 
 export interface PackageChangeset {
   updated: Set<PackageVersion>;
