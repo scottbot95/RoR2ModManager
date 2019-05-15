@@ -5,6 +5,7 @@ import { MaterialModule } from '../../../../shared/material.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { PackageService } from '../../../../core/services/package.service';
 import { MockPackageService } from '../../../../core/services/mocks.spec';
+import { ScrollToModule } from '@nicky-lenaers/ngx-scroll-to';
 
 describe('StepThreeComponent', () => {
   let component: StepThreeComponent;
@@ -13,7 +14,7 @@ describe('StepThreeComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [StepThreeComponent],
-      imports: [MaterialModule, ReactiveFormsModule],
+      imports: [MaterialModule, ReactiveFormsModule, ScrollToModule.forRoot()],
       providers: [{ provide: PackageService, useClass: MockPackageService }]
     }).compileComponents();
   }));

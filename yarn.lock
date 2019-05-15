@@ -357,6 +357,13 @@
   dependencies:
     tslib "^1.9.0"
 
+"@nicky-lenaers/ngx-scroll-to@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@nicky-lenaers/ngx-scroll-to/-/ngx-scroll-to-2.0.0.tgz#9ad6ad38b3c490054733644dd9b67f381c4bc530"
+  integrity sha512-c7GNPhvN0uj563tvj0ssh7gV1VPKHjlAYdBQmJQbmVhff+C4b8FXRvJXGbeW49emfu71Lnz/sQFVEURk/XIK7Q==
+  dependencies:
+    tslib "^1.9.0"
+
 "@schematics/angular@7.3.3":
   version "7.3.3"
   resolved "https://registry.yarnpkg.com/@schematics/angular/-/angular-7.3.3.tgz#aaa63331365bf67b1b908cc18cfc5d7097ec8377"

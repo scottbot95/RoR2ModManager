@@ -3,7 +3,7 @@ import {
   defaultConfig
 } from '../../../../electron/preferences.model';
 import { ChangeEvent } from './preferences.service';
-import { Observable, of, BehaviorSubject } from 'rxjs';
+import { Observable, of, BehaviorSubject, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PackageList, Package, PackageVersion } from '../models/package.model';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -60,6 +60,9 @@ export class MockPackageService {
   public pendingChanges = new BehaviorSubject<PackageChangeset>(
     new PackageChangeset()
   );
+
+  log$ = new Subject<Subject<string>>();
+  applyPercentage$ = new Subject<number>();
 
   installPackage(pkg: Package, version: PackageVersion) {
     this.installedPackages$.next([...this.installedPackages$.value, pkg]);
