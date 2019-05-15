@@ -133,6 +133,8 @@ export class MockThunderstoreService {
 }
 
 export class MockProfileService {
+  confirmProfile = new Subject<void>();
+
   registerMenuHandlers() {}
 }
 

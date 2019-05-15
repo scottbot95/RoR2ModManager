@@ -1,18 +1,25 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import { ElectronService } from '../../core/services/electron.service';
 import { PackageService } from '../../core/services/package.service';
-import { Package } from '../../core/models/package.model';
+import {
+  Package,
+  PackageVersionList
+} from '../../core/models/package.model';
 import { PROFILE_EXTENSIONS } from '../constants';
+import { PackageProfile } from '../../core/models/profile.model';
 
 @Injectable()
 export class ProfileService {
   private allPackages: Package[] = [];
+
+  public confirmProfile = new EventEmitter<void>(true);
 
   constructor(
     private electron: ElectronService,
     private packages: PackageService
   ) {
     this.exportToFile = this.exportToFile.bind(this);
+    this.importFromFile = this.importFromFile.bind(this);
     this.packages.allPackages$.subscribe(pkgs => {
       if (Array.isArray(pkgs) && pkgs.length > 0) {
         this.allPackages = pkgs;
@@ -33,7 +40,11 @@ export class ProfileService {
   }
 
   public showImportDialog() {
-    this.electron.ipcRenderer.send('openDialog', 'importProfile', true);
+    this.electron.remote.dialog.showOpenDialog(
+      this.electron.remote.getCurrentWindow(),
+      { filters: PROFILE_EXTENSIONS },
+      this.importFromFile
+    );
   }
 
   public showExportDialog() {
@@ -44,6 +55,58 @@ export class ProfileService {
       },
       this.exportToFile
     );
+  }
+
+  private async importFromFile(filenames: string[]) {
+    if (!Array.isArray(filenames) || filenames.length === 0) return;
+    const [file] = filenames;
+
+    let errors = [];
+    let packages: PackageVersionList;
+    try {
+      const profile: PackageProfile = await this.electron.fs.readJson(file);
+      packages = profile
+        .map(dep => {
+          try {
+            return this.packages.findPackageFromDependencyString(dep);
+          } catch (err) {
+            if (
+              err.name === 'PackageSourceEmptyError' ||
+              err.name === 'PackageNotFoundError'
+            ) {
+              errors.push(err);
+            }
+          }
+        })
+        .filter(p => p); // remove false elements
+    } catch (err) {
+      if (err.name === 'SyntaxError') {
+        errors = ['Cannot failed to parse profile file'];
+      } else {
+        errors = [err.message || err];
+      }
+    }
+
+    if (errors.length) {
+      this.electron.remote.dialog.showMessageBox(
+        this.electron.remote.getCurrentWindow(),
+        {
+          title: 'Error',
+          type: 'error',
+          buttons: ['Ok'],
+          message: errors.join('\n')
+        }
+      );
+      return;
+    }
+
+    this.packages.selection.clear();
+    packages.forEach(pkg => {
+      console.log(`Selecting package from profile ${pkg.name}`);
+      this.packages.selection.select(pkg.pkg);
+    });
+
+    this.confirmProfile.emit();
   }
 
   private async exportToFile(filename: string) {

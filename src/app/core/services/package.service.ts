@@ -18,7 +18,6 @@ import { Selectable } from '../models/selectable.model';
 export interface SelectablePackge extends Selectable, Package {}
 
 import { protocols } from '../../../../package.json';
-import { PackageProfile } from '../models/profile.model';
 
 export interface PackageChangeset {
   updated: Set<PackageVersion>;
@@ -265,23 +264,6 @@ export class PackageService {
     );
 
     this.log.next('Finished installing packages!');
-  }
-
-  public installProfile(
-    profile: PackageProfile,
-    cleanInstall = false
-  ): Promise<void> {
-    let removed: Set<Package> = new Set<Package>();
-    if (cleanInstall) {
-      removed = new Set<Package>(
-        this.allPackagesSource.value.filter(pkg => pkg.installedVersion)
-      );
-    }
-    const updated = new Set<PackageVersion>(
-      profile.map(str => this.findPackageFromDependencyString(str))
-    );
-
-    return this.applyChanges({ removed, updated });
   }
 
   public findPackageFromDependencyString(

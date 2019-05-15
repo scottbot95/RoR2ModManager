@@ -2,11 +2,15 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PackagesPageComponent } from './packages-page.component';
 import { PackageService } from '../../../core/services/package.service';
-import { MockPackageService } from '../../../core/services/mocks.spec';
+import {
+  MockPackageService,
+  MockProfileService
+} from '../../../core/services/mocks.spec';
 import { MaterialModule } from '../../../shared/material.module';
 import { MatStepperModule } from '@angular/material';
 import { Component, Input } from '@angular/core';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { ProfileService } from '../../../profile/services/profile.service';
 
 @Component({
   selector: 'app-step-one',
@@ -41,7 +45,10 @@ describe('PackagesPageComponent', () => {
         MockStepThreeComponent
       ],
       imports: [MaterialModule, MatStepperModule, NoopAnimationsModule],
-      providers: [{ provide: PackageService, useClass: MockPackageService }]
+      providers: [
+        { provide: PackageService, useClass: MockPackageService },
+        { provide: ProfileService, useClass: MockProfileService }
+      ]
     }).compileComponents();
   }));
 
