@@ -1,13 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { ImportDialogComponent } from './import-dialog/import-dialog.component';
 
-const routes: Routes = [
-  {
-    path: 'importProfile',
-    component: ImportDialogComponent
-  }
-];
+const routes: Routes = [];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

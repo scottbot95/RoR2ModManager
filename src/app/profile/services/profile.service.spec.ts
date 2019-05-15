@@ -49,15 +49,6 @@ describe('ProfileService', () => {
     expect(spy).toHaveBeenCalledWith('exportProfile', jasmine.any(Function));
   });
 
-  it('sends message on show open dialog', () => {
-    const spy = spyOn(electron.ipcRenderer, 'send');
-
-    service.showImportDialog();
-
-    expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy).toHaveBeenCalledWith('openDialog', 'importProfile', true);
-  });
-
   it('calls `dialog.showSaveDialog` on export', () => {
     const spy = spyOn(electron.remote.dialog, 'showSaveDialog');
     spyOn(electron.remote, 'getCurrentWindow').and.returnValue(

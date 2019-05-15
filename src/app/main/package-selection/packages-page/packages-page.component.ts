@@ -1,10 +1,17 @@
-import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ViewChild,
+  OnDestroy,
+  ChangeDetectorRef
+} from '@angular/core';
 import { Subscription } from 'rxjs';
 import { StepOneComponent } from './step-one/step-one.component';
 import { StepTwoComponent } from './step-two/step-two.component';
 import { StepThreeComponent } from './step-three/step-three.component';
 import { MatStepper } from '@angular/material';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
+import { ProfileService } from '../../../profile/services/profile.service';
 
 @Component({
   selector: 'app-packages-page',
@@ -27,7 +34,10 @@ export class PackagesPageComponent implements OnInit, OnDestroy {
 
   private subscription = new Subscription();
 
-  constructor() {}
+  constructor(
+    private profile: ProfileService,
+    private changeDetector: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
     this.subscription.add(
@@ -43,6 +53,14 @@ export class PackagesPageComponent implements OnInit, OnDestroy {
     this.subscription.add(
       this.stepper.animationDone.subscribe(() => {
         this.animating = false;
+      })
+    );
+
+    this.subscription.add(
+      this.profile.confirmProfile.subscribe(() => {
+        console.log('selecting proper step');
+        this.stepper.selectedIndex = 1;
+        this.changeDetector.detectChanges();
       })
     );
   }

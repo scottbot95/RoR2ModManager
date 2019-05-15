@@ -3,7 +3,7 @@ import {
   defaultConfig
 } from '../../../../electron/preferences.model';
 import { ChangeEvent } from './preferences.service';
-import { Observable, of, BehaviorSubject } from 'rxjs';
+import { Observable, of, BehaviorSubject, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PackageList, Package, PackageVersion } from '../models/package.model';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -130,6 +130,8 @@ export class MockThunderstoreService {
 }
 
 export class MockProfileService {
+  confirmProfile = new Subject<void>();
+
   registerMenuHandlers() {}
 }
 

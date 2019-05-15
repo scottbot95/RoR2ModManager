@@ -229,23 +229,6 @@ export class PackageService {
     );
   }
 
-  public installProfile(
-    profile: PackageProfile,
-    cleanInstall = false
-  ): Promise<void> {
-    let removed: Set<Package> = new Set<Package>();
-    if (cleanInstall) {
-      removed = new Set<Package>(
-        this.allPackagesSource.value.filter(pkg => pkg.installedVersion)
-      );
-    }
-    const updated = new Set<PackageVersion>(
-      profile.map(str => this.findPackageFromDependencyString(str))
-    );
-
-    return this.applyChanges({ removed, updated });
-  }
-
   public findPackageFromDependencyString(
     depString: string
   ): PackageVersion | undefined {
