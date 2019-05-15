@@ -61,6 +61,9 @@ export class MockPackageService {
     new PackageChangeset()
   );
 
+  log$ = new Subject<Subject<string>>();
+  applyPercentage$ = new Subject<number>();
+
   installPackage(pkg: Package, version: PackageVersion) {
     this.installedPackages$.next([...this.installedPackages$.value, pkg]);
   }

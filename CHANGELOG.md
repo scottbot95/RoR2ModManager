@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Fancy new changes progress log
+
 ## [0.7.0] 2019-05-14
 
 ### Changed
@@ -127,7 +131,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial alpha release
 
 [unreleased]: https://github.com/scottbot95/RoR2ModManager/compare/v0.7.0...HEAD
-[0.6.4]: https://github.com/scottbot95/RoR2ModManager/compare/v0.6.4...v0.7.0
+[0.7.0]: https://github.com/scottbot95/RoR2ModManager/compare/v0.6.4...v0.7.0
 [0.6.4]: https://github.com/scottbot95/RoR2ModManager/compare/v0.6.3...v0.6.4
 [0.6.3]: https://github.com/scottbot95/RoR2ModManager/compare/v0.6.2...v0.6.3
 [0.6.2]: https://github.com/scottbot95/RoR2ModManager/compare/v0.6.1...v0.6.2

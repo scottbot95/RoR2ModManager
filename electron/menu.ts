@@ -1,4 +1,4 @@
-import { Menu, BrowserWindow, shell } from 'electron';
+import { Menu, BrowserWindow, shell, app } from 'electron';
 import openAboutWindow from 'about-window';
 import * as path from 'path';
 import { prefs } from './prefs';
@@ -59,6 +59,11 @@ const template: Electron.MenuItemConstructorOptions[] = [
             click: openRoR2Directory('BepInEx/plugins')
           }
         ]
+      },
+      {
+        label: 'Download Cache',
+        click: () =>
+          shell.openItem(path.join(app.getPath('userData'), 'downloadCache'))
       }
     ]
   },

@@ -75,6 +75,7 @@
     "@angular/router": "^7.2.7",
     "@ngx-translate/core": "11.0.1",
     "@ngx-translate/http-loader": "4.0.0",
+    "@nicky-lenaers/ngx-scroll-to": "^2.0.0",
     "@types/fs-extra": "^5.0.5",
     "@types/glob": "^7.1.1",
     "@types/inflection": "^1.5.28",
