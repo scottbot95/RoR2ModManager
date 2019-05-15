@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject, Subject } from 'rxjs';
 import {
   PackageVersion,
   Package,
@@ -49,6 +49,12 @@ export class PackageService {
 
   public log$ = new ReplaySubject<ReplaySubject<string>>(1);
   private log: ReplaySubject<string>;
+
+  private applyPercentageSource = new BehaviorSubject<number>(null);
+  public applyPerctnage$ = this.applyPercentageSource.asObservable();
+
+  private totalSteps = 0;
+  private stepsComplete = 0;
 
   constructor(
     private download: DownloadService,
@@ -147,6 +153,7 @@ export class PackageService {
     }
     this.log.next(`Downloading ${pkg.name}...`);
     const zipPath = await this.download.download(pkg);
+    this.completeStep();
     // Dirty hack because the specs really didn't like this
     if (this.electron.isElectron()) {
       const fileStream = this.electron.fs.createReadStream(zipPath);
@@ -155,7 +162,6 @@ export class PackageService {
       else await this.installBepInPlugin(fileStream, pkg.pkg.fullName);
     }
 
-    this.log.next(`Finished installing ${pkg.name}`);
     pkg.pkg.installedVersion = pkg;
 
     await this.db.updatePackage(pkg.pkg.uuid4, {
@@ -166,6 +172,9 @@ export class PackageService {
       ...this.installedPackagesSource.value,
       { ...pkg.pkg, installedVersion: pkg }
     ]);
+
+    this.completeStep();
+    this.log.next(`Finished installing ${pkg.name}`);
   }
 
   // TODO use InstalledPackage here and add installedPath to InstalledPackage
@@ -199,6 +208,7 @@ export class PackageService {
 
     await this.db.updatePackage(pkg.uuid4, { installed_version: null });
 
+    this.completeStep();
     this.log.next(`Finished removing ${pkg.name}`);
 
     return pkg.uuid4;
@@ -225,6 +235,10 @@ export class PackageService {
         changeset.removed.add(existing);
       }
     });
+
+    this.totalSteps = changeset.updated.size * 2 + changeset.removed.size;
+    this.stepsComplete = 0;
+    this.applyPercentageSource.next(0);
 
     this.log.next('Uninstalling packages marked for removal...');
     // uninstall old packages
@@ -397,5 +411,19 @@ export class PackageService {
         }
       });
     }
+  }
+
+  private completeStep() {
+    this.stepsComplete += 1;
+    if (this.stepsComplete > this.totalSteps)
+      console.warn(
+        `More steps completed, than available. Completed ${
+          this.stepsComplete
+        }. Total ${this.totalSteps}`
+      );
+    if (this.totalSteps > 0)
+      this.applyPercentageSource.next(this.stepsComplete / this.totalSteps);
+    else
+      console.warn('Attempting to complete step, but there are 0 total steps');
   }
 }

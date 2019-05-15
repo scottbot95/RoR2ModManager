@@ -7,7 +7,8 @@ import {
   OnChanges,
   SimpleChanges,
   ViewChild,
-  ElementRef
+  ElementRef,
+  OnDestroy
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { PackageService } from '../../../../core/services/package.service';
@@ -19,7 +20,7 @@ import { ScrollToService } from '@nicky-lenaers/ngx-scroll-to';
   templateUrl: './step-three.component.html',
   styleUrls: ['./step-three.component.scss']
 })
-export class StepThreeComponent implements OnInit, OnChanges {
+export class StepThreeComponent implements OnInit, OnChanges, OnDestroy {
   @Output() done = new EventEmitter<void>();
   @Output() reset = new EventEmitter<void>();
   @Input() visible: boolean;
@@ -31,6 +32,10 @@ export class StepThreeComponent implements OnInit, OnChanges {
 
   logs: string[];
 
+  progress: number;
+
+  private subscription = new Subscription();
+
   constructor(
     private fb: FormBuilder,
     private packages: PackageService,
@@ -41,21 +46,32 @@ export class StepThreeComponent implements OnInit, OnChanges {
     this.formStep3 = this.fb.group({});
 
     let logSub: Subscription;
-    this.packages.log$.subscribe(log => {
-      if (logSub) logSub.unsubscribe();
-      this.logs = [];
-      logSub = log.subscribe(row => {
-        console.log(row);
-        this.logs.push(row);
-        this.scrollToService.scrollTo({ target: 'bottom', duration: 250 });
-      });
-    });
+    this.subscription.add(
+      this.packages.log$.subscribe(log => {
+        if (logSub) logSub.unsubscribe();
+        this.logs = [];
+        logSub = log.subscribe(row => {
+          this.logs.push(row);
+          this.scrollToService.scrollTo({ target: 'bottom', duration: 250 });
+        });
+      })
+    );
+
+    this.subscription.add(
+      this.packages.applyPerctnage$.subscribe(progress => {
+        this.progress = progress * 100;
+      })
+    );
   }
 
   ngOnChanges(changes: SimpleChanges) {
     const change = changes['visible'];
     if (!change || change.previousValue === change.currentValue) return;
     if (change.currentValue) setTimeout(this.applyChanges.bind(this));
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
   async applyChanges() {

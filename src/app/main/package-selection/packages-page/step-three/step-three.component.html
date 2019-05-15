@@ -11,7 +11,11 @@
   </mat-list-item>
   <span id="bottom"></span>
 </mat-list>
-<mat-progress-bar mode="indeterminate" *ngIf="working"></mat-progress-bar>
+<mat-progress-bar
+  [mode]="progress === undefined ? 'indeterminate' : 'determinate'"
+  [value]="progress"
+  *ngIf="working"
+></mat-progress-bar>
 <ng-container *ngIf="complete">
   <p>Done!</p>
   <button mat-raised-button (click)="back()">
