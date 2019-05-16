@@ -58,7 +58,6 @@ export class PackagesPageComponent implements OnInit, OnDestroy {
 
     this.subscription.add(
       this.profile.confirmProfile.subscribe(() => {
-        console.log('selecting proper step');
         this.stepper.selectedIndex = 1;
         this.changeDetector.detectChanges();
       })

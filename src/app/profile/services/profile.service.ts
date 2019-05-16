@@ -2,8 +2,9 @@ import { Injectable, EventEmitter } from '@angular/core';
 import { ElectronService } from '../../core/services/electron.service';
 import { PackageService } from '../../core/services/package.service';
 import { Package, PackageVersionList } from '../../core/models/package.model';
-import { PROFILE_EXTENSIONS } from '../constants';
+import { PROFILE_EXTENSIONS, DEFAULT_PROFILE_EXTENSION } from '../constants';
 import { PackageProfile } from '../../core/models/profile.model';
+import { DatabaseService } from '../../core/services/database.service';
 
 @Injectable()
 export class ProfileService {
@@ -11,21 +12,46 @@ export class ProfileService {
 
   public confirmProfile = new EventEmitter<void>(true);
 
+  public profiles = new Map<string, PackageProfile>();
+  public activeProfileName: string;
+
   constructor(
     private electron: ElectronService,
-    private packages: PackageService
+    private packages: PackageService,
+    private db: DatabaseService
   ) {
     this.exportToFile = this.exportToFile.bind(this);
     this.importFromFile = this.importFromFile.bind(this);
+
     this.packages.allPackages$.subscribe(pkgs => {
       if (Array.isArray(pkgs) && pkgs.length > 0) {
         this.allPackages = pkgs;
       }
     });
 
+    this.packages.installedPackages$.subscribe(installed => {
+      this.db.updateProfile({
+        name: this.activeProfileName,
+        packages: installed.map(pkg => pkg.installedVersion.fullName),
+        version: 1
+      });
+    });
+
+    this.db.getProfiles().then(profiles => {
+      profiles.forEach(profile => {
+        this.profiles.set(profile.name, profile);
+        this.electron.ipcRenderer.send('addProfile', profile.name);
+      });
+    });
+
+    this.activeProfileName = localStorage.getItem('activeProfile');
+    if (!this.activeProfileName) {
+      this.activeProfileName = 'default';
+      localStorage.setItem('activeProfile', 'default');
+      this.db.saveProfile({ name: 'default', version: 1, packages: [] });
+      this.electron.ipcRenderer.send('switchProfile', 'default');
+    }
     this.electron.ipcRenderer.send('clearProfiles');
-    this.electron.ipcRenderer.send('addProfile', 'default', 'test1');
-    this.electron.ipcRenderer.send('addProfile', 'test2');
   }
 
   public registerMenuHandlers() {
@@ -41,8 +67,10 @@ export class ProfileService {
 
     this.electron.ipcRenderer.on(
       'switchProfile',
-      this.switchProfile.bind(this)
+      this.handleSwitchProfile.bind(this)
     );
+
+    this.electron.ipcRenderer.on('newProfile', this.newProfile.bind(this));
   }
 
   public showImportDialog() {
@@ -63,20 +91,18 @@ export class ProfileService {
     );
   }
 
-  private switchProfile(event: Electron.Event, profile: string) {
+  private handleSwitchProfile(event: Electron.Event, profile: string) {
     this.electron.ipcRenderer.send('switchProfile', profile);
-    console.log('Switching to profile ', profile);
+    console.log(`Switching to profile ${profile}`);
   }
 
-  private async importFromFile(filenames: string[]) {
-    if (!Array.isArray(filenames) || filenames.length === 0) return;
-    const [file] = filenames;
+  private newProfile(event: Electron.Event) {}
 
+  private switchProfile(profile: PackageProfile) {
     let errors = [];
     let packages: PackageVersionList;
     try {
-      const profile: PackageProfile = await this.electron.fs.readJson(file);
-      packages = profile
+      packages = profile.packages
         .map(dep => {
           try {
             return this.packages.findPackageFromDependencyString(dep);
@@ -90,6 +116,46 @@ export class ProfileService {
           }
         })
         .filter(p => p); // remove false elements
+    } catch (err) {
+      errors = [err.message || err];
+    }
+
+    if (errors.length) {
+      this.electron.remote.dialog.showMessageBox(
+        this.electron.remote.getCurrentWindow(),
+        {
+          title: 'Error',
+          type: 'error',
+          buttons: ['Ok'],
+          message: errors.join('\n')
+        }
+      );
+      return;
+    }
+
+    this.packages.selection.clear();
+    packages.forEach(pkg => {
+      this.packages.selection.select(pkg.pkg);
+    });
+
+    this.confirmProfile.emit();
+  }
+
+  private async importFromFile(filenames: string[]) {
+    if (!Array.isArray(filenames) || filenames.length === 0) return;
+    const [file] = filenames;
+
+    let errors = [];
+    try {
+      const parsed: PackageProfile | string[] = await this.electron.fs.readJson(
+        file
+      );
+      let profile: PackageProfile;
+      if (Array.isArray(parsed))
+        profile = { name: 'unknown', version: 1, packages: parsed };
+      else if (parsed.version === 1) profile = parsed;
+      else throw new Error('Unkown profile version');
+      this.switchProfile(profile);
     } catch (err) {
       if (err.name === 'SyntaxError') {
         errors = ['Cannot failed to parse profile file'];
@@ -110,14 +176,6 @@ export class ProfileService {
       );
       return;
     }
-
-    this.packages.selection.clear();
-    packages.forEach(pkg => {
-      console.log(`Selecting package from profile ${pkg.name}`);
-      this.packages.selection.select(pkg.pkg);
-    });
-
-    this.confirmProfile.emit();
   }
 
   private async exportToFile(filename: string) {
@@ -126,9 +184,15 @@ export class ProfileService {
       .filter(p => p.installedVersion)
       .map(p => p.installedVersion.fullName);
     console.log('Writing profile file', installed);
+
+    const profile: PackageProfile = {
+      name: this.electron.path.basename(filename, DEFAULT_PROFILE_EXTENSION),
+      version: 1,
+      packages: installed
+    };
     try {
       await this.electron.fs.remove(filename);
     } catch {}
-    await this.electron.fs.writeJson(filename, installed);
+    await this.electron.fs.writeJson(filename, profile);
   }
 }
