@@ -1,10 +1,7 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { ElectronService } from '../../core/services/electron.service';
 import { PackageService } from '../../core/services/package.service';
-import {
-  Package,
-  PackageVersionList
-} from '../../core/models/package.model';
+import { Package, PackageVersionList } from '../../core/models/package.model';
 import { PROFILE_EXTENSIONS } from '../constants';
 import { PackageProfile } from '../../core/models/profile.model';
 
@@ -25,6 +22,10 @@ export class ProfileService {
         this.allPackages = pkgs;
       }
     });
+
+    this.electron.ipcRenderer.send('clearProfiles');
+    this.electron.ipcRenderer.send('addProfile', 'default', 'test1');
+    this.electron.ipcRenderer.send('addProfile', 'test2');
   }
 
   public registerMenuHandlers() {
@@ -36,6 +37,11 @@ export class ProfileService {
     this.electron.ipcRenderer.on(
       'exportProfile',
       this.showExportDialog.bind(this)
+    );
+
+    this.electron.ipcRenderer.on(
+      'switchProfile',
+      this.switchProfile.bind(this)
     );
   }
 
@@ -55,6 +61,11 @@ export class ProfileService {
       },
       this.exportToFile
     );
+  }
+
+  private switchProfile(event: Electron.Event, profile: string) {
+    this.electron.ipcRenderer.send('switchProfile', profile);
+    console.log('Switching to profile ', profile);
   }
 
   private async importFromFile(filenames: string[]) {

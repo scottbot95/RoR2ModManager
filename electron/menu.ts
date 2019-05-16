@@ -1,4 +1,13 @@
-import { Menu, BrowserWindow, shell, app } from 'electron';
+import {
+  Menu,
+  BrowserWindow,
+  shell,
+  app,
+  MenuItemConstructorOptions,
+  MenuItem,
+  ipcMain,
+  Event
+} from 'electron';
 import openAboutWindow from 'about-window';
 import * as path from 'path';
 import { prefs } from './prefs';
@@ -9,7 +18,10 @@ const openRoR2Directory = (dir: string = '') => {
   return () => shell.openItem(openPath);
 };
 
-const template: Electron.MenuItemConstructorOptions[] = [
+const profiles: string[] = [];
+let selectedProfile: string;
+
+const generateTemplate = (): MenuItemConstructorOptions[] => [
   {
     label: 'File',
     submenu: [{ role: 'quit' }]
@@ -39,6 +51,31 @@ const template: Electron.MenuItemConstructorOptions[] = [
         label: 'Export',
         click: () =>
           BrowserWindow.getFocusedWindow().webContents.send('exportProfile')
+      },
+      {
+        type: 'separator'
+      },
+      {
+        label: 'Switch Profile',
+        submenu: [
+          ...profiles.map(
+            (p): MenuItemConstructorOptions => ({
+              label: p,
+              type: 'radio',
+              checked: p === selectedProfile,
+              enabled: p !== selectedProfile,
+              click: handleSwitchProfile,
+              id: p
+            })
+          ),
+          { type: 'separator' },
+          {
+            label: 'New Profile',
+            click: (item: MenuItem, window: BrowserWindow) => {
+              window.webContents.send('newProfile');
+            }
+          }
+        ]
       }
     ]
   },
@@ -97,9 +134,66 @@ const template: Electron.MenuItemConstructorOptions[] = [
   }
 ];
 
-export const configureApplicationMenu = () => {
-  const menu = Menu.buildFromTemplate(template);
+function handleSwitchProfile(
+  menuItem: MenuItem,
+  browserWindow: BrowserWindow,
+  event: Event
+) {
+  menuItem.checked = false;
+  const oldItem = Menu.getApplicationMenu().getMenuItemById(selectedProfile);
+  if (oldItem) {
+    oldItem.checked = true;
+  }
+  browserWindow.webContents.send('switchProfile', menuItem.label);
+}
+
+const rebuildMenu = () => {
+  // const oldMenu = Menu.getApplicationMenu();
+  // if ((oldMenu as any).dispose) {
+  //   (oldMenu as any).dispose();
+  // }
+  // Potentially there is a memory leak here depending on how
+  // electron deals with creating new memory
+  const menu = Menu.buildFromTemplate(generateTemplate());
   Menu.setApplicationMenu(menu);
+  return menu;
+};
+
+export const configureApplicationMenu = () => {
+  const menu = rebuildMenu();
+
+  ipcMain.on('addProfile', (event: Event, ...addedProfiles: string[]) => {
+    if (addedProfiles.length > 0) {
+      profiles.push(...addedProfiles);
+      if (!selectedProfile) selectedProfile = addedProfiles[0];
+      rebuildMenu();
+    }
+  });
+
+  ipcMain.on('removeProfile', (event: Event, profile: string) => {
+    const profIndex = profiles.indexOf(profile);
+    if (profIndex !== -1) {
+      profiles.splice(profIndex, 1);
+    }
+    rebuildMenu();
+  });
+
+  ipcMain.on('clearProfiles', (event: Event) => {
+    profiles.splice(0, profiles.length);
+    rebuildMenu();
+  });
+
+  ipcMain.on('switchProfile', (event: Event, profile: string) => {
+    const currMenu = Menu.getApplicationMenu();
+    const oldMenuItem = currMenu.getMenuItemById(selectedProfile);
+    oldMenuItem.checked = false;
+    oldMenuItem.enabled = true;
+
+    const newMenuItem = currMenu.getMenuItemById(profile);
+    newMenuItem.checked = true;
+    newMenuItem.enabled = false;
+    selectedProfile = profile;
+  });
 
   return menu;
 };
