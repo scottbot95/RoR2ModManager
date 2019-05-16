@@ -168,6 +168,8 @@ export const configureApplicationMenu = () => {
       if (!selectedProfile) selectedProfile = addedProfiles[0];
       rebuildMenu();
     }
+
+    event.returnValue = profiles;
   });
 
   ipcMain.on('removeProfile', (event: Event, profile: string) => {
@@ -176,11 +178,15 @@ export const configureApplicationMenu = () => {
       profiles.splice(profIndex, 1);
     }
     rebuildMenu();
+
+    event.returnValue = profiles;
   });
 
   ipcMain.on('clearProfiles', (event: Event) => {
     profiles.splice(0, profiles.length);
     rebuildMenu();
+
+    event.returnValue = profiles;
   });
 
   ipcMain.on('switchProfile', (event: Event, profile: string) => {
@@ -193,6 +199,8 @@ export const configureApplicationMenu = () => {
     newMenuItem.checked = true;
     newMenuItem.enabled = false;
     selectedProfile = profile;
+
+    event.returnValue = selectedProfile;
   });
 
   return menu;

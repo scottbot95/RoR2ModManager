@@ -5,6 +5,7 @@ import { Package, PackageVersionList } from '../../core/models/package.model';
 import { PROFILE_EXTENSIONS, DEFAULT_PROFILE_EXTENSION } from '../constants';
 import { PackageProfile } from '../../core/models/profile.model';
 import { DatabaseService } from '../../core/services/database.service';
+import { DialogWindowOptions } from '../../../../electron/ipc';
 
 @Injectable()
 export class ProfileService {
@@ -54,6 +55,23 @@ export class ProfileService {
     this.electron.ipcRenderer.send('clearProfiles');
   }
 
+  public async refreshPackages() {
+    const profiles = await this.db.getProfiles();
+    this.electron.ipcRenderer.sendSync('clearProfiles');
+    profiles.forEach(profile => {
+      this.profiles.set(profile.name, profile);
+      this.electron.ipcRenderer.sendSync('addProfile', profile.name);
+    });
+
+    this.activeProfileName = localStorage.getItem('activeProfile');
+    if (!this.activeProfileName) {
+      this.activeProfileName = 'default';
+      localStorage.setItem('activeProfile', 'default');
+      this.electron.ipcRenderer.sendSync('switchProfile', 'default');
+      await this.db.saveProfile({ name: 'default', version: 1, packages: [] });
+    }
+  }
+
   public registerMenuHandlers() {
     this.electron.ipcRenderer.on(
       'importProfile',
@@ -92,11 +110,17 @@ export class ProfileService {
   }
 
   private handleSwitchProfile(event: Electron.Event, profile: string) {
-    this.electron.ipcRenderer.send('switchProfile', profile);
+    this.electron.ipcRenderer.sendSync('switchProfile', profile);
     console.log(`Switching to profile ${profile}`);
   }
 
-  private newProfile(event: Electron.Event) {}
+  private newProfile(event: Electron.Event) {
+    this.electron.ipcRenderer.send('openDialog', <DialogWindowOptions>{
+      slug: 'new-profile',
+      width: 300,
+      height: 300
+    });
+  }
 
   private switchProfile(profile: PackageProfile) {
     let errors = [];

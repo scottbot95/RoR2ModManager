@@ -1,0 +1,48 @@
+<div
+  class="mat-dialog-container padding2"
+  fxLayout="column"
+  style="height: 100%"
+>
+  <h2 mat-dialog-title>
+    Create new profile
+  </h2>
+  <mat-dialog-content>
+    <form
+      [formGroup]="form"
+      fxLayout="column"
+      novalidate
+      (ngSubmit)="createProfile()"
+      #profileForm="ngForm"
+    >
+      <mat-form-field appearance="standard">
+        <mat-label>
+          Profile Name
+        </mat-label>
+        <input matInput formControlName="name" required />
+        <mat-error *ngIf="form.get('name').invalid">
+          Profile Name required
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="standard">
+        <mat-label>
+          Copy From
+        </mat-label>
+        <mat-select formControlName="copyFrom">
+          <mat-option>None</mat-option>
+          <mat-option *ngFor="let profile of profiles" [value]="profile">
+            {{ profile }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </form>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button
+      mat-raised-button
+      (click)="formElem.onSubmit(undefined)"
+      [matTooltip]="getTooltip()"
+    >
+      Create
+    </button>
+  </mat-dialog-actions>
+</div>
