@@ -6,12 +6,21 @@ import { PROFILE_EXTENSIONS, DEFAULT_PROFILE_EXTENSION } from '../constants';
 import { PackageProfile } from '../../core/models/profile.model';
 import { DatabaseService } from '../../core/services/database.service';
 import { DialogWindowOptions } from '../../../../electron/ipc';
+import { BehaviorSubject, Subscription } from 'rxjs';
+
+export interface CreateProfileOptions {
+  name: string;
+  copyFrom?: string;
+}
 
 @Injectable()
 export class ProfileService {
   private allPackages: Package[] = [];
 
   public confirmProfile = new EventEmitter<void>(true);
+
+  private profileNamesSource = new BehaviorSubject<string[]>([]);
+  public profileNames$ = this.profileNamesSource.asObservable();
 
   public profiles = new Map<string, PackageProfile>();
   public activeProfileName: string;
@@ -38,30 +47,19 @@ export class ProfileService {
       });
     });
 
-    this.db.getProfiles().then(profiles => {
-      profiles.forEach(profile => {
-        this.profiles.set(profile.name, profile);
-        this.electron.ipcRenderer.send('addProfile', profile.name);
-      });
-    });
-
-    this.activeProfileName = localStorage.getItem('activeProfile');
-    if (!this.activeProfileName) {
-      this.activeProfileName = 'default';
-      localStorage.setItem('activeProfile', 'default');
-      this.db.saveProfile({ name: 'default', version: 1, packages: [] });
-      this.electron.ipcRenderer.send('switchProfile', 'default');
-    }
-    this.electron.ipcRenderer.send('clearProfiles');
+    this.refreshPackages();
   }
 
   public async refreshPackages() {
-    const profiles = await this.db.getProfiles();
+    const profilesP = this.db.getProfiles();
     this.electron.ipcRenderer.sendSync('clearProfiles');
+    const profiles = await profilesP;
     profiles.forEach(profile => {
       this.profiles.set(profile.name, profile);
       this.electron.ipcRenderer.sendSync('addProfile', profile.name);
     });
+
+    this.profileNamesSource.next(profiles.map(p => p.name));
 
     this.activeProfileName = localStorage.getItem('activeProfile');
     if (!this.activeProfileName) {
@@ -89,6 +87,11 @@ export class ProfileService {
     );
 
     this.electron.ipcRenderer.on('newProfile', this.newProfile.bind(this));
+    this.electron.ipcRenderer.on(
+      'createProfile',
+      (event: Electron.Event, opts: CreateProfileOptions) =>
+        this.createProfile(opts)
+    );
   }
 
   public showImportDialog() {
@@ -109,9 +112,33 @@ export class ProfileService {
     );
   }
 
-  private handleSwitchProfile(event: Electron.Event, profile: string) {
-    this.electron.ipcRenderer.sendSync('switchProfile', profile);
-    console.log(`Switching to profile ${profile}`);
+  public createProfile(opts: CreateProfileOptions) {
+    const profile: PackageProfile = {
+      name: opts.name,
+      version: 1,
+      packages: []
+    };
+    if (opts.copyFrom) {
+      const original = this.profiles.get(opts.copyFrom);
+      if (original) {
+        profile.packages = [...original.packages];
+      }
+    }
+
+    this.db.saveProfile(profile);
+
+    this.profiles.set(profile.name, profile);
+    this.profileNamesSource.next([
+      ...this.profileNamesSource.value,
+      profile.name
+    ]);
+    this.electron.ipcRenderer.sendSync('addProfile', profile.name);
+  }
+
+  private handleSwitchProfile(event: Electron.Event, profileName: string) {
+    const profile = this.profiles.get(profileName);
+    console.log(`Switching to profile ${profileName}`, profile);
+    this.switchProfile(profile);
   }
 
   private newProfile(event: Electron.Event) {

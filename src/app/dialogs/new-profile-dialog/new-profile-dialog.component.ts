@@ -7,6 +7,7 @@ import {
 } from '@angular/forms';
 import { ProfileService } from '../../profile/services/profile.service';
 import { ElectronService } from '../../core/services/electron.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-new-profile-dialog',
@@ -17,7 +18,7 @@ export class NewProfileDialogComponent implements OnInit {
   @ViewChild('profileForm') formElem: FormGroupDirective;
   form: FormGroup;
 
-  profiles: string[];
+  profiles: Observable<string[]>;
 
   constructor(
     private fb: FormBuilder,
@@ -31,20 +32,15 @@ export class NewProfileDialogComponent implements OnInit {
       copyFrom: ''
     });
 
-    this.profiles = Array.from(this.profileService.profiles.keys());
-  }
-
-  buttonClick(event: Event) {
-    console.log('submitting');
-
-    this.formElem.onSubmit(new Event('submit'));
+    this.profiles = this.profileService.profileNames$;
   }
 
   createProfile() {
-    console.log('form submitted');
     if (this.form.invalid) return;
     const win = this.electron.remote.getCurrentWindow();
-    win.getParentWindow().webContents.send('print', this.form.value);
+    const parent = win.getParentWindow();
+    parent.webContents.send('createProfile', this.form.value);
+    parent.focus();
     win.close();
   }
 

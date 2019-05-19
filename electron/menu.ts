@@ -192,10 +192,13 @@ export const configureApplicationMenu = () => {
   ipcMain.on('switchProfile', (event: Event, profile: string) => {
     const currMenu = Menu.getApplicationMenu();
     const oldMenuItem = currMenu.getMenuItemById(selectedProfile);
-    oldMenuItem.checked = false;
-    oldMenuItem.enabled = true;
+    if (oldMenuItem) {
+      oldMenuItem.checked = false;
+      oldMenuItem.enabled = true;
+    }
 
     const newMenuItem = currMenu.getMenuItemById(profile);
+    if (!newMenuItem) event.sender.send('print', `Unkown profile ${profile}`);
     newMenuItem.checked = true;
     newMenuItem.enabled = false;
     selectedProfile = profile;

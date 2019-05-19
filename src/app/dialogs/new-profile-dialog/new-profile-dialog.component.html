@@ -29,7 +29,10 @@
         </mat-label>
         <mat-select formControlName="copyFrom">
           <mat-option>None</mat-option>
-          <mat-option *ngFor="let profile of profiles" [value]="profile">
+          <mat-option
+            *ngFor="let profile of profiles | async"
+            [value]="profile"
+          >
             {{ profile }}
           </mat-option>
         </mat-select>
@@ -39,7 +42,7 @@
   <mat-dialog-actions>
     <button
       mat-raised-button
-      (click)="formElem.onSubmit(undefined)"
+      (click)="profileForm.onSubmit()"
       [matTooltip]="getTooltip()"
     >
       Create
