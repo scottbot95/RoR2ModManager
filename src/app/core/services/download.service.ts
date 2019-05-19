@@ -38,6 +38,10 @@ export class DownloadService {
     info: DownloadResultInfo
   ) {
     const data = this.downloads.get(pkg.uuid4);
+    if (!data) {
+      console.warn(`Running onComplete for completed download ${pkg.uuid4}`);
+      return;
+    }
     this.downloads.delete(pkg.uuid4);
     const { state } = info;
     console.log(`Download completed for uuid ${pkg.uuid4}. State: ${state}`);
