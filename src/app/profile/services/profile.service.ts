@@ -216,7 +216,6 @@ export class ProfileService {
     if (!Array.isArray(filenames) || filenames.length === 0) return;
     const [file] = filenames;
 
-    let errors = [];
     try {
       const parsed: PackageProfile | string[] = await this.electron.fs.readJson(
         file
@@ -226,26 +225,41 @@ export class ProfileService {
         profile = { name: 'unknown', version: 1, packages: parsed };
       else if (parsed.version === 1) profile = parsed;
       else throw new Error('Unkown profile version');
+      if (this.profiles.has(profile.name)) {
+        const clicked = this.electron.remote.dialog.showMessageBox(
+          this.electron.remote.getCurrentWindow(),
+          {
+            title: 'Confirm Overwrite',
+            message:
+              `A profile with name '${profile.name}' already exists.\n` +
+              `Do you want to overwrite existing profile?`,
+            buttons: ['Yes', 'No'],
+            defaultId: 1,
+            type: 'question'
+          }
+        );
+        if (clicked === 0) {
+        }
+      }
       this.switchProfile(profile);
     } catch (err) {
+      let message: string;
       if (err.name === 'SyntaxError') {
-        errors = ['Cannot failed to parse profile file'];
+        message = 'Cannot failed to parse profile file';
       } else {
-        errors = [err.message || err];
+        message = err.message || err;
       }
-    }
 
-    if (errors.length) {
       this.electron.remote.dialog.showMessageBox(
         this.electron.remote.getCurrentWindow(),
         {
           title: 'Error',
           type: 'error',
           buttons: ['Ok'],
-          message: errors.join('\n')
-        }
+          message
+        },
+        () => {}
       );
-      return;
     }
   }
 

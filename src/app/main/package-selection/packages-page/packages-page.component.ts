@@ -83,4 +83,8 @@ export class PackagesPageComponent implements OnInit, OnDestroy {
   reset = () => {
     this.stepper.reset();
   };
+
+  canceled() {
+    console.log('Canceled event');
+  }
 }

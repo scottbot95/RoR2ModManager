@@ -10,7 +10,10 @@
     <ng-template matStepLabel>
       Confirm Changes
     </ng-template>
-    <app-step-two (confirmed)="editable = !$event"></app-step-two>
+    <app-step-two
+      (confirmed)="editable = !$event"
+      (canceled)="canceled()"
+    ></app-step-two>
   </mat-step>
 
   <mat-step [stepControl]="formStepThree">

@@ -9,7 +9,9 @@
     Please check to confirm changes
   </mat-error>
   <span fxLayout>
-    <button mat-button matStepperPrevious>Back</button>
+    <button mat-button matStepperPrevious (click)="canceled.emit()">
+      Back
+    </button>
     <button mat-button matStepperNext>Next</button>
   </span>
 </form>
