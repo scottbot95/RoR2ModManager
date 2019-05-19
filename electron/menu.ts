@@ -74,6 +74,14 @@ const generateTemplate = (): MenuItemConstructorOptions[] => [
             click: (item: MenuItem, window: BrowserWindow) => {
               window.webContents.send('newProfile');
             }
+          },
+          { type: 'separator' },
+          {
+            label: 'Delete Profile',
+            enabled: profiles.length > 1,
+            click: (item: MenuItem, window: BrowserWindow) => {
+              window.webContents.send('deleteProfile');
+            }
           }
         ]
       }

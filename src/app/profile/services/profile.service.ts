@@ -40,11 +40,13 @@ export class ProfileService {
     });
 
     this.packages.installedPackages$.subscribe(installed => {
-      this.db.updateProfile({
-        name: this.activeProfileName,
-        packages: installed.map(pkg => pkg.installedVersion.fullName),
-        version: 1
-      });
+      if (this.activeProfileName) {
+        this.db.updateProfile({
+          name: this.activeProfileName,
+          packages: installed.map(pkg => pkg.installedVersion.fullName),
+          version: 1
+        });
+      }
     });
 
     this.refreshPackages();
@@ -65,9 +67,9 @@ export class ProfileService {
     if (!this.activeProfileName) {
       this.activeProfileName = 'default';
       localStorage.setItem('activeProfile', 'default');
-      this.electron.ipcRenderer.sendSync('switchProfile', 'default');
       await this.db.saveProfile({ name: 'default', version: 1, packages: [] });
     }
+    this.electron.ipcRenderer.sendSync('switchProfile', this.activeProfileName);
   }
 
   public registerMenuHandlers() {
@@ -87,11 +89,16 @@ export class ProfileService {
     );
 
     this.electron.ipcRenderer.on('newProfile', this.newProfile.bind(this));
+
     this.electron.ipcRenderer.on(
       'createProfile',
       (event: Electron.Event, opts: CreateProfileOptions) =>
         this.createProfile(opts)
     );
+
+    this.electron.ipcRenderer.on('deleteProfile', () => {
+      this.deleteProfile(this.activeProfileName);
+    });
   }
 
   public showImportDialog() {
@@ -133,6 +140,19 @@ export class ProfileService {
       profile.name
     ]);
     this.electron.ipcRenderer.sendSync('addProfile', profile.name);
+  }
+
+  public deleteProfile(name: string) {
+    console.log(`Deleting profile ${name}`, this.profiles.has(name));
+    return;
+    if (this.profiles.delete(name)) {
+      this.profileNamesSource.next(Array.from(this.profiles.keys()));
+      this.electron.ipcRenderer.send('removeProfile', name);
+      if (this.activeProfileName === name) {
+        const profile = this.profiles.get(this.profileNamesSource.value[0]);
+        this.switchProfile(profile);
+      }
+    }
   }
 
   private handleSwitchProfile(event: Electron.Event, profileName: string) {
