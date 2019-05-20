@@ -6,7 +6,7 @@ import { PROFILE_EXTENSIONS, DEFAULT_PROFILE_EXTENSION } from '../constants';
 import { PackageProfile } from '../../core/models/profile.model';
 import { DatabaseService } from '../../core/services/database.service';
 import { DialogWindowOptions } from '../../../../electron/ipc';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
 export interface CreateProfileOptions {
   name: string;
@@ -25,6 +25,8 @@ export class ProfileService {
   public profiles = new Map<string, PackageProfile>();
   public activeProfileName: string;
 
+  private pendingProfileSwitch: string;
+
   constructor(
     private electron: ElectronService,
     private packages: PackageService,
@@ -40,7 +42,7 @@ export class ProfileService {
     });
 
     this.packages.installedPackages$.subscribe(installed => {
-      if (this.activeProfileName) {
+      if (this.activeProfileName && !this.pendingProfileSwitch) {
         this.db.updateProfile({
           name: this.activeProfileName,
           packages: installed.map(pkg => pkg.installedVersion.fullName),
@@ -48,6 +50,10 @@ export class ProfileService {
         });
       }
     });
+
+    this.packages.doneApplyingChanges.subscribe(
+      this.confirmPendingSwitch.bind(this)
+    );
 
     this.refreshPackages();
   }
@@ -66,10 +72,21 @@ export class ProfileService {
     this.activeProfileName = localStorage.getItem('activeProfile');
     if (!this.activeProfileName) {
       this.activeProfileName = 'default';
-      localStorage.setItem('activeProfile', 'default');
       await this.db.saveProfile({ name: 'default', version: 1, packages: [] });
     }
-    this.electron.ipcRenderer.sendSync('switchProfile', this.activeProfileName);
+    this.setActiveProfile();
+  }
+
+  public setActiveProfile(name: string = this.activeProfileName) {
+    if (!this.profiles.has(name)) {
+      console.warn(
+        `Attempted to set active profile to non-existant profile ${name}`
+      );
+      return;
+    }
+    this.activeProfileName = name;
+    localStorage.setItem('activeProfile', name);
+    this.electron.ipcRenderer.sendSync('switchProfile', name);
   }
 
   public registerMenuHandlers() {
@@ -97,7 +114,22 @@ export class ProfileService {
     );
 
     this.electron.ipcRenderer.on('deleteProfile', () => {
-      this.deleteProfile(this.activeProfileName);
+      this.electron.showMessageBox(
+        {
+          title: 'Are you sure?',
+          message: `Are you sure you want to delete profile '${
+            this.activeProfileName
+          }'`,
+          type: 'question',
+          buttons: ['Yes', 'No'],
+          defaultId: 1
+        },
+        clickedIndex => {
+          if (clickedIndex === 0) {
+            this.deleteProfile(this.activeProfileName);
+          }
+        }
+      );
     });
   }
 
@@ -132,27 +164,44 @@ export class ProfileService {
       }
     }
 
-    this.db.saveProfile(profile);
+    this.saveAndAddProfile(profile);
+  }
 
+  private async saveAndAddProfile(profile: PackageProfile) {
+    const promise = this.db.saveProfile(profile);
     this.profiles.set(profile.name, profile);
     this.profileNamesSource.next([
       ...this.profileNamesSource.value,
       profile.name
     ]);
     this.electron.ipcRenderer.sendSync('addProfile', profile.name);
+    await promise;
   }
 
-  public deleteProfile(name: string) {
+  public async deleteProfile(name: string) {
     console.log(`Deleting profile ${name}`, this.profiles.has(name));
-    return;
     if (this.profiles.delete(name)) {
       this.profileNamesSource.next(Array.from(this.profiles.keys()));
-      this.electron.ipcRenderer.send('removeProfile', name);
+      this.electron.ipcRenderer.sendSync('removeProfile', name);
+      await this.db.deleteProfile(name);
       if (this.activeProfileName === name) {
         const profile = this.profiles.get(this.profileNamesSource.value[0]);
         this.switchProfile(profile);
       }
     }
+  }
+
+  public cancelPendingSwitch() {
+    console.log(`Canceling switch to ${this.pendingProfileSwitch}`);
+    this.pendingProfileSwitch = null;
+    this.packages.resetSelection();
+  }
+
+  public confirmPendingSwitch() {
+    if (!this.pendingProfileSwitch) return;
+    console.log(`Finalizing pending switch to ${this.pendingProfileSwitch}`);
+    this.setActiveProfile(this.pendingProfileSwitch);
+    this.pendingProfileSwitch = null;
   }
 
   private handleSwitchProfile(event: Electron.Event, profileName: string) {
@@ -192,15 +241,12 @@ export class ProfileService {
     }
 
     if (errors.length) {
-      this.electron.remote.dialog.showMessageBox(
-        this.electron.remote.getCurrentWindow(),
-        {
-          title: 'Error',
-          type: 'error',
-          buttons: ['Ok'],
-          message: errors.join('\n')
-        }
-      );
+      this.electron.showMessageBox({
+        title: 'Error',
+        type: 'error',
+        buttons: ['Ok'],
+        message: errors.join('\n')
+      });
       return;
     }
 
@@ -210,6 +256,8 @@ export class ProfileService {
     });
 
     this.confirmProfile.emit();
+
+    this.pendingProfileSwitch = profile.name;
   }
 
   private async importFromFile(filenames: string[]) {
@@ -226,21 +274,22 @@ export class ProfileService {
       else if (parsed.version === 1) profile = parsed;
       else throw new Error('Unkown profile version');
       if (this.profiles.has(profile.name)) {
-        const clicked = this.electron.remote.dialog.showMessageBox(
-          this.electron.remote.getCurrentWindow(),
-          {
-            title: 'Confirm Overwrite',
-            message:
-              `A profile with name '${profile.name}' already exists.\n` +
-              `Do you want to overwrite existing profile?`,
-            buttons: ['Yes', 'No'],
-            defaultId: 1,
-            type: 'question'
-          }
-        );
-        if (clicked === 0) {
+        const clicked = this.electron.showMessageBox({
+          title: 'Confirm Overwrite',
+          message:
+            `A profile with name '${profile.name}' already exists.\n` +
+            `Do you want to overwrite existing profile?`,
+          buttons: ['Yes', 'No'],
+          defaultId: 1,
+          type: 'question'
+        });
+        // user clicked yes
+        if (clicked === 1) {
+          return;
         }
       }
+      this.saveAndAddProfile(profile);
+
       this.switchProfile(profile);
     } catch (err) {
       let message: string;
@@ -250,8 +299,7 @@ export class ProfileService {
         message = err.message || err;
       }
 
-      this.electron.remote.dialog.showMessageBox(
-        this.electron.remote.getCurrentWindow(),
+      this.electron.showMessageBox(
         {
           title: 'Error',
           type: 'error',

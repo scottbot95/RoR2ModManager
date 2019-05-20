@@ -47,6 +47,18 @@ export class ElectronService {
     return window && window.process && window.process.type;
   };
 
+  showMessageBox(
+    opts: Electron.MessageBoxOptions,
+    callback?: (res: number, checked: boolean) => void
+  ) {
+    const win = this.remote.getCurrentWindow();
+    if (callback) {
+      return this.remote.dialog.showMessageBox(win, opts, callback);
+    } else {
+      return this.remote.dialog.showMessageBox(win, opts);
+    }
+  }
+
   private configureIpc() {
     this.ipcRenderer.on('print', (event: any, ...args: any) => {
       console.log('Main Process:', ...args);

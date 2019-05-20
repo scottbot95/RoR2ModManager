@@ -22,7 +22,6 @@ export class StepTwoComponent implements OnInit, OnDestroy {
   public changes: PackageChangeset;
 
   @Output() confirmed = new EventEmitter<boolean>();
-  @Output() canceled = new EventEmitter<void>();
 
   private subscription = new Subscription();
 

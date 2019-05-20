@@ -88,8 +88,7 @@ export class PreferencesPageComponent implements OnInit, OnDestroy {
           const { join } = this.electron.path;
           this.electron.fs.access(join(path, 'Risk of Rain 2.exe'), err => {
             if (err) {
-              this.electron.remote.dialog.showMessageBox(
-                this.electron.remote.getCurrentWindow(),
+              this.electron.showMessageBox(
                 {
                   message: 'Directory must contain `Risk of Rain 2.exe',
                   title: 'Invalid Directory',

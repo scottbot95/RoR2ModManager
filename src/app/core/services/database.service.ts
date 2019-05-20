@@ -94,6 +94,10 @@ export class DatabaseService {
     return this.db.profiles.toArray();
   }
 
+  public deleteProfile(profile: string): Promise<void> {
+    return this.db.profiles.delete(profile);
+  }
+
   public get profileTable() {
     return this.db.profiles;
   }

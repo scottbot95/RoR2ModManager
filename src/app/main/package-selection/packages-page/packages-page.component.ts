@@ -44,7 +44,9 @@ export class PackagesPageComponent implements OnInit, OnDestroy {
       this.stepper.selectionChange.subscribe((event: StepperSelectionEvent) => {
         this.animating = true;
         this.currentStep = event.selectedIndex;
-        if (this.currentStep === 2) {
+        if (event.selectedIndex === 0 && event.previouslySelectedIndex === 1) {
+          this.canceled();
+        } else if (event.selectedIndex === 2) {
           this.editable = false;
         }
       })
@@ -60,6 +62,9 @@ export class PackagesPageComponent implements OnInit, OnDestroy {
       this.profile.confirmProfile.subscribe(() => {
         this.stepper.selectedIndex = 1;
         this.changeDetector.detectChanges();
+        if (this.stepper.selectedIndex === 0) {
+          this.profile.confirmPendingSwitch();
+        }
       })
     );
   }
@@ -85,6 +90,6 @@ export class PackagesPageComponent implements OnInit, OnDestroy {
   };
 
   canceled() {
-    console.log('Canceled event');
+    this.profile.cancelPendingSwitch();
   }
 }

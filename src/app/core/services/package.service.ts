@@ -220,7 +220,12 @@ export class PackageService {
     // );
   }
 
-  public updatePackage(pkg: Package, version: PackageVersion) {}
+  public resetSelection() {
+    this.selection.clear();
+    for (const pkg of this.installedPackagesSource.value) {
+      if (pkg.installedVersion) this.selection.select(pkg);
+    }
+  }
 
   public async applyChanges(
     changeset: PackageChangeset = this.pendingChanges.value
