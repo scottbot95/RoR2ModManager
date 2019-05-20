@@ -8,8 +8,9 @@ import { map } from 'rxjs/operators';
 import { PackageList, Package, PackageVersion } from '../models/package.model';
 import { SelectionModel } from '@angular/cdk/collections';
 import { SelectablePackge, PackageChangeset } from './package.service';
-import { Component } from '@angular/core';
+import { Component, EventEmitter } from '@angular/core';
 import * as path from 'path';
+import { PackageProfile } from '../models/profile.model';
 
 export class MockPreferencesService {
   private data: UserPreferences = defaultConfig;
@@ -57,12 +58,14 @@ export class MockPackageService {
   selection = new SelectionModel<SelectablePackge>();
   selectedPackage = new BehaviorSubject<Package>(undefined);
 
-  public pendingChanges = new BehaviorSubject<PackageChangeset>(
+  pendingChanges = new BehaviorSubject<PackageChangeset>(
     new PackageChangeset()
   );
 
   log$ = new Subject<Subject<string>>();
   applyPercentage$ = new Subject<number>();
+
+  doneApplyingChanges = new EventEmitter<void>();
 
   installPackage(pkg: Package, version: PackageVersion) {
     this.installedPackages$.next([...this.installedPackages$.value, pkg]);
@@ -115,6 +118,7 @@ export class MockElectronService {
     return false;
   }
   glob() {}
+  showMessageBox() {}
 }
 
 export class MockDownloadService {
@@ -165,4 +169,14 @@ export class MockBrowserWindow {
 
 export class MockConfigParserService {
   parseFile() {}
+}
+
+export class MockDatabaseService {
+  public saveProfile(profile: PackageProfile) {}
+
+  public updateProfile(profile: PackageProfile) {}
+
+  public getProfiles() {}
+
+  public deleteProfile(profile: string) {}
 }

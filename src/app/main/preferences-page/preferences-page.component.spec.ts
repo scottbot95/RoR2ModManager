@@ -63,7 +63,7 @@ describe('PreferencesPageComponent', () => {
     beforeEach(() => {
       const electron: MockElectronService = TestBed.get(ElectronService);
       openDialogSpy = spyOn(electron.remote.dialog, 'showOpenDialog');
-      messageDialogSpy = spyOn(electron.remote.dialog, 'showMessageBox');
+      messageDialogSpy = spyOn(electron, 'showMessageBox');
       accessSpy = spyOn(electron.fs, 'access');
     });
 

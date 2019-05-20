@@ -13,7 +13,8 @@ import {
   MatInputModule,
   MatExpansionModule,
   MatProgressBarModule,
-  MatTableModule
+  MatTableModule,
+  MatSelectModule
 } from '@angular/material';
 
 // Inject hammerjs
@@ -34,7 +35,8 @@ import 'hammerjs';
     MatFormFieldModule,
     MatInputModule,
     MatExpansionModule,
-    MatTableModule
+    MatTableModule,
+    MatSelectModule
   ]
 })
 export class MaterialModule {}

@@ -12,6 +12,7 @@ import { StepThreeComponent } from './step-three/step-three.component';
 import { MatStepper } from '@angular/material';
 import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { ProfileService } from '../../../profile/services/profile.service';
+import { ElectronService } from '../../../core/services/electron.service';
 
 @Component({
   selector: 'app-packages-page',
@@ -36,6 +37,7 @@ export class PackagesPageComponent implements OnInit, OnDestroy {
 
   constructor(
     private profile: ProfileService,
+    private electron: ElectronService,
     private changeDetector: ChangeDetectorRef
   ) {}
 
@@ -44,7 +46,23 @@ export class PackagesPageComponent implements OnInit, OnDestroy {
       this.stepper.selectionChange.subscribe((event: StepperSelectionEvent) => {
         this.animating = true;
         this.currentStep = event.selectedIndex;
-        if (this.currentStep === 2) {
+        if (event.selectedIndex === 0 && event.previouslySelectedIndex === 1) {
+          this.electron.showMessageBox(
+            {
+              title: 'Cancel Pending Switch?',
+              message:
+                `Do you want to cancel the pending change to profile` +
+                `'${this.profile.pendingProfileName}'?`,
+              buttons: ['Yes', 'No'],
+              type: 'question'
+            },
+            clickedIndex => {
+              if (clickedIndex === 0) {
+                this.canceled();
+              }
+            }
+          );
+        } else if (event.selectedIndex === 2) {
           this.editable = false;
         }
       })
@@ -58,9 +76,11 @@ export class PackagesPageComponent implements OnInit, OnDestroy {
 
     this.subscription.add(
       this.profile.confirmProfile.subscribe(() => {
-        console.log('selecting proper step');
         this.stepper.selectedIndex = 1;
         this.changeDetector.detectChanges();
+        if (this.stepper.selectedIndex === 0) {
+          this.profile.confirmPendingSwitch();
+        }
       })
     );
   }
@@ -84,4 +104,8 @@ export class PackagesPageComponent implements OnInit, OnDestroy {
   reset = () => {
     this.stepper.reset();
   };
+
+  canceled() {
+    this.profile.cancelPendingSwitch();
+  }
 }

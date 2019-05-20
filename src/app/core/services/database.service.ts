@@ -7,12 +7,19 @@ import {
   serializePackageList,
   PackageList
 } from '../models/package.model';
+import { PackageProfile } from '../models/profile.model';
 
 export class Database extends Dexie {
   packages: Dexie.Table<SerializedPackage, string>;
 
+  profiles: Dexie.Table<PackageProfile, string>;
+
   constructor() {
     super('Database');
+    this.version(2).stores({
+      packages: '&uuid4,name,owner',
+      profiles: '&name'
+    });
     this.version(1).stores({
       packages: '&uuid4,name,owner'
     });
@@ -73,5 +80,25 @@ export class DatabaseService {
 
   public get packageTable() {
     return this.db.packages;
+  }
+
+  public saveProfile(profile: PackageProfile): Promise<string> {
+    return this.db.profiles.add(profile);
+  }
+
+  public updateProfile(profile: PackageProfile): Promise<string> {
+    return this.db.profiles.put(profile);
+  }
+
+  public getProfiles(): Promise<PackageProfile[]> {
+    return this.db.profiles.toArray();
+  }
+
+  public deleteProfile(profile: string): Promise<void> {
+    return this.db.profiles.delete(profile);
+  }
+
+  public get profileTable() {
+    return this.db.profiles;
   }
 }

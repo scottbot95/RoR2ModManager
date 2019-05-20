@@ -43,7 +43,7 @@ export class StepTwoComponent implements OnInit, OnDestroy {
     this.subscription.add(
       this.formStep2
         .get('confirmed')
-        .valueChanges.subscribe(this.confirmed.next.bind(this.confirmed))
+        .valueChanges.subscribe(this.confirmed.emit.bind(this.confirmed))
     );
   }
 

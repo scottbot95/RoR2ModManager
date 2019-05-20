@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
 import {
   PackageVersion,
@@ -51,6 +51,8 @@ export class PackageService {
 
   private applyPercentageSource = new BehaviorSubject<number>(null);
   public applyPercentage$ = this.applyPercentageSource.asObservable();
+
+  public doneApplyingChanges = new EventEmitter<void>();
 
   private totalSteps = 0;
   private stepsComplete = 0;
@@ -218,7 +220,12 @@ export class PackageService {
     // );
   }
 
-  public updatePackage(pkg: Package, version: PackageVersion) {}
+  public resetSelection() {
+    this.selection.clear();
+    for (const pkg of this.installedPackagesSource.value) {
+      if (pkg.installedVersion) this.selection.select(pkg);
+    }
+  }
 
   public async applyChanges(
     changeset: PackageChangeset = this.pendingChanges.value
@@ -264,6 +271,8 @@ export class PackageService {
     );
 
     this.log.next('Finished installing packages!');
+
+    this.doneApplyingChanges.emit();
   }
 
   public findPackageFromDependencyString(

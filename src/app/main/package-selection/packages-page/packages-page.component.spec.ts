@@ -4,13 +4,15 @@ import { PackagesPageComponent } from './packages-page.component';
 import { PackageService } from '../../../core/services/package.service';
 import {
   MockPackageService,
-  MockProfileService
+  MockProfileService,
+  MockElectronService
 } from '../../../core/services/mocks.spec';
 import { MaterialModule } from '../../../shared/material.module';
 import { MatStepperModule } from '@angular/material';
 import { Component, Input } from '@angular/core';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ProfileService } from '../../../profile/services/profile.service';
+import { ElectronService } from '../../../core/services/electron.service';
 
 @Component({
   selector: 'app-step-one',
@@ -47,7 +49,8 @@ describe('PackagesPageComponent', () => {
       imports: [MaterialModule, MatStepperModule, NoopAnimationsModule],
       providers: [
         { provide: PackageService, useClass: MockPackageService },
-        { provide: ProfileService, useClass: MockProfileService }
+        { provide: ProfileService, useClass: MockProfileService },
+        { provide: ElectronService, useClass: MockElectronService }
       ]
     }).compileComponents();
   }));
