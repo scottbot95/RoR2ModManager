@@ -58,6 +58,10 @@ export class ProfileService {
     this.refreshPackages();
   }
 
+  public get pendingProfileName() {
+    return this.pendingProfileSwitch;
+  }
+
   public async refreshPackages() {
     const profilesP = this.db.getProfiles();
     this.electron.ipcRenderer.sendSync('clearProfiles');
