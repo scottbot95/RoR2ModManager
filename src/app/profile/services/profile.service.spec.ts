@@ -4,10 +4,12 @@ import { ProfileService } from './profile.service';
 import { ElectronService } from '../../core/services/electron.service';
 import {
   MockElectronService,
-  MockPackageService
+  MockPackageService,
+  MockDatabaseService
 } from '../../core/services/mocks.spec';
 import { PackageService } from '../../core/services/package.service';
 import { testBepInExPackPackage } from '../../core/models/package.model.spec';
+import { DatabaseService } from '../../core/services/database.service';
 
 describe('ProfileService', () => {
   let electron: MockElectronService;
@@ -19,7 +21,8 @@ describe('ProfileService', () => {
       providers: [
         ProfileService,
         { provide: ElectronService, useClass: MockElectronService },
-        { provide: PackageService, useClass: MockPackageService }
+        { provide: PackageService, useClass: MockPackageService },
+        { provide: DatabaseService, useClass: MockDatabaseService }
       ]
     })
   );
@@ -72,9 +75,11 @@ describe('ProfileService', () => {
     (service as any).exportToFile(filename);
 
     expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy).toHaveBeenCalledWith(filename, [
-      testBepInExPackPackage.installedVersion.fullName
-    ]);
+    expect(spy).toHaveBeenCalledWith(filename, {
+      name: 'foobar',
+      version: 1,
+      packages: [testBepInExPackPackage.installedVersion.fullName]
+    });
   });
 
   it('does nothing if export dialog is closed', () => {
