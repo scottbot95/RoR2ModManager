@@ -1,0 +1,35 @@
+<div
+  class="mat-dialog-container padding2"
+  fxLayout="column"
+  style="height: 100%"
+>
+  <h2 mat-dialog-title>
+    Rename Profile
+  </h2>
+  <mat-dialog-content>
+    <p>Old Name: {{ oldName }}</p>
+    <form
+      [formGroup]="formGroup"
+      (ngSubmit)="close()"
+      novalidate
+      #formRef="ngForm"
+    >
+      <mat-form-field appearance="standard">
+        <mat-label>New Name</mat-label>
+        <input matInput formControlName="newName" required />
+        <mat-error *ngIf="formGroup.get('newName').errors?.required">
+          This field is required
+        </mat-error>
+
+        <mat-error *ngIf="formGroup.get('newName').errors?.notEqual">
+          You must specify a different name
+        </mat-error>
+      </mat-form-field>
+    </form>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-raised-button (click)="formRef.onSubmit()">
+      Close
+    </button>
+  </mat-dialog-actions>
+</div>

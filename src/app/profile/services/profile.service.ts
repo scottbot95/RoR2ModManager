@@ -7,6 +7,7 @@ import { PackageProfile } from '../../core/models/profile.model';
 import { DatabaseService } from '../../core/services/database.service';
 import { DialogWindowOptions } from '../../../../electron/ipc';
 import { BehaviorSubject } from 'rxjs';
+import { DialogService } from '../../dialogs/services/dialog.service';
 
 export interface CreateProfileOptions {
   name: string;
@@ -30,7 +31,8 @@ export class ProfileService {
   constructor(
     private electron: ElectronService,
     private packages: PackageService,
-    private db: DatabaseService
+    private db: DatabaseService,
+    private dialog: DialogService
   ) {
     this.exportToFile = this.exportToFile.bind(this);
     this.importFromFile = this.importFromFile.bind(this);
@@ -135,6 +137,20 @@ export class ProfileService {
         }
       );
     });
+
+    this.electron.ipcRenderer.on('renameProfile', async () => {
+      const newName = await this.dialog.openDialog(
+        {
+          slug: 'rename-profile',
+          modal: true
+        },
+        this.activeProfileName
+      );
+
+      if (newName) {
+        this.renmaeProfile(this.activeProfileName, newName);
+      }
+    });
   }
 
   public showImportDialog() {
@@ -193,6 +209,30 @@ export class ProfileService {
         this.switchProfile(profile);
       }
     }
+  }
+
+  public async renmaeProfile(oldName: string, newName: string) {
+    const profile = this.profiles.get(oldName);
+    profile.name = newName;
+    this.profiles.delete(oldName);
+    this.profiles.set(newName, profile);
+    const nameIndex = this.profileNamesSource.value.indexOf(oldName);
+    if (nameIndex !== -1) {
+      this.profileNamesSource.next(
+        this.profileNamesSource.value.splice(nameIndex, 1, newName)
+      );
+    }
+    if (this.activeProfileName === oldName) {
+      this.activeProfileName = newName;
+    }
+    if (this.pendingProfileSwitch === oldName) {
+      this.pendingProfileSwitch = newName;
+    }
+    this.electron.ipcRenderer.sendSync('renameProfile', oldName, newName);
+    await Promise.all([
+      this.db.deleteProfile(oldName),
+      this.db.updateProfile(profile)
+    ]);
   }
 
   public cancelPendingSwitch() {

@@ -180,3 +180,10 @@ export class MockDatabaseService {
 
   public deleteProfile(profile: string) {}
 }
+
+export class MockDialogService {
+  public dialogInput = new Subject<any>();
+  public async openDialog() {}
+  public dialogReady() {}
+  public closeDialog() {}
+}

@@ -5,11 +5,13 @@ import { ElectronService } from '../../core/services/electron.service';
 import {
   MockElectronService,
   MockPackageService,
-  MockDatabaseService
+  MockDatabaseService,
+  MockDialogService
 } from '../../core/services/mocks.spec';
 import { PackageService } from '../../core/services/package.service';
 import { testBepInExPackPackage } from '../../core/models/package.model.spec';
 import { DatabaseService } from '../../core/services/database.service';
+import { DialogService } from '../../dialogs/services/dialog.service';
 
 describe('ProfileService', () => {
   let electron: MockElectronService;
@@ -22,7 +24,8 @@ describe('ProfileService', () => {
         ProfileService,
         { provide: ElectronService, useClass: MockElectronService },
         { provide: PackageService, useClass: MockPackageService },
-        { provide: DatabaseService, useClass: MockDatabaseService }
+        { provide: DatabaseService, useClass: MockDatabaseService },
+        { provide: DialogService, useClass: MockDialogService }
       ]
     })
   );
