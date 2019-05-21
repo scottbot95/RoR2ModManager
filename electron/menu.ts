@@ -56,6 +56,20 @@ const generateTemplate = (): MenuItemConstructorOptions[] => [
         type: 'separator'
       },
       {
+        label: 'Rename Profile',
+        click: (item: MenuItem, window: BrowserWindow) => {
+          window.webContents.send('renameProfile');
+        }
+      },
+      {
+        label: 'Delete Profile',
+        enabled: profiles.length > 1,
+        click: (item: MenuItem, window: BrowserWindow) => {
+          window.webContents.send('deleteProfile');
+        }
+      },
+      { type: 'separator' },
+      {
         label: 'Switch Profile',
         submenu: [
           ...profiles.map(
@@ -67,23 +81,15 @@ const generateTemplate = (): MenuItemConstructorOptions[] => [
               click: handleSwitchProfile,
               id: p
             })
-          ),
-          { type: 'separator' },
-          {
-            label: 'New Profile',
-            click: (item: MenuItem, window: BrowserWindow) => {
-              window.webContents.send('newProfile');
-            }
-          },
-          { type: 'separator' },
-          {
-            label: 'Delete Profile',
-            enabled: profiles.length > 1,
-            click: (item: MenuItem, window: BrowserWindow) => {
-              window.webContents.send('deleteProfile');
-            }
-          }
+          )
         ]
+      },
+      { type: 'separator' },
+      {
+        label: 'New Profile',
+        click: (item: MenuItem, window: BrowserWindow) => {
+          window.webContents.send('newProfile');
+        }
       }
     ]
   },
@@ -184,11 +190,21 @@ export const configureApplicationMenu = () => {
     const profIndex = profiles.indexOf(profile);
     if (profIndex !== -1) {
       profiles.splice(profIndex, 1);
+      rebuildMenu();
     }
-    rebuildMenu();
 
     event.returnValue = profiles;
   });
+
+  ipcMain.on(
+    'renameProfile',
+    (event: Event, oldName: string, newName: string) => {
+      const profIndex = profiles.indexOf(oldName);
+      if (profIndex !== -1) {
+        profiles.splice(profIndex, 1, newName);
+      }
+    }
+  );
 
   ipcMain.on('clearProfiles', (event: Event) => {
     profiles.splice(0, profiles.length);
