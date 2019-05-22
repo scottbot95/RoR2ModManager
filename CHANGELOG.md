@@ -11,11 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fancy new changes progress log
 - Serveral improvements to profile system
-    - Now supports multiple named profiles and easy switch between them
+    - **Now supports multiple named profiles and easy switch between them**
     - Renaming profiles
     - Streamlined import/export process
     - Backend improvements to profile management system
 
+### Changed
+
+- Complete rework of dialog system (Most noticably this will increase load time of dialogs)
 
 ## [0.7.0] 2019-05-14
 
