@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, ValidationErrors } from '@angular/forms';
 import {
   PackageChangeset,
   PackageService
-} from '../../../../core/services/package.service';
+} from '../../../services/package.service';
 
 const packageChangesValidator = (group: FormGroup): ValidationErrors => {
   const changes: PackageChangeset = group.value;

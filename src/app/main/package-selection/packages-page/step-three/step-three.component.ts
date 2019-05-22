@@ -9,7 +9,7 @@ import {
   OnDestroy
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { PackageService } from '../../../../core/services/package.service';
+import { PackageService } from '../../../services/package.service';
 import { Subscription } from 'rxjs';
 import { ScrollToService } from '@nicky-lenaers/ngx-scroll-to';
 

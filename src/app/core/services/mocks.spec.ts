@@ -7,7 +7,10 @@ import { Observable, of, BehaviorSubject, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PackageList, Package, PackageVersion } from '../models/package.model';
 import { SelectionModel } from '@angular/cdk/collections';
-import { SelectablePackge, PackageChangeset } from './package.service';
+import {
+  SelectablePackge,
+  PackageChangeset
+} from '../../main/services/package.service';
 import { Component, EventEmitter } from '@angular/core';
 import * as path from 'path';
 import { PackageProfile } from '../models/profile.model';

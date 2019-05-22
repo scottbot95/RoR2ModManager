@@ -86,7 +86,7 @@ export class DialogService {
       this.electron.ipcRenderer.once(
         'dialogInput',
         (event: Electron.Event, input: any) => {
-          console.log('receive dialog input');
+          console.log('receive dialog input', input);
           this._dialogInputSource.next(input);
           this._dialogInputSource.complete();
         }

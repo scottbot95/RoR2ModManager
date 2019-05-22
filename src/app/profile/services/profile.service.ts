@@ -1,6 +1,6 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { ElectronService } from '../../core/services/electron.service';
-import { PackageService } from '../../core/services/package.service';
+import { PackageService } from '../../main/services/package.service';
 import { Package, PackageVersionList } from '../../core/models/package.model';
 import { PROFILE_EXTENSIONS, DEFAULT_PROFILE_EXTENSION } from '../constants';
 import { PackageProfile } from '../../core/models/profile.model';

@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PackagesPageComponent } from './packages-page.component';
-import { PackageService } from '../../../core/services/package.service';
+import { PackageService } from '../../services/package.service';
 import {
   MockPackageService,
   MockProfileService,

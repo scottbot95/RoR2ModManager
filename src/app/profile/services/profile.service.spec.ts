@@ -7,7 +7,7 @@ import {
   MockPackageService,
   MockDatabaseService,
   MockDialogService
-} from '../../core/services/mocks.spec';
+} from '../../core/services/mock../../main/services/package.service
 import { PackageService } from '../../core/services/package.service';
 import { testBepInExPackPackage } from '../../core/models/package.model.spec';
 import { DatabaseService } from '../../core/services/database.service';

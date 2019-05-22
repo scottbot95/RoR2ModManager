@@ -5,7 +5,7 @@ import {
   ViewChild,
   AfterViewInit
 } from '@angular/core';
-import { PackageService } from '../../../core/services/package.service';
+import { PackageService } from '../../services/package.service';
 import { Subscription } from 'rxjs';
 import { MatTableDataSource, MatSort } from '@angular/material';
 import { PreferencesService } from '../../../core/services/preferences.service';

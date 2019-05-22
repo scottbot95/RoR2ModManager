@@ -41,7 +41,6 @@ export function HttpLoaderFactory(http: HttpClient) {
       }
     }),
     ScrollToModule.forRoot(),
-    ProfileModule,
     DialogsModule
   ],
   bootstrap: [AppComponent]

@@ -26,7 +26,7 @@ import {
   PackageChangeset,
   PackageService,
   SelectablePackge
-} from '../../../core/services/package.service';
+} from '../../services/package.service';
 import { PreferencesService } from '../../../core/services/preferences.service';
 import { SelectionModel } from '@angular/cdk/collections';
 import { ElectronService } from '../../../core/services/electron.service';

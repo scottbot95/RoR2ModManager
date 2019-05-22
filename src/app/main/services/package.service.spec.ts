@@ -1,18 +1,18 @@
 import { TestBed } from '@angular/core/testing';
 
 import { PackageService } from './package.service';
-import { ElectronService } from './electron.service';
+import { ElectronService } from '../../core/services/electron.service';
 import {
   MockElectronService,
   MockDownloadService,
   MockPreferencesService,
   MockThunderstoreService
-} from './mocks.spec';
-import { DownloadService } from './download.service';
-import { testPackage } from '../models/package.model.spec';
-import { PreferencesService } from './preferences.service';
-import { ThunderstoreService } from './thunderstore.service';
-import { DatabaseService } from './database.service';
+} from '../../core/services/mocks.spec';
+import { DownloadService } from '../../core/services/download.service';
+import { testPackage } from '../../core/models/package.model.spec';
+import { PreferencesService } from '../../core/services/preferences.service';
+import { ThunderstoreService } from '../../core/services/thunderstore.service';
+import { DatabaseService } from '../../core/services/database.service';
 
 describe('PackageService', () => {
   let service: PackageService;

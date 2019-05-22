@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ElectronService } from '../../../core/services/electron.service';
 import { PreferencesService } from '../../../core/services/preferences.service';
 import { Package } from '../../../core/models/package.model';
-import { BEPIN_UUID4 } from '../../../core/services/package.service';
+import { BEPIN_UUID4 } from '../../services/package.service';
 
 export class ParseError extends Error {
   name = 'ParseError';

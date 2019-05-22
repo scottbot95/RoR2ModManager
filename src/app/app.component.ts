@@ -17,16 +17,13 @@ export class AppComponent implements OnInit {
   constructor(
     private electronService: ElectronService,
     private translate: TranslateService,
-    private theme: ThemeService,
-    private profile: ProfileService
+    private theme: ThemeService
   ) {
     this.translate.setDefaultLang('en');
   }
 
   ngOnInit(): void {
     console.log('AppConfig', AppConfig);
-
-    this.profile.registerMenuHandlers();
 
     if (this.electronService.isElectron()) {
       console.log('Mode electron');
