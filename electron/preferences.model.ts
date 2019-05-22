@@ -10,6 +10,8 @@ export interface UserPreferences {
   updatePackagesOnStart: boolean;
 
   appUpdateCheckInterval: number;
+
+  displayedColumns: string[];
 }
 
 interface SchemaItem {
@@ -53,6 +55,10 @@ export const preferencesSchema = <Schema>{
     type: 'number',
     minimum: 0,
     default: 300
+  },
+  displayedColumns: {
+    type: 'array',
+    default: []
   }
 };
 
@@ -61,5 +67,6 @@ export const defaultConfig: UserPreferences = {
   respectPinned: true,
   humanizePackageNames: true,
   updatePackagesOnStart: true,
-  appUpdateCheckInterval: 300
+  appUpdateCheckInterval: 300,
+  displayedColumns: []
 };

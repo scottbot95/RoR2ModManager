@@ -76,8 +76,10 @@
         To Install
       </th>
       <td mat-cell *matCellDef="let row">
-        <!-- {{ row.selectedVersion?.version?.version || '-' }} -->
-        <mat-form-field style="max-width: 60px">
+        <mat-form-field
+          style="max-width: 60px"
+          (click)="$event.stopPropagation()"
+        >
           <mat-select
             [(value)]="row.selectedVersion"
             (selectionChange)="onSelectedVersionChange(row)"

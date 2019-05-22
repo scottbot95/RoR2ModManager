@@ -56,22 +56,22 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   installedPackages: Observable<PackageList>;
 
-  private availableColumns: ColumnInfo[] = [
-    { name: 'select', required: true },
-    { name: 'versionToInstall', required: true },
-    { name: 'installed' },
-    { name: 'icon' },
-    { name: 'id' },
-    { name: 'name', required: true },
-    { name: 'author' },
-    { name: 'updated' },
-    { name: 'latest' },
-    { name: 'downloads' },
-    { name: 'flags' }
-  ];
+  private availableColumns: { [key: string]: ColumnInfo } = {
+    select: { name: 'Select', required: true },
+    versionToInstall: { name: 'Version To Install', required: true },
+    installed: { name: 'Installed' },
+    icon: { name: 'Icon' },
+    id: { name: 'Id' },
+    name: { name: 'Name', required: true },
+    author: { name: 'Author' },
+    updated: { name: 'Updated' },
+    latest: { name: 'Latest Version' },
+    downloads: { name: 'Total Downloads' },
+    flags: { name: 'Flags' }
+  };
 
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
-  displayedColumns = [
+  displayedColumns: string[] = [
     'select',
     'versionToInstall',
     'installed',
@@ -110,6 +110,8 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
     this.selection = this.packages.selection;
     this.installedPackages = this.packages.installedPackages$;
+
+    this.loadColumnsFromPrefs();
 
     // this.subscription.add(1)
     this.refreshPackages = this.refreshPackages.bind(this);
@@ -292,25 +294,27 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
   showColumnSelectMenu = () => {
     const activeColumns = new Set(this.displayedColumns);
     this.electron.remote.Menu.buildFromTemplate(
-      this.availableColumns.map<Electron.MenuItemConstructorOptions>(
-        colInfo => {
-          const { name } = colInfo;
-          return {
-            label: name[0].toUpperCase() + name.slice(1),
-            type: 'checkbox',
-            checked: activeColumns.has(name),
-            enabled: !colInfo.required,
-            click: () => {
-              if (activeColumns.has(name)) activeColumns.delete(name);
-              else activeColumns.add(name);
-              this.displayedColumns = this.availableColumns
-                .filter(c => activeColumns.has(c.name))
-                .map(info => info.name);
-              this.changeDetector.detectChanges();
-            }
-          };
-        }
-      )
+      Object.keys(this.availableColumns).map<
+        Electron.MenuItemConstructorOptions
+      >(colName => {
+        const colInfo = this.availableColumns[colName];
+        const { name } = colInfo;
+        return {
+          label: name,
+          type: 'checkbox',
+          checked: activeColumns.has(colName),
+          enabled: !colInfo.required,
+          click: () => {
+            if (activeColumns.has(colName)) activeColumns.delete(colName);
+            else activeColumns.add(colName);
+            this.displayedColumns = Object.keys(this.availableColumns).filter(
+              c => activeColumns.has(c)
+            );
+            this.prefs.set('displayedColumns', this.displayedColumns);
+            this.changeDetector.detectChanges();
+          }
+        };
+      })
     ).popup();
   };
 
@@ -368,4 +372,14 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (toDeselct.length) this.selection.deselect(...toDeselct.map(p => p.pkg));
   }
+
+  private loadColumnsFromPrefs = () => {
+    const prefColumns = new Set(this.prefs.get('displayedColumns'));
+    if (prefColumns.size) {
+      this.displayedColumns = Object.keys(this.availableColumns).filter(
+        colName =>
+          this.availableColumns[colName].required || prefColumns.has(colName)
+      );
+    }
+  };
 }
