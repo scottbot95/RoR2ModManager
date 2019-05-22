@@ -48,9 +48,10 @@ export class Package extends PackageBase {
   isPinned: boolean;
   packageUrl: string;
   versions: PackageVersionList;
-  latestVersion: PackageVersion;
   totalDownloads: number;
   requiredBy: Set<PackageVersion>;
+  readonly latestVersion: PackageVersion;
+  readonly flagsString: string;
 
   installedVersion?: PackageVersion;
 }
@@ -124,6 +125,9 @@ export const deserializablePackageList = (
       }),
       get latestVersion() {
         return this.versions[0];
+      },
+      get flagsString(): string {
+        return this.isPinned ? 'P' : '';
       }
     };
 

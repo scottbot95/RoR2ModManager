@@ -33,6 +33,7 @@ import { ElectronService } from '../../../core/services/electron.service';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Router } from '@angular/router';
 import { getPossibleConfigFilenames } from '../../config-editor/services/config-parser.service';
+import { TranslateService } from '@ngx-translate/core';
 
 interface ColumnInfo {
   name: string;
@@ -57,26 +58,30 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private availableColumns: ColumnInfo[] = [
     { name: 'select', required: true },
-    { name: 'installed', required: true },
+    { name: 'versionToInstall', required: true },
+    { name: 'installed' },
     { name: 'icon' },
     { name: 'id' },
     { name: 'name', required: true },
     { name: 'author' },
     { name: 'updated' },
     { name: 'latest' },
-    { name: 'downloads' }
+    { name: 'downloads' },
+    { name: 'flags' }
   ];
 
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
   displayedColumns = [
     'select',
+    'versionToInstall',
     'installed',
     'icon',
     'name',
     'author',
     'updated',
     'latest',
-    'downloads'
+    'downloads',
+    'flags'
   ];
   selection: SelectionModel<SelectablePackge>;
 
@@ -88,13 +93,16 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private changes = new PackageChangeset();
 
+  private flagDetails: { [flag: string]: string };
+
   constructor(
     public packages: PackageService,
     private prefs: PreferencesService,
     private electron: ElectronService,
     private changeDetector: ChangeDetectorRef,
     private router: Router,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    private translate: TranslateService
   ) {}
 
   ngOnInit() {
@@ -123,23 +131,25 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.selection.changed.pipe(delay(0)).subscribe(changed => {
         changed.added.forEach(pkg => {
           pkg.selected = true;
+          pkg.selectedVersion = pkg.latestVersion;
           pkg.dirty = calcPackageDirty(pkg);
-          this.selectAllDependencies(pkg.latestVersion);
+          this.selectAllDependencies(pkg.selectedVersion);
           if (this.changes.removed.has(pkg)) {
             this.changes.removed.delete(pkg);
           } else if (pkg.dirty) {
-            this.changes.updated.add(pkg.latestVersion);
+            this.changes.updated.add(pkg.selectedVersion);
           }
         });
         changed.removed.forEach(pkg => {
-          pkg.selected = false;
-          pkg.dirty = calcPackageDirty(pkg);
-          this.deselectAvailDependencies(pkg.latestVersion);
-          if (this.changes.updated.has(pkg.latestVersion)) {
-            this.changes.updated.delete(pkg.latestVersion);
+          this.deselectAvailDependencies(pkg.selectedVersion);
+          if (this.changes.updated.has(pkg.selectedVersion)) {
+            this.changes.updated.delete(pkg.selectedVersion);
           } else if (pkg.dirty) {
             this.changes.removed.add(pkg);
           }
+          pkg.selected = false;
+          pkg.dirty = calcPackageDirty(pkg);
+          pkg.selectedVersion = null;
         });
 
         this.packages.pendingChanges.next(this.changes);
@@ -161,6 +171,10 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
           });
       })
     );
+
+    this.translate.get('FLAGS.DETAILS').subscribe(translated => {
+      this.flagDetails = translated;
+    });
   }
 
   ngAfterViewInit() {
@@ -298,6 +312,19 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       )
     ).popup();
+  };
+
+  getFlagTooltip = (flags: string) => {
+    if (!flags) return '';
+    if (!this.flagDetails) return 'Loading';
+    let tooltip = 'Explanation of flags:\n';
+    const flagsArr = Array.from(flags);
+    for (let i = 0; i < flagsArr.length; i++) {
+      const flag = flagsArr[i];
+      tooltip += `${flag} - ${this.flagDetails[flag]}\n`;
+    }
+
+    return tooltip;
   };
 
   columnDrop(event: CdkDragDrop<string[]>) {

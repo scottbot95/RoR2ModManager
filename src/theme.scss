@@ -9,6 +9,10 @@ $warn: mat-palette($mat-red);
 $app-light-theme: mat-light-theme($primary, $accent, $warn);
 $app-dark-theme: mat-dark-theme($primary, $accent, $warn);
 
+.mat-tooltip {
+  white-space: pre-line;
+}
+
 .app-light-theme {
   @include angular-material-theme($app-light-theme);
 
