@@ -20,12 +20,15 @@ export class RenameProfileDialogComponent implements OnInit {
 
   public formGroup: FormGroup;
 
+  public newName: AbstractControl;
+
   constructor(private dialog: DialogService, private fb: FormBuilder) {}
 
   ngOnInit() {
     this.formGroup = this.fb.group({
       newName: ['', [Validators.required, this.notEqualValidator]]
     });
+    this.newName = this.formGroup.get('newName');
 
     this.dialog.dialogReady();
     this.dialog.dialogInput.subscribe(oldName => {
@@ -35,7 +38,7 @@ export class RenameProfileDialogComponent implements OnInit {
 
   close() {
     if (this.formGroup.invalid) return;
-    this.dialog.closeDialog();
+    this.dialog.closeDialog(this.newName.value);
   }
 
   private notEqualValidator = (

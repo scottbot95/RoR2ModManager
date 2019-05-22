@@ -17,11 +17,11 @@
       <mat-form-field appearance="standard">
         <mat-label>New Name</mat-label>
         <input matInput formControlName="newName" required />
-        <mat-error *ngIf="formGroup.get('newName').errors?.required">
+        <mat-error *ngIf="newName.errors?.required">
           This field is required
         </mat-error>
 
-        <mat-error *ngIf="formGroup.get('newName').errors?.notEqual">
+        <mat-error *ngIf="newName.errors?.notEqual">
           You must specify a different name
         </mat-error>
       </mat-form-field>

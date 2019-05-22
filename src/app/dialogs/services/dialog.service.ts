@@ -107,7 +107,8 @@ export class DialogService {
     this.electron.ipcRenderer.sendTo(
       this.parentWebContents.id,
       channel,
-      this.webContents.id
+      this.webContents.id,
+      ...args
     );
   }
 

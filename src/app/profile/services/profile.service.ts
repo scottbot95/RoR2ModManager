@@ -146,7 +146,7 @@ export class ProfileService {
         },
         this.activeProfileName
       );
-
+      console.log(`Dialog closed with result ${newName}`);
       if (newName) {
         this.renmaeProfile(this.activeProfileName, newName);
       }
