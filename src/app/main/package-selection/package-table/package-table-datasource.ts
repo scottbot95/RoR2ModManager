@@ -20,7 +20,7 @@ export const calcPackageDirty = (pkg: SelectablePackage, mutate = true) => {
   if (pkg.selected && pkg.selectedVersion) {
     dirty =
       !pkg.installedVersion ||
-      pkg.selectedVersion.version.compare(pkg.installedVersion.version) > 0;
+      pkg.selectedVersion.version.compare(pkg.installedVersion.version) !== 0;
   } else {
     dirty = !!pkg.installedVersion;
   }
