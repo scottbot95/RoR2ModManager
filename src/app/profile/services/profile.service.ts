@@ -5,8 +5,8 @@ import { Package, PackageVersionList } from '../../core/models/package.model';
 import { PROFILE_EXTENSIONS, DEFAULT_PROFILE_EXTENSION } from '../constants';
 import { PackageProfile } from '../../core/models/profile.model';
 import { DatabaseService } from '../../core/services/database.service';
-import { DialogWindowOptions } from '../../../../electron/ipc';
 import { BehaviorSubject } from 'rxjs';
+import { DialogService } from '../../dialogs/services/dialog.service';
 
 export interface CreateProfileOptions {
   name: string;
@@ -30,7 +30,8 @@ export class ProfileService {
   constructor(
     private electron: ElectronService,
     private packages: PackageService,
-    private db: DatabaseService
+    private db: DatabaseService,
+    private dialog: DialogService
   ) {
     this.exportToFile = this.exportToFile.bind(this);
     this.importFromFile = this.importFromFile.bind(this);
@@ -135,6 +136,19 @@ export class ProfileService {
         }
       );
     });
+
+    this.electron.ipcRenderer.on('renameProfile', async () => {
+      const newName = await this.dialog.openDialog(
+        {
+          slug: 'rename-profile',
+          modal: true
+        },
+        this.activeProfileName
+      );
+      if (newName) {
+        this.renameProfile(this.activeProfileName, newName);
+      }
+    });
   }
 
   public showImportDialog() {
@@ -195,6 +209,30 @@ export class ProfileService {
     }
   }
 
+  public async renameProfile(oldName: string, newName: string) {
+    const profile = this.profiles.get(oldName);
+    profile.name = newName;
+    this.profiles.delete(oldName);
+    this.profiles.set(newName, profile);
+    const nameIndex = this.profileNamesSource.value.indexOf(oldName);
+    if (nameIndex !== -1) {
+      this.profileNamesSource.next(
+        this.profileNamesSource.value.splice(nameIndex, 1, newName)
+      );
+    }
+    this.electron.ipcRenderer.sendSync('renameProfile', oldName, newName);
+    if (this.activeProfileName === oldName) {
+      this.setActiveProfile(newName);
+    }
+    if (this.pendingProfileSwitch === oldName) {
+      this.pendingProfileSwitch = newName;
+    }
+    await Promise.all([
+      this.db.deleteProfile(oldName),
+      this.db.updateProfile(profile)
+    ]);
+  }
+
   public cancelPendingSwitch() {
     console.log(`Canceling switch to ${this.pendingProfileSwitch}`);
     this.pendingProfileSwitch = null;
@@ -215,11 +253,7 @@ export class ProfileService {
   }
 
   private newProfile(event: Electron.Event) {
-    this.electron.ipcRenderer.send('openDialog', <DialogWindowOptions>{
-      slug: 'new-profile',
-      width: 300,
-      height: 300
-    });
+    this.dialog.openDialog({ slug: 'new-profile', width: 300, height: 300 });
   }
 
   private switchProfile(profile: PackageProfile) {
@@ -320,7 +354,6 @@ export class ProfileService {
     const installed = this.allPackages
       .filter(p => p.installedVersion)
       .map(p => p.installedVersion.fullName);
-    console.log('Writing profile file', installed);
 
     const profile: PackageProfile = {
       name: this.electron.path.basename(filename, DEFAULT_PROFILE_EXTENSION),

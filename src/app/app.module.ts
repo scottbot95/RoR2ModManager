@@ -17,6 +17,7 @@ import { AppComponent } from './app.component';
 import { CoreModule } from './core/core.module';
 import { SharedModule } from './shared/shared.module';
 import { ProfileModule } from './profile/profile.module';
+import { DialogsModule } from './dialogs/dialogs.module';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -40,7 +41,8 @@ export function HttpLoaderFactory(http: HttpClient) {
       }
     }),
     ScrollToModule.forRoot(),
-    ProfileModule
+    ProfileModule,
+    DialogsModule
   ],
   bootstrap: [AppComponent]
 })

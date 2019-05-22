@@ -1,5 +1,8 @@
-import { ipcMain, BrowserWindow, screen } from 'electron';
+import { ipcMain, BrowserWindow } from 'electron';
 import { createBrowserWindow } from './windows';
+
+const args = process.argv.slice(1);
+const serve = args.some(val => val === '--serve');
 
 export interface DialogWindowOptions {
   slug: string;
@@ -17,23 +20,27 @@ export const registerIpcListeners = () => {
         // tslint:disable-next-line: quotemark
         return event.sender.send('print', "Can't  display dialog with no slug");
       const win = BrowserWindow.fromWebContents(event.sender);
-      const display = screen.getPrimaryDisplay();
+      const bounds = win.getBounds();
       const width = opts.width || 400;
       const height = opts.height || 600;
-      createBrowserWindow(
+      const dialog = createBrowserWindow(
         {
           parent: win,
-          x: (display.bounds.width - width) / 2,
-          y: (display.bounds.height - height) / 2,
+          x: bounds.x + (bounds.width - width) / 2,
+          y: bounds.y + (bounds.height - height) / 2,
           width,
           height,
           modal: opts.modal,
           autoHideMenuBar: true,
           minimizable: false,
-          maximizable: opts.maximizable
+          maximizable: opts.maximizable || false
         },
         `/dialogs/${opts.slug}`
       );
+      event.returnValue = dialog.webContents.id;
+      if (serve) {
+        dialog.webContents.openDevTools();
+      }
     }
   );
 };
