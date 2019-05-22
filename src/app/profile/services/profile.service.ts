@@ -5,7 +5,6 @@ import { Package, PackageVersionList } from '../../core/models/package.model';
 import { PROFILE_EXTENSIONS, DEFAULT_PROFILE_EXTENSION } from '../constants';
 import { PackageProfile } from '../../core/models/profile.model';
 import { DatabaseService } from '../../core/services/database.service';
-import { DialogWindowOptions } from '../../../../electron/ipc';
 import { BehaviorSubject } from 'rxjs';
 import { DialogService } from '../../dialogs/services/dialog.service';
 

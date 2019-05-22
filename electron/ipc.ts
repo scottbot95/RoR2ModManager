@@ -1,4 +1,4 @@
-import { ipcMain, BrowserWindow, screen } from 'electron';
+import { ipcMain, BrowserWindow } from 'electron';
 import { createBrowserWindow } from './windows';
 
 const args = process.argv.slice(1);

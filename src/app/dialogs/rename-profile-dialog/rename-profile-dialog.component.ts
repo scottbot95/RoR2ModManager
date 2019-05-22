@@ -1,13 +1,11 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { DialogService } from '../services/dialog.service';
 import {
-  FormControl,
   Validators,
   FormGroup,
   FormBuilder,
   AbstractControl,
-  ValidationErrors,
-  FormGroupDirective
+  ValidationErrors
 } from '@angular/forms';
 
 @Component({
