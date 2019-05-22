@@ -4,7 +4,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { AppConfig } from '../environments/environment';
 import { ThemeService } from './core/services/theme.service';
 import { Observable } from 'rxjs';
-import { ProfileService } from './profile/services/profile.service';
 
 @Component({
   selector: 'app-root',

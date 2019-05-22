@@ -6,7 +6,6 @@ import {
   FormGroupDirective
 } from '@angular/forms';
 import { ProfileService } from '../../profile/services/profile.service';
-import { ElectronService } from '../../core/services/electron.service';
 import { Observable } from 'rxjs';
 import { DialogService } from '../services/dialog.service';
 
@@ -24,7 +23,6 @@ export class NewProfileDialogComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private profileService: ProfileService,
-    private electron: ElectronService,
     private dialog: DialogService
   ) {}
 

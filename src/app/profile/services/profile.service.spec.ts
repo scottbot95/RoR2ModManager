@@ -2,16 +2,16 @@ import { TestBed } from '@angular/core/testing';
 
 import { ProfileService } from './profile.service';
 import { ElectronService } from '../../core/services/electron.service';
+import { testBepInExPackPackage } from '../../core/models/package.model.spec';
+import { DatabaseService } from '../../core/services/database.service';
+import { DialogService } from '../../dialogs/services/dialog.service';
 import {
   MockElectronService,
   MockPackageService,
   MockDatabaseService,
   MockDialogService
-} from '../../core/services/mock../../main/services/package.service
-import { PackageService } from '../../core/services/package.service';
-import { testBepInExPackPackage } from '../../core/models/package.model.spec';
-import { DatabaseService } from '../../core/services/database.service';
-import { DialogService } from '../../dialogs/services/dialog.service';
+} from '../../core/services/mocks.spec';
+import { PackageService } from '../../main/services/package.service';
 
 describe('ProfileService', () => {
   let electron: MockElectronService;
