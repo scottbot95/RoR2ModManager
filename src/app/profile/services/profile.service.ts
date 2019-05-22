@@ -146,9 +146,8 @@ export class ProfileService {
         },
         this.activeProfileName
       );
-      console.log(`Dialog closed with result ${newName}`);
       if (newName) {
-        this.renmaeProfile(this.activeProfileName, newName);
+        this.renameProfile(this.activeProfileName, newName);
       }
     });
   }
@@ -211,7 +210,7 @@ export class ProfileService {
     }
   }
 
-  public async renmaeProfile(oldName: string, newName: string) {
+  public async renameProfile(oldName: string, newName: string) {
     const profile = this.profiles.get(oldName);
     profile.name = newName;
     this.profiles.delete(oldName);
@@ -222,13 +221,13 @@ export class ProfileService {
         this.profileNamesSource.value.splice(nameIndex, 1, newName)
       );
     }
+    this.electron.ipcRenderer.sendSync('renameProfile', oldName, newName);
     if (this.activeProfileName === oldName) {
-      this.activeProfileName = newName;
+      this.setActiveProfile(newName);
     }
     if (this.pendingProfileSwitch === oldName) {
       this.pendingProfileSwitch = newName;
     }
-    this.electron.ipcRenderer.sendSync('renameProfile', oldName, newName);
     await Promise.all([
       this.db.deleteProfile(oldName),
       this.db.updateProfile(profile)
@@ -255,11 +254,7 @@ export class ProfileService {
   }
 
   private newProfile(event: Electron.Event) {
-    this.electron.ipcRenderer.send('openDialog', <DialogWindowOptions>{
-      slug: 'new-profile',
-      width: 300,
-      height: 300
-    });
+    this.dialog.openDialog({ slug: 'new-profile', width: 300, height: 300 });
   }
 
   private switchProfile(profile: PackageProfile) {
@@ -360,7 +355,6 @@ export class ProfileService {
     const installed = this.allPackages
       .filter(p => p.installedVersion)
       .map(p => p.installedVersion.fullName);
-    console.log('Writing profile file', installed);
 
     const profile: PackageProfile = {
       name: this.electron.path.basename(filename, DEFAULT_PROFILE_EXTENSION),

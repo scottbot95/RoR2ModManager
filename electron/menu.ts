@@ -202,6 +202,10 @@ export const configureApplicationMenu = () => {
       const profIndex = profiles.indexOf(oldName);
       if (profIndex !== -1) {
         profiles.splice(profIndex, 1, newName);
+        rebuildMenu();
+        event.returnValue = newName;
+      } else {
+        event.returnValue = null;
       }
     }
   );
