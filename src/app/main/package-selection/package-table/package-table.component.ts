@@ -8,7 +8,7 @@ import {
   ChangeDetectorRef,
   NgZone
 } from '@angular/core';
-import { MatPaginator, MatSort } from '@angular/material';
+import { MatPaginator, MatSort, MatSelectChange } from '@angular/material';
 import { Subscription, Observable } from 'rxjs';
 import { delay } from 'rxjs/operators';
 import { FormControl, FormGroup } from '@angular/forms';
@@ -95,8 +95,6 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private flagDetails: { [flag: string]: string };
 
-  foobar = 'bar';
-
   constructor(
     public packages: PackageService,
     private prefs: PreferencesService,
@@ -134,7 +132,7 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.selection.changed.pipe(delay(0)).subscribe(changed => {
         changed.added.forEach(pkg => {
           pkg.selected = true;
-          pkg.selectedVersion = pkg.latestVersion;
+          pkg.selectedVersion = pkg.selectedVersion || pkg.latestVersion;
           calcPackageDirty(pkg, true);
           this.selectAllDependencies(pkg.selectedVersion);
           if (this.changes.removed.has(pkg)) {
@@ -155,11 +153,7 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
           pkg.selectedVersion = null;
         });
 
-        this.packages.pendingChanges.next(this.changes);
-        this.formGroup.patchValue(this.changes);
-        if (this.changes.updated.size > 0 || this.changes.removed.size > 0) {
-          this.formGroup.markAsDirty();
-        }
+        this.updatePendingChanges();
       })
     );
 
@@ -340,11 +334,19 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onSelectedVersionChange(pkg: SelectablePackge) {
+    this.changes.updated.forEach(ver => {
+      if (ver.pkg.uuid4 === pkg.uuid4) {
+        this.changes.updated.delete(ver);
+      }
+    });
+
+    this.changes.updated.add(pkg.selectedVersion);
     if (!this.packages.selection.isSelected(pkg)) {
       this.packages.selection.select(pkg);
     }
 
     calcPackageDirty(pkg);
+    this.updatePendingChanges();
   }
 
   private selectAllDependencies(pkg: PackageVersion) {
@@ -380,6 +382,14 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
         colName =>
           this.availableColumns[colName].required || prefColumns.has(colName)
       );
+    }
+  };
+
+  private updatePendingChanges = () => {
+    this.packages.pendingChanges.next(this.changes);
+    this.formGroup.patchValue(this.changes);
+    if (this.changes.updated.size > 0 || this.changes.removed.size > 0) {
+      this.formGroup.markAsDirty();
     }
   };
 }
