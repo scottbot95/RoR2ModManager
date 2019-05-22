@@ -5,7 +5,6 @@ import {
   Validators,
   FormGroupDirective
 } from '@angular/forms';
-import { ProfileService } from '../../profile/services/profile.service';
 import { Observable } from 'rxjs';
 import { DialogService } from '../services/dialog.service';
 

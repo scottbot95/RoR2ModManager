@@ -8,8 +8,7 @@ import {
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {
   PackageService,
-  PackageChangeset,
-  BEPINEX_UUID4
+  PackageChangeset
 } from '../../../services/package.service';
 import { Subscription } from 'rxjs';
 
@@ -53,16 +52,6 @@ export class StepTwoComponent implements OnInit, OnDestroy {
   }
 
   onConfirmChange = (confirmed: boolean) => {
-    if (
-      Array.from(this.changes.updated).some(
-        ver => ver.pkg.uuid4 === BEPINEX_UUID4
-      )
-    ) {
-      console.log('Updating bepinex');
-    } else if (
-      Array.from(this.changes.removed).some(pkg => pkg.uuid4 === BEPINEX_UUID4)
-    ) {
-    }
     this.confirmed.emit();
   };
 }
