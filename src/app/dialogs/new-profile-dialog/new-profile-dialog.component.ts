@@ -20,11 +20,7 @@ export class NewProfileDialogComponent implements OnInit {
 
   profiles: Observable<string[]>;
 
-  constructor(
-    private fb: FormBuilder,
-    private profileService: ProfileService,
-    private dialog: DialogService
-  ) {}
+  constructor(private fb: FormBuilder, private dialog: DialogService) {}
 
   ngOnInit() {
     this.form = this.fb.group({
@@ -32,9 +28,11 @@ export class NewProfileDialogComponent implements OnInit {
       copyFrom: ''
     });
 
-    this.profiles = this.profileService.profileNames$;
-
     this.dialog.dialogReady();
+
+    this.dialog.dialogInput.subscribe(profiles => {
+      this.profiles = profiles;
+    });
   }
 
   createProfile() {
