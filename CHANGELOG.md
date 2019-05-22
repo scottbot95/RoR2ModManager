@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Complete rework of dialog system (Most noticably this will increase load time of dialogs)
+- Uninstalling BepInExPack will no longer remove your config files
 
 ### Fixed
 

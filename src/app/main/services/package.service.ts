@@ -174,26 +174,24 @@ export class PackageService {
   // TODO use InstalledPackage here and add installedPath to InstalledPackage
   public async uninstallPackage(pkg: Package) {
     this.log.next(`Removing ${pkg.name}...`);
+    const join = this.electron.path.join;
     if (pkg.uuid4 === BEPINEX_UUID4) {
+      const bepInExPath = this.electron.path.dirname(
+        this.getBepInExPluginPath()
+      );
       await Promise.all([
+        this.electron.fs.remove(join(bepInExPath, 'core')),
+        this.electron.fs.remove(join(bepInExPath, 'patchers')),
+        this.electron.fs.remove(join(bepInExPath, 'plugins')),
         this.electron.fs.remove(
-          this.electron.path.dirname(this.getBepInExPluginPath())
+          join(this.prefs.get('ror2_path'), 'winhttp.dll')
         ),
         this.electron.fs.remove(
-          this.electron.path.join(this.prefs.get('ror2_path'), 'winhttp.dll')
-        ),
-        this.electron.fs.remove(
-          this.electron.path.join(
-            this.prefs.get('ror2_path'),
-            'doorstop_config.ini'
-          )
+          join(this.prefs.get('ror2_path'), 'doorstop_config.ini')
         )
       ]);
     } else {
-      const installedPath = this.electron.path.join(
-        this.getBepInExPluginPath(),
-        pkg.fullName
-      );
+      const installedPath = join(this.getBepInExPluginPath(), pkg.fullName);
 
       await this.electron.fs.remove(installedPath);
     }
