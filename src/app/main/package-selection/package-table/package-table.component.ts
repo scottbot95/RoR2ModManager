@@ -25,7 +25,7 @@ import {
 import {
   PackageChangeset,
   PackageService,
-  SelectablePackge
+  SelectablePackage
 } from '../../services/package.service';
 import { PreferencesService } from '../../../core/services/preferences.service';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -83,7 +83,7 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
     'downloads',
     'flags'
   ];
-  selection: SelectionModel<SelectablePackge>;
+  selection: SelectionModel<SelectablePackage>;
 
   filter = new FormControl('');
 
@@ -203,7 +203,7 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }`;
   }
 
-  showDetails = (pkg: SelectablePackge) => {
+  showDetails = (pkg: SelectablePackage) => {
     this.packages.selectedPackage.next(pkg);
   };
 
@@ -333,7 +333,7 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
-  onSelectedVersionChange(pkg: SelectablePackge) {
+  onSelectedVersionChange(pkg: SelectablePackage) {
     this.changes.updated.forEach(ver => {
       if (ver.pkg.uuid4 === pkg.uuid4) {
         this.changes.updated.delete(ver);

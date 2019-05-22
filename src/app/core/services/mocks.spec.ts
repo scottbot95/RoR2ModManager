@@ -8,7 +8,7 @@ import { map } from 'rxjs/operators';
 import { PackageList, Package, PackageVersion } from '../models/package.model';
 import { SelectionModel } from '@angular/cdk/collections';
 import {
-  SelectablePackge,
+  SelectablePackage,
   PackageChangeset
 } from '../../main/services/package.service';
 import { Component, EventEmitter } from '@angular/core';
@@ -58,7 +58,7 @@ export class MockPackageService {
 
   allPackages$ = new BehaviorSubject<PackageList>([]);
 
-  selection = new SelectionModel<SelectablePackge>();
+  selection = new SelectionModel<SelectablePackage>();
   selectedPackage = new BehaviorSubject<Package>(undefined);
 
   pendingChanges = new BehaviorSubject<PackageChangeset>(

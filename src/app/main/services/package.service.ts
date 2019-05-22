@@ -15,7 +15,7 @@ import { DatabaseService } from '../../core/services/database.service';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Selectable } from '../../core/models/selectable.model';
 
-export interface SelectablePackge extends Selectable, Package {
+export interface SelectablePackage extends Selectable, Package {
   selectedVersion?: PackageVersion;
 }
 
@@ -35,14 +35,16 @@ export const BEPIN_UUID4 = '4c253b36-fd0b-4e6d-b4d8-b227972af4da';
 
 @Injectable()
 export class PackageService {
-  private installedPackagesSource = new BehaviorSubject<SelectablePackge[]>([]);
+  private installedPackagesSource = new BehaviorSubject<SelectablePackage[]>(
+    []
+  );
   public installedPackages$ = this.installedPackagesSource.asObservable();
 
-  private allPackagesSource = new BehaviorSubject<SelectablePackge[]>([]);
+  private allPackagesSource = new BehaviorSubject<SelectablePackage[]>([]);
   public allPackages$ = this.allPackagesSource.asObservable();
 
-  public selectedPackage = new BehaviorSubject<Package>(undefined);
-  public selection = new SelectionModel<SelectablePackge>(true, []);
+  public selectedPackage = new BehaviorSubject<SelectablePackage>(undefined);
+  public selection = new SelectionModel<SelectablePackage>(true, []);
 
   public pendingChanges = new BehaviorSubject<PackageChangeset>(
     new PackageChangeset()
@@ -95,7 +97,7 @@ export class PackageService {
     this.log$.next(new ReplaySubject<string>());
   }
 
-  public async loadPackagesFromCache(): Promise<SelectablePackge[]> {
+  public async loadPackagesFromCache(): Promise<SelectablePackage[]> {
     const serializedPackages = await this.db.packageTable.toArray();
 
     const packages = deserializablePackageList(serializedPackages);
@@ -109,7 +111,7 @@ export class PackageService {
     return packages;
   }
 
-  public downloadPackageList(): Observable<SelectablePackge[]> {
+  public downloadPackageList(): Observable<SelectablePackage[]> {
     const oldPackages = this.allPackagesSource.value;
     this.allPackagesSource.next(null);
 
