@@ -34,6 +34,11 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Router } from '@angular/router';
 import { getPossibleConfigFilenames } from '../../config-editor/services/config-parser.service';
 
+interface ColumnInfo {
+  name: string;
+  required?: boolean;
+}
+
 @Component({
   selector: 'app-package-table',
   templateUrl: './package-table.component.html',
@@ -50,16 +55,16 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   installedPackages: Observable<PackageList>;
 
-  private availableColumns = [
-    'select',
-    'installed',
-    'icon',
-    'id',
-    'name',
-    'author',
-    'updated',
-    'latest',
-    'downloads'
+  private availableColumns: ColumnInfo[] = [
+    { name: 'select', required: true },
+    { name: 'installed', required: true },
+    { name: 'icon' },
+    { name: 'id' },
+    { name: 'name', required: true },
+    { name: 'author' },
+    { name: 'updated' },
+    { name: 'latest' },
+    { name: 'downloads' }
   ];
 
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
@@ -258,27 +263,7 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   handleApplyChanges() {
-    // const added = new Set<Package>();
-    // const removed = new Set<Package>();
-    // this.dataSource.data.forEach(pkg => {
-    //   if (pkg.dirty) {
-    //     if (pkg.selected) {
-    //       added.add(pkg);
-    //     } else {
-    //       removed.add(pkg);
-    //     }
-    //   }
-    // });
-
-    // const changes = new PackageChangeset();
-    // changes.removed = removed;
-    // changes.updated = new Set(Array.from(added).map(pkg => pkg.latestVersion));
-    // this.formGroup.patchValue(changes);
-    // this.formGroup.markAsDirty();
-    // this.packages.pendingChanges.next(changes);
-
     if (this.applyChanges) this.applyChanges(this.changes);
-    // this.packages.applyChanges(changes);
   }
 
   refreshPackages() {
@@ -293,19 +278,25 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
   showColumnSelectMenu = () => {
     const activeColumns = new Set(this.displayedColumns);
     this.electron.remote.Menu.buildFromTemplate(
-      this.availableColumns.map<Electron.MenuItemConstructorOptions>(col => ({
-        label: col[0].toUpperCase() + col.slice(1),
-        type: 'checkbox',
-        checked: activeColumns.has(col),
-        click: () => {
-          if (activeColumns.has(col)) activeColumns.delete(col);
-          else activeColumns.add(col);
-          this.displayedColumns = this.availableColumns.filter(c =>
-            activeColumns.has(c)
-          );
-          this.changeDetector.detectChanges();
+      this.availableColumns.map<Electron.MenuItemConstructorOptions>(
+        colInfo => {
+          const { name } = colInfo;
+          return {
+            label: name[0].toUpperCase() + name.slice(1),
+            type: 'checkbox',
+            checked: activeColumns.has(name),
+            enabled: !colInfo.required,
+            click: () => {
+              if (activeColumns.has(name)) activeColumns.delete(name);
+              else activeColumns.add(name);
+              this.displayedColumns = this.availableColumns
+                .filter(c => activeColumns.has(c.name))
+                .map(info => info.name);
+              this.changeDetector.detectChanges();
+            }
+          };
         }
-      }))
+      )
     ).popup();
   };
 
