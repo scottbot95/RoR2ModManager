@@ -50,4 +50,8 @@ export class PackageDetailsComponent implements OnInit, OnDestroy {
   openPackage() {
     this.electron.remote.shell.openExternal(this.package.packageUrl);
   }
+
+  close() {
+    this.packages.selectedPackage.next(null);
+  }
 }

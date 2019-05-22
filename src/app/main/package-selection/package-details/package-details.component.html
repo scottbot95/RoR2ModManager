@@ -18,6 +18,9 @@
       >
         Thunderstore
       </button>
+      <button mat-icon-button matTooltip="Close Details" (click)="close()">
+        <mat-icon>clear</mat-icon>
+      </button>
     </mat-card-title>
     <mat-card-subtitle>
       {{ packageVersion.description }}

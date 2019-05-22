@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Fancy new changes progress log
+- Close button to Package Details pane
 - Serveral improvements to profile system
     - **Now supports multiple named profiles and easy switch between them**
     - Renaming profiles
