@@ -1,6 +1,6 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { ElectronService } from '../../core/services/electron.service';
-import { PackageService } from '../../core/services/package.service';
+import { PackageService } from '../../main/services/package.service';
 import { Package, PackageVersionList } from '../../core/models/package.model';
 import { PROFILE_EXTENSIONS, DEFAULT_PROFILE_EXTENSION } from '../constants';
 import { PackageProfile } from '../../core/models/profile.model';
@@ -111,12 +111,6 @@ export class ProfileService {
     );
 
     this.electron.ipcRenderer.on('newProfile', this.newProfile.bind(this));
-
-    this.electron.ipcRenderer.on(
-      'createProfile',
-      (event: Electron.Event, opts: CreateProfileOptions) =>
-        this.createProfile(opts)
-    );
 
     this.electron.ipcRenderer.on('deleteProfile', () => {
       this.electron.showMessageBox(
@@ -252,8 +246,13 @@ export class ProfileService {
     this.switchProfile(profile);
   }
 
-  private newProfile(event: Electron.Event) {
-    this.dialog.openDialog({ slug: 'new-profile', width: 300, height: 300 });
+  private async newProfile(event: Electron.Event) {
+    const createOpts = await this.dialog.openDialog({
+      slug: 'new-profile',
+      width: 300,
+      height: 300
+    });
+    if (createOpts) this.createProfile(createOpts);
   }
 
   private switchProfile(profile: PackageProfile) {

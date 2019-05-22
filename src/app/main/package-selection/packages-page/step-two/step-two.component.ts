@@ -9,7 +9,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {
   PackageService,
   PackageChangeset
-} from '../../../../core/services/package.service';
+} from '../../../services/package.service';
 import { Subscription } from 'rxjs';
 
 @Component({

@@ -3,7 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ChangesTableComponent } from './changes-table.component';
 import { MaterialModule } from '../../../shared/material.module';
 import { HumanizePipe } from '../../../shared/humanize.pipe';
-import { PackageService } from '../../../core/services/package.service';
+import { PackageService } from '../../services/package.service';
 import { MockPackageService } from '../../../core/services/mocks.spec';
 import { PreferencesService } from '../../../core/services/preferences.service';
 

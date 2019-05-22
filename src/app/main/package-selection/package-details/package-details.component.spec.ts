@@ -10,7 +10,7 @@ import {
   MockPackageService,
   MockElectronService
 } from '../../../core/services/mocks.spec';
-import { PackageService } from '../../../core/services/package.service';
+import { PackageService } from '../../services/package.service';
 import { ElectronService } from '../../../core/services/electron.service';
 
 @Component({

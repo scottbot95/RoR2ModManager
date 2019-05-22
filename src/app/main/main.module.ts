@@ -6,6 +6,8 @@ import { PreferencesPageComponent } from './preferences-page/preferences-page.co
 import { MainComponent } from './main/main.component';
 import { NavMenuModule } from './nav-menu/nav-menu.module';
 import { PackageSelectionModule } from './package-selection/package-selection.module';
+import { PackageService } from './services/package.service';
+import { ProfileModule } from '../profile/profile.module';
 
 @NgModule({
   declarations: [PreferencesPageComponent, MainComponent],
@@ -13,7 +15,9 @@ import { PackageSelectionModule } from './package-selection/package-selection.mo
     SharedModule,
     MainRoutingModule,
     NavMenuModule,
-    PackageSelectionModule
-  ]
+    PackageSelectionModule,
+    ProfileModule
+  ],
+  providers: [PackageService]
 })
 export class MainModule {}

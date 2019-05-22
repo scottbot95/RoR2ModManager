@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { DialogService } from '../services/dialog.service';
 import {
   Validators,
@@ -20,7 +20,11 @@ export class RenameProfileDialogComponent implements OnInit {
 
   public newName: AbstractControl;
 
-  constructor(private dialog: DialogService, private fb: FormBuilder) {}
+  constructor(
+    private dialog: DialogService,
+    private fb: FormBuilder,
+    private changeDetector: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
     this.formGroup = this.fb.group({
@@ -31,6 +35,7 @@ export class RenameProfileDialogComponent implements OnInit {
     this.dialog.dialogReady();
     this.dialog.dialogInput.subscribe(oldName => {
       this.oldName = oldName;
+      this.changeDetector.detectChanges();
     });
   }
 

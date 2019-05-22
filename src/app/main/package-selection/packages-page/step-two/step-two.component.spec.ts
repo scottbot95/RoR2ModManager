@@ -4,7 +4,7 @@ import { StepTwoComponent } from './step-two.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Component } from '@angular/core';
 import { MaterialModule } from '../../../../shared/material.module';
-import { PackageService } from '../../../../core/services/package.service';
+import { PackageService } from '../../../services/package.service';
 import { MockPackageService } from '../../../../core/services/mocks.spec';
 
 @Component({

@@ -21,7 +21,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { DatabaseService } from '../../../core/services/database.service';
 import { PreferencesService } from '../../../core/services/preferences.service';
 import { HumanizePipe } from '../../../shared/humanize.pipe';
-import { PackageService } from '../../../core/services/package.service';
+import { PackageService } from '../../services/package.service';
 import { RouterTestingModule } from '@angular/router/testing';
 
 @Component({

@@ -13,7 +13,7 @@ import { PreferencesService } from '../../../core/services/preferences.service';
 import {
   PackageService,
   SelectablePackge
-} from '../../../core/services/package.service';
+} from '../../services/package.service';
 
 export const calcPackageDirty = (pkg: SelectablePackge) => {
   if (pkg.selected) {

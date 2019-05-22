@@ -5,15 +5,15 @@ import {
   Package,
   deserializablePackageList,
   parseDependencyString
-} from '../models/package.model';
-import { DownloadService } from './download.service';
-import { ElectronService } from './electron.service';
-import { PreferencesService } from './preferences.service';
+} from '../../core/models/package.model';
+import { DownloadService } from '../../core/services/download.service';
+import { ElectronService } from '../../core/services/electron.service';
+import { PreferencesService } from '../../core/services/preferences.service';
 import { ReadStream } from 'fs';
-import { ThunderstoreService } from './thunderstore.service';
-import { DatabaseService } from './database.service';
+import { ThunderstoreService } from '../../core/services/thunderstore.service';
+import { DatabaseService } from '../../core/services/database.service';
 import { SelectionModel } from '@angular/cdk/collections';
-import { Selectable } from '../models/selectable.model';
+import { Selectable } from '../../core/models/selectable.model';
 
 export interface SelectablePackge extends Selectable, Package {}
 

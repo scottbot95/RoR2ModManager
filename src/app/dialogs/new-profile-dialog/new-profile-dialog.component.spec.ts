@@ -7,10 +7,12 @@ import { MatDialogModule } from '@angular/material';
 import { ProfileService } from '../../profile/services/profile.service';
 import {
   MockProfileService,
-  MockElectronService
+  MockElectronService,
+  MockDialogService
 } from '../../core/services/mocks.spec';
 import { ElectronService } from '../../core/services/electron.service';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { DialogService } from '../services/dialog.service';
 
 describe('NewProfileDialogComponent', () => {
   let component: NewProfileDialogComponent;
@@ -27,7 +29,8 @@ describe('NewProfileDialogComponent', () => {
       ],
       providers: [
         { provide: ProfileService, useClass: MockProfileService },
-        { provide: ElectronService, useClass: MockElectronService }
+        { provide: ElectronService, useClass: MockElectronService },
+        { provide: DialogService, useClass: MockDialogService }
       ]
     }).compileComponents();
   }));

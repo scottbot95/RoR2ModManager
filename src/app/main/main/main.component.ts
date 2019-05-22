@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ProfileService } from '../../profile/services/profile.service';
 
 @Component({
   selector: 'app-main',
@@ -6,10 +7,9 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./main.component.scss']
 })
 export class MainComponent implements OnInit {
-
-  constructor() { }
+  constructor(private profile: ProfileService) {}
 
   ngOnInit() {
+    this.profile.registerMenuHandlers();
   }
-
 }

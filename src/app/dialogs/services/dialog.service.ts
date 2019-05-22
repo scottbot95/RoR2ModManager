@@ -83,10 +83,10 @@ export class DialogService {
   public dialogReady() {
     this.checkIsDialog();
     if (!this.dialogIsReady) {
-      this.electron.ipcRenderer.on(
+      this.electron.ipcRenderer.once(
         'dialogInput',
         (event: Electron.Event, input: any) => {
-          console.log('receive dialog input');
+          console.log('receive dialog input', input);
           this._dialogInputSource.next(input);
           this._dialogInputSource.complete();
         }
@@ -100,7 +100,9 @@ export class DialogService {
   public closeDialog(result?: any) {
     this.checkIsDialog();
     this.sendToParent('dialogClose', result);
-    this.electron.remote.getCurrentWindow().close();
+    const win = this.electron.remote.getCurrentWindow();
+    win.getParentWindow().focus();
+    win.close();
   }
 
   private sendToParent(channel: string, ...args: any[]) {

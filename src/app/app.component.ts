@@ -4,7 +4,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { AppConfig } from '../environments/environment';
 import { ThemeService } from './core/services/theme.service';
 import { Observable } from 'rxjs';
-import { ProfileService } from './profile/services/profile.service';
 
 @Component({
   selector: 'app-root',
@@ -17,16 +16,13 @@ export class AppComponent implements OnInit {
   constructor(
     private electronService: ElectronService,
     private translate: TranslateService,
-    private theme: ThemeService,
-    private profile: ProfileService
+    private theme: ThemeService
   ) {
     this.translate.setDefaultLang('en');
   }
 
   ngOnInit(): void {
     console.log('AppConfig', AppConfig);
-
-    this.profile.registerMenuHandlers();
 
     if (this.electronService.isElectron()) {
       console.log('Mode electron');
