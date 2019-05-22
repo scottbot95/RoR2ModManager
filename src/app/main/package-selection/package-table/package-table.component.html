@@ -1,4 +1,8 @@
 <div class="mat-elevation-z1">
+  <mat-select [(value)]="foobar">
+    <mat-option value="foo">Foo</mat-option>
+    <mat-option value="bar">Bar</mat-option>
+  </mat-select>
   <table
     mat-table
     class="full-width-table"
@@ -61,7 +65,8 @@
           [aria-label]="checkboxLabel(row)"
           [matTooltip]="checkboxLabel(row)"
           [disabled]="row.requiredBy.size > 0"
-        ></mat-checkbox>
+        >
+        </mat-checkbox>
       </td>
     </ng-container>
 
@@ -71,7 +76,17 @@
         To Install
       </th>
       <td mat-cell *matCellDef="let row">
-        {{ row.selectedVersion?.version?.version || '-' }}
+        <!-- {{ row.selectedVersion?.version?.version || '-' }} -->
+        <mat-form-field style="max-width: 60px">
+          <mat-select
+            [(value)]="row.selectedVersion"
+            (selectionChange)="onSelectedVersionChange(row)"
+          >
+            <mat-option *ngFor="let version of row.versions" [value]="version">
+              {{ version.version.version }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
       </td>
     </ng-container>
 

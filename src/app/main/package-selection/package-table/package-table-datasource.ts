@@ -15,15 +15,19 @@ import {
   SelectablePackge
 } from '../../services/package.service';
 
-export const calcPackageDirty = (pkg: SelectablePackge) => {
-  if (pkg.selected) {
-    return (
+export const calcPackageDirty = (pkg: SelectablePackge, mutate = true) => {
+  let dirty: boolean;
+  if (pkg.selected && pkg.selectedVersion) {
+    dirty =
       !pkg.installedVersion ||
-      pkg.latestVersion.version.compare(pkg.installedVersion.version) > 0
-    );
+      pkg.selectedVersion.version.compare(pkg.installedVersion.version) > 0;
   } else {
-    return !!pkg.installedVersion;
+    dirty = !!pkg.installedVersion;
   }
+
+  if (mutate) pkg.dirty = dirty;
+
+  return dirty;
 };
 
 /**

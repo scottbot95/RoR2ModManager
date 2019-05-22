@@ -15,7 +15,9 @@ import { DatabaseService } from '../../core/services/database.service';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Selectable } from '../../core/models/selectable.model';
 
-export interface SelectablePackge extends Selectable, Package {}
+export interface SelectablePackge extends Selectable, Package {
+  selectedVersion?: PackageVersion;
+}
 
 import { protocols } from '../../../../package.json';
 

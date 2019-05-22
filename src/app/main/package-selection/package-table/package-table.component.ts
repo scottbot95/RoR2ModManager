@@ -95,6 +95,8 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private flagDetails: { [flag: string]: string };
 
+  foobar = 'bar';
+
   constructor(
     public packages: PackageService,
     private prefs: PreferencesService,
@@ -121,7 +123,6 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.subscription.add(
       this.prefs.onChange('humanizePackageNames').subscribe(shouldHumanize => {
-        console.log('New humanize', shouldHumanize.newValue);
         this.shouldHumanize = shouldHumanize.newValue;
       })
     );
@@ -132,7 +133,7 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
         changed.added.forEach(pkg => {
           pkg.selected = true;
           pkg.selectedVersion = pkg.latestVersion;
-          pkg.dirty = calcPackageDirty(pkg);
+          calcPackageDirty(pkg, true);
           this.selectAllDependencies(pkg.selectedVersion);
           if (this.changes.removed.has(pkg)) {
             this.changes.removed.delete(pkg);
@@ -148,7 +149,7 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
             this.changes.removed.add(pkg);
           }
           pkg.selected = false;
-          pkg.dirty = calcPackageDirty(pkg);
+          calcPackageDirty(pkg, true);
           pkg.selectedVersion = null;
         });
 
@@ -167,7 +168,7 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
         this.selection.select(...pkgs);
         if (this.dataSource && this.dataSource.hasData())
           this.dataSource.data.forEach(pkg => {
-            pkg.dirty = calcPackageDirty(pkg);
+            calcPackageDirty(pkg, true);
           });
       })
     );
@@ -206,10 +207,9 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }`;
   }
 
-  showDetails(pkg: Package) {
+  showDetails = (pkg: SelectablePackge) => {
     this.packages.selectedPackage.next(pkg);
-    // this.showPackageDetails.emit(pkg);
-  }
+  };
 
   showContextMenu(pkg: Package) {
     if (pkg.installedVersion) {
@@ -333,6 +333,14 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
       event.previousIndex,
       event.currentIndex
     );
+  }
+
+  onSelectedVersionChange(pkg: SelectablePackge) {
+    if (!this.packages.selection.isSelected(pkg)) {
+      this.packages.selection.select(pkg);
+    }
+
+    calcPackageDirty(pkg);
   }
 
   private selectAllDependencies(pkg: PackageVersion) {
