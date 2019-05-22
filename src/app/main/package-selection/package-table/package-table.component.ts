@@ -142,15 +142,19 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         });
         changed.removed.forEach(pkg => {
-          this.deselectAvailDependencies(pkg.selectedVersion);
-          if (this.changes.updated.has(pkg.selectedVersion)) {
-            this.changes.updated.delete(pkg.selectedVersion);
-          } else if (pkg.dirty) {
+          const { selectedVersion } = pkg;
+          pkg.selected = false;
+          pkg.selectedVersion = null;
+          calcPackageDirty(pkg, true);
+          this.deselectAvailDependencies(selectedVersion);
+          for (const ver of Array.from(this.changes.updated)) {
+            if (ver.pkg.uuid4 === pkg.uuid4) {
+              this.changes.updated.delete(ver);
+            }
+          }
+          if (pkg.dirty) {
             this.changes.removed.add(pkg);
           }
-          pkg.selected = false;
-          calcPackageDirty(pkg, true);
-          pkg.selectedVersion = null;
         });
 
         this.updatePendingChanges();
@@ -386,6 +390,7 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
   };
 
   private updatePendingChanges = () => {
+    console.log(this.changes);
     this.packages.pendingChanges.next(this.changes);
     this.formGroup.patchValue(this.changes);
     if (this.changes.updated.size > 0 || this.changes.removed.size > 0) {
