@@ -19,7 +19,9 @@ class MockPackageTableComponent {
   selector: 'app-package-details',
   template: '<p>mock package details</p>'
 })
-class MockPackageDetailsComponent {}
+class MockPackageDetailsComponent {
+  @Input() table: MockPackageTableComponent;
+}
 
 describe('StepOneComponent', () => {
   let component: StepOneComponent;

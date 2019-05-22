@@ -8,7 +8,7 @@ import {
   ChangeDetectorRef,
   NgZone
 } from '@angular/core';
-import { MatPaginator, MatSort, MatSelectChange } from '@angular/material';
+import { MatPaginator, MatSort } from '@angular/material';
 import { Subscription, Observable } from 'rxjs';
 import { delay } from 'rxjs/operators';
 import { FormControl, FormGroup } from '@angular/forms';
