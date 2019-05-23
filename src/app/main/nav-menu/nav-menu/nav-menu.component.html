@@ -7,18 +7,18 @@
     [mode]="(isHandset$ | async) ? 'over' : 'side'"
     [opened]="!(isHandset$ | async)"
   >
-    <mat-toolbar>Menu</mat-toolbar>
+    <mat-toolbar> {{ 'MENU.TITLE' | translate }} </mat-toolbar>
     <mat-divider></mat-divider>
     <mat-nav-list (click)="drawer.mode === 'over' && drawer.close()">
-      <a mat-list-item routerLinkActive="active" routerLink="/packages"
-        >Packages</a
-      >
-      <a mat-list-item routerLinkActive="active" routerLink="/config-editor"
-        >Config Editor</a
-      >
-      <a mat-list-item routerLinkActive="active" routerLink="/preferences"
-        >Preferences</a
-      >
+      <a mat-list-item routerLinkActive="active" routerLink="/packages">
+        {{ 'MENU.NAV.PACKAGES' | translate }}
+      </a>
+      <a mat-list-item routerLinkActive="active" routerLink="/config-editor">
+        {{ 'MENU.NAV.CONFIG_EDITOR' | translate }}
+      </a>
+      <a mat-list-item routerLinkActive="active" routerLink="/preferences">
+        {{ 'MENU.NAV.PREFS' | translate }}
+      </a>
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content fxLayout="column">
@@ -32,12 +32,12 @@
       >
         <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
       </button>
-      <span>RoR2 Mod Manager {{ version }}</span>
+      <span> {{ 'MENU.TITLEBAR.TITLE' | translate }} {{ version }}</span>
       <span fxFlex></span>
       <button
         *ngIf="router.url === '/preferences'"
         mat-icon-button
-        matTooltip="Back"
+        [matTooltip]="'MENU.TOOLTIPS.BACK_BUTTON' | translate"
         (click)="goBack()"
       >
         <mat-icon>arrow_back</mat-icon>
@@ -46,17 +46,23 @@
         *ngIf="router.url !== '/preferences'"
         mat-icon-button
         routerLink="/preferences"
-        matTooltip="Preferences"
+        [matTooltip]="'MENU.TOOLTIPS.PREFERENCES' | translate"
       >
         <mat-icon>settings</mat-icon>
       </button>
       <button mat-icon-button (click)="theme.toggleDarkMode()">
-        <mat-icon *ngIf="theme.isDarkMode$ | async" matTooltip="Light Mode"
-          >brightness_7</mat-icon
+        <mat-icon
+          *ngIf="theme.isDarkMode$ | async"
+          [matTooltip]="'MENU.TOOLTIPS.LIGHT_MODE' | translate"
         >
-        <mat-icon *ngIf="!(theme.isDarkMode$ | async)" matTooltip="Dark Mode"
-          >brightness_2</mat-icon
+          brightness_7
+        </mat-icon>
+        <mat-icon
+          *ngIf="!(theme.isDarkMode$ | async)"
+          [matTooltip]="'MENU.TOOLTIPS.DARK_MODE' | translate"
         >
+          brightness_2
+        </mat-icon>
       </button>
     </mat-toolbar>
     <div fxLayout="column" fxFlex class="grow page-content">

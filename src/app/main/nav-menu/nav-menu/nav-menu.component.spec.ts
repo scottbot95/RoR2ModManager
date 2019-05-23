@@ -6,7 +6,10 @@ import { MaterialModule } from '../../../shared/material.module';
 import { MatToolbarModule, MatSidenavModule } from '@angular/material';
 import { ThemeService } from '../../../core/services/theme.service';
 import { RouterTestingModule } from '@angular/router/testing';
-import { MockThemeService } from '../../../core/services/mocks.spec';
+import {
+  MockThemeService,
+  MockTranslatePipe
+} from '../../../core/services/mocks.spec';
 
 describe('NavMenuComponent', () => {
   let component: NavMenuComponent;
@@ -14,7 +17,7 @@ describe('NavMenuComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [NavMenuComponent],
+      declarations: [NavMenuComponent, MockTranslatePipe],
       imports: [
         NoopAnimationsModule,
         LayoutModule,

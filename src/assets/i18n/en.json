@@ -1,12 +1,149 @@
 {
-  "PAGES": {
-    "HOME": {
-      "TITLE": "App works !"
-    }
-  },
   "FLAGS": {
     "DETAILS": {
       "P": "This package is pinned"
     }
+  },
+  "MENU": {
+    "NAV": {
+      "CONFIG_EDITOR": "Config Editor",
+      "PACKAGES": "Packages",
+      "PREFS": "Preferences"
+    },
+    "TITLE": "Menu",
+    "TITLEBAR": {
+      "TITLE": "RoR2 Mod Manager"
+    },
+    "TOOLTIPS": {
+      "BACK_BUTTON": "Back",
+      "DARK_MODE": "Dark Mode",
+      "LIGHT_MODE": "Light Mode",
+      "PREFERENCES": "Preferences"
+    }
+  },
+  "PAGES": {
+    "CONFIG_EDITOR": {
+      "BACK_BUTTON": "Back to list",
+      "RESET_BUTTON": "Rest",
+      "TITLE": "Editing",
+      "TOOLTIPS": {
+        "BACK_BUTTON": "Return to list of found config files",
+        "RESET_BUTTON": "Undo all changes"
+      }
+    },
+    "NEW_PROFILE": {
+      "COPY_FROM": "Copy From",
+      "ERRORS": {
+        "REQUIRED": "Profile Name is required"
+      },
+      "NAME": "Profile Name",
+      "NONE": "None",
+      "SUBMIT_BUTTON": "Create",
+      "TITLE": "Create New Profile"
+    },
+    "PKG_DETAILS": {
+      "DEPENDENCIES": "Dependencies",
+      "DOWNLOADS": "Total Downloads",
+      "LATEST_VERSION": "Latest Version",
+      "README": "Readme",
+      "TOOLTIPS": {
+        "CLOSE": "Close details",
+        "INSTALL_VERSION": "Install version",
+        "THUNDERSTORE": "Open on thunderstore.io"
+      },
+      "UPDATED_ON": "Last Updated On",
+      "VERSIONS": "Versions"
+    },
+    "PKG_SELECT": {
+      "CONFIRM_TABLE": {
+        "COLUMNS": {
+          "ACTION": "Name",
+          "AUTHOR": "Author",
+          "INSTALLED": "Action",
+          "NAME": "Installed Version",
+          "TO_INSTALL": "Version To Install"
+        }
+      },
+      "PKG_TABLE": {
+        "APPLY_BUTTON": "Apply",
+        "COLUMNS": {
+          "AUTHOR": "Author",
+          "DOWNLOADS": "Total Downloads",
+          "FLAGS": "Flags",
+          "ICON": "Icon",
+          "ID": "Id",
+          "INSTALLED": "Installed",
+          "LATEST": "Latest",
+          "NAME": "Package Name",
+          "SELECT": "Install",
+          "TO_INSTALL": "To Install",
+          "UPDATED": "Updated"
+        },
+        "TOOLTIPS": {
+          "APPLY_CHANGES": "Apply Changes",
+          "CLEAR_FILTER": "Clear filter",
+          "REFRESH": "Refresh"
+        }
+      },
+      "STEP_1": {
+        "ERRORS": "Errors",
+        "TITLE": "Select Packages"
+      },
+      "STEP_2": {
+        "APPLY_CHANGES": "Apply these changes",
+        "BACK_BUTTON": "Back",
+        "CONFIRM_CHANGES": "Please check to confirm changes",
+        "NEXT_BUTTON": "Next",
+        "TITLE": "Confirm Changes"
+      },
+      "STEP_3": {
+        "BACK_BUTTON": "Back to Package List",
+        "DONE": "Done",
+        "TITLE": "Applying changes"
+      }
+    },
+    "PREFS": {
+      "SECTION": {
+        "PKG_LIST": {
+          "CHECK_FOR_UPDATE": "Chck for updates on start",
+          "HUMANIZE": "Humanize Package Names",
+          "PINNED": "Respect Pinned Flag",
+          "TITLE": "Package List"
+        },
+        "ROR2": {
+          "BROWSE_BUTTON": "Browse",
+          "PATH": "RoR2 Install Path",
+          "TITLE": "Risk of Rain 2"
+        },
+        "THEMING": {
+          "DARK_MODE": "Dark Mode",
+          "TITLE": "Theming"
+        },
+        "UPDATES": {
+          "SECONDS": "seconds",
+          "TITLE": "App Updates",
+          "UPDATE_INTERVAL": "Check for Updates Interval"
+        }
+      },
+      "TOOLTIPS": {
+        "CHECK_FOR_UPDATE": "Check for updates on start?",
+        "HUMANIZE": "Convert names like 'ReallyCoolMod' to 'Really Cool Mod'",
+        "RESPECT_PINNED": "Whether or not to respect the `is_pinned` flag from thunderstore.io",
+        "ROR2_PATH": "Choose RoR2 Install Path"
+      }
+    },
+    "RENAME_PROFILE": {
+      "ERRORS": {
+        "NEW_NAME": "You must specify a different name",
+        "REQUIRED": "This field is required"
+      },
+      "NEW_NAME": "New Name",
+      "OLD_NAME": "Old Name",
+      "SUBMIT_BUTTON": "Close",
+      "TITLE": "Rename Profile"
+    }
+  },
+  "THUNDERSTORE": {
+    "NAME": "Thunderstore"
   }
 }

@@ -1,5 +1,5 @@
 <ng-container *ngIf="showErrors && !formStep1.pristine && !formStep1.valid">
-  <mat-error>Errors:</mat-error>
+  <mat-error>{{ 'PAGES.PKG_SELECT.STEP_1.ERRORS' | translate }}:</mat-error>
   <ul>
     <mat-error *ngFor="let error of formStep1.errors | keyvalue">
       <li>

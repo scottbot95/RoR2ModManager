@@ -6,12 +6,16 @@
       <span fxFlex></span>
       <button
         mat-raised-button
-        matTooltip="Open on thunderstore.io"
+        [matTooltip]="'PAGES.PKG_DETAILS.TOOLTIPS.THUNDERSTORE' | translate"
         (click)="openPackage()"
       >
-        Thunderstore
+        {{ 'THUNDERSTORE.NAME' | translate }}
       </button>
-      <button mat-icon-button matTooltip="Close Details" (click)="close()">
+      <button
+        mat-icon-button
+        [matTooltip]="'PAGES.PKG_DETAILS.TOOLTIPS.CLOSE' | translate"
+        (click)="close()"
+      >
         <mat-icon>clear</mat-icon>
       </button>
     </mat-card-title>
@@ -22,7 +26,7 @@
   <mat-card-content>
     <table class="details">
       <tr>
-        <td>Latests Updated:</td>
+        <td>{{ 'PAGES.PKG_DETAILS.UPDATED_ON' | translate }}:</td>
         <td align="right">
           {{ package.dateUpdated | date: 'MMM d, y, h:mm a ' }}
         </td>
@@ -31,13 +35,13 @@
         </td>
       </tr>
       <tr>
-        <td>Latest Version:</td>
+        <td>{{ 'PAGES.PKG_DETAILS.LATEST_VERSION' | translate }}:</td>
         <td align="right">
           {{ packageVersion.version }}
         </td>
       </tr>
       <tr>
-        <td>Total Downloads:</td>
+        <td>{{ 'PAGES.PKG_DETAILS.DOWNLOADS' | translate }}:</td>
         <td align="right">
           {{ package.totalDownloads }}
         </td>
@@ -45,14 +49,16 @@
     </table>
 
     <mat-card *ngIf="packageVersion.readme">
-      <mat-card-title>README</mat-card-title>
+      <mat-card-title>{{
+        'PAGES.PKG_DETAILS.README' | translate
+      }}</mat-card-title>
       <mat-card-content>
         <markdown>
           {{ packageVersion.readme }}
         </markdown>
       </mat-card-content>
     </mat-card>
-    <strong>Dependencies:</strong>
+    <strong>{{ 'PAGES.PKG_DETAILS.DEPENDENCIES' | translate }}:</strong>
     <span *ngIf="packageVersion.dependencies.length === 0"> None </span>
     <mat-list dense *ngIf="packageVersion.dependencies">
       <ng-container
@@ -68,13 +74,16 @@
         <mat-divider *ngIf="!isLast"></mat-divider>
       </ng-container>
     </mat-list>
-    <strong>Versions:</strong>
+    <strong>{{ 'PAGES.PKG_DETAILS.VERSIONS' | translate }}:</strong>
     <mat-list dense>
       <ng-container *ngFor="let version of package.versions; last as isLast">
         <mat-list-item
           (click)="selectVersion(version)"
           class="clickable"
-          [matTooltip]="'Install version ' + version.version.version"
+          [matTooltip]="
+            ('PAGES.PKG_DETAILS.TOOLTIPS.INSTALL_VERSION' | translate) +
+            version.version.version
+          "
         >
           {{ version.version.version }}
         </mat-list-item>

@@ -8,7 +8,8 @@ import { ProfileService } from '../../profile/services/profile.service';
 import {
   MockProfileService,
   MockElectronService,
-  MockDialogService
+  MockDialogService,
+  MockTranslatePipe
 } from '../../core/services/mocks.spec';
 import { ElectronService } from '../../core/services/electron.service';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
@@ -20,7 +21,7 @@ describe('NewProfileDialogComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [NewProfileDialogComponent],
+      declarations: [NewProfileDialogComponent, MockTranslatePipe],
       imports: [
         ReactiveFormsModule,
         MaterialModule,

@@ -5,7 +5,10 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { Component } from '@angular/core';
 import { MaterialModule } from '../../../../shared/material.module';
 import { PackageService } from '../../../services/package.service';
-import { MockPackageService } from '../../../../core/services/mocks.spec';
+import {
+  MockPackageService,
+  MockTranslatePipe
+} from '../../../../core/services/mocks.spec';
 
 @Component({
   selector: 'app-changes-table',
@@ -19,7 +22,11 @@ describe('StepTwoComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [StepTwoComponent, MockChangesTableComponent],
+      declarations: [
+        StepTwoComponent,
+        MockChangesTableComponent,
+        MockTranslatePipe
+      ],
       imports: [ReactiveFormsModule, MaterialModule],
       providers: [{ provide: PackageService, useClass: MockPackageService }]
     }).compileComponents();

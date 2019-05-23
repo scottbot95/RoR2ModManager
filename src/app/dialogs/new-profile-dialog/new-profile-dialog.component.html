@@ -4,7 +4,7 @@
   style="height: 100%"
 >
   <h2 mat-dialog-title>
-    Create new profile
+    {{ 'PAGES.NEW_PROFILE.TITLE' | translate }}
   </h2>
   <mat-dialog-content>
     <form
@@ -16,19 +16,19 @@
     >
       <mat-form-field appearance="standard">
         <mat-label>
-          Profile Name
+          {{ 'PAGES.NEW_PROFILE.NAME' | translate }}
         </mat-label>
         <input matInput formControlName="name" required />
         <mat-error *ngIf="form.get('name').invalid">
-          Profile Name required
+          {{ 'PAGES.NEW_PROFILE.ERRORS.REQUIRED' | translate }}
         </mat-error>
       </mat-form-field>
       <mat-form-field appearance="standard">
         <mat-label>
-          Copy From
+          {{ 'PAGES.NEW_PROFILE.COPY_FROM' | translate }}
         </mat-label>
         <mat-select formControlName="copyFrom">
-          <mat-option>None</mat-option>
+          <mat-option>{{ 'PAGES.NEW_PROFILE.NONE' | translate }}</mat-option>
           <mat-option
             *ngFor="let profile of profiles | async"
             [value]="profile"
@@ -45,7 +45,7 @@
       (click)="profileForm.onSubmit()"
       [matTooltip]="getTooltip()"
     >
-      Create
+      {{ 'PAGES.NEW_PROFILE.SUBMIT_BUTTON' | translate }}
     </button>
   </mat-dialog-actions>
 </div>

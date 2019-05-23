@@ -8,7 +8,8 @@ import { PreferencesService } from '../../../core/services/preferences.service';
 import {
   MockPreferencesService,
   MockPackageService,
-  MockElectronService
+  MockElectronService,
+  MockTranslatePipe
 } from '../../../core/services/mocks.spec';
 import { PackageService } from '../../services/package.service';
 import { ElectronService } from '../../../core/services/electron.service';
@@ -29,7 +30,8 @@ describe('PackageDetailsComponent', () => {
       declarations: [
         PackageDetailsComponent,
         MockMarkdownComponent,
-        HumanizePipe
+        HumanizePipe,
+        MockTranslatePipe
       ],
       imports: [MaterialModule],
       providers: [

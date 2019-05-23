@@ -1,21 +1,21 @@
 <mat-horizontal-stepper [linear]="true" #stepper>
   <mat-step [stepControl]="formStepOne" [editable]="editable">
     <ng-template matStepLabel>
-      Select Packages
+      {{ 'PAGES.PKG_SELECT.STEP_1.TITLE' | translate }}
     </ng-template>
     <app-step-one></app-step-one>
   </mat-step>
 
   <mat-step [stepControl]="formStepTwo" [editable]="editable">
     <ng-template matStepLabel>
-      Confirm Changes
+      {{ 'PAGES.PKG_SELECT.STEP_2.TITLE' | translate }}
     </ng-template>
     <app-step-two (confirmed)="editable = !$event"></app-step-two>
   </mat-step>
 
   <mat-step [stepControl]="formStepThree">
     <ng-template matStepLabel>
-      Applying Changes
+      {{ 'PAGES.PKG_SELECT.STEP_3.TITLE' | translate }}
     </ng-template>
     <app-step-three
       (reset)="reset()"

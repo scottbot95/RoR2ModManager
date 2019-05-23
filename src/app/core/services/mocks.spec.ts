@@ -11,7 +11,7 @@ import {
   SelectablePackage,
   PackageChangeset
 } from '../../main/services/package.service';
-import { Component, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, Pipe, PipeTransform } from '@angular/core';
 import * as path from 'path';
 import { PackageProfile } from '../models/profile.model';
 
@@ -191,4 +191,9 @@ export class MockDialogService {
   public async openDialog() {}
   public dialogReady() {}
   public closeDialog() {}
+}
+
+@Pipe({ name: 'translate' })
+export class MockTranslatePipe implements PipeTransform {
+  transform() {}
 }

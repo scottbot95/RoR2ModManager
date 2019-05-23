@@ -17,8 +17,8 @@
   *ngIf="working"
 ></mat-progress-bar>
 <ng-container *ngIf="complete">
-  <p>Done!</p>
+  <p>{{ 'PAGES.PKG_SELECT.STEP_3.DONE' | translate }}</p>
   <button mat-raised-button (click)="back()">
-    Back to Package List
+    {{ 'PAGES.PKG_SELECT.STEP_3.BACK_BUTTON' | translate }}
   </button>
 </ng-container>
