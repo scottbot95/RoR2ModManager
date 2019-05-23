@@ -1,13 +1,6 @@
-<!-- Available directions -->
-<!--
-  <mat-card-content>
-  <img mat-card-image>
-  <mat-card-actions>
-  <mat-card-footer>
-   -->
 <mat-card *ngIf="package">
   <mat-card-header class="fullWidthCardHeader">
-    <mat-card-title fxLayout="row">
+    <mat-card-title fxLayout="row wrap">
       {{ package.name | humanize: shouldHumanize }}
       <small>&nbsp;by {{ package.owner }} </small>
       <span fxFlex></span>
