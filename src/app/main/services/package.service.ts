@@ -1,7 +1,6 @@
 import {
   Injectable,
   EventEmitter,
-  ChangeDetectorRef,
   ApplicationRef
 } from '@angular/core';
 import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';

@@ -1,5 +1,5 @@
 import { ipcMain, BrowserWindow, protocol } from 'electron';
-import { createBrowserWindow, getUrl } from './windows';
+import { createBrowserWindow } from './windows';
 import { log } from 'electron-log';
 
 const args = process.argv.slice(1);
