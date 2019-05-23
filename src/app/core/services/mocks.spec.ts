@@ -120,7 +120,9 @@ export class MockElectronService {
   isElectron() {
     return false;
   }
-  glob() {}
+  glob() {
+    return [];
+  }
   showMessageBox() {}
 }
 
