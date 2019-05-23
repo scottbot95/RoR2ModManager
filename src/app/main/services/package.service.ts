@@ -1,4 +1,9 @@
-import { Injectable, EventEmitter } from '@angular/core';
+import {
+  Injectable,
+  EventEmitter,
+  ChangeDetectorRef,
+  ApplicationRef
+} from '@angular/core';
 import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
 import {
   PackageVersion,
@@ -66,7 +71,8 @@ export class PackageService {
     private electron: ElectronService,
     private prefs: PreferencesService,
     private thunderstore: ThunderstoreService,
-    private db: DatabaseService
+    private db: DatabaseService,
+    private app: ApplicationRef
   ) {
     this.registerHttpProtocol();
 
@@ -332,8 +338,6 @@ export class PackageService {
         const moveFile = (destDir: string) => (file: string) => {
           const index = file.lastIndexOf(destDir);
           const relativePath = file.slice(index + destDir.length + 1);
-          console.log(file);
-          console.log(`Moving ${file} to BepInEx/${relativePath}`);
           return fs.move(
             file,
             path.join(bepInExPath, destDir, pkgName, relativePath),
@@ -342,12 +346,13 @@ export class PackageService {
             }
           );
         };
-
-        await Promise.all([
+        const promises = [
           plugins.map(moveFile('plugins')),
           monomod.map(moveFile('monomod')),
           patchers.map(moveFile('patchers'))
-        ]);
+        ];
+        console.log(promises);
+        await Promise.all(promises);
 
         await fs.remove(tmp_path);
       }
@@ -402,35 +407,40 @@ export class PackageService {
   private registerHttpProtocol() {
     for (const scheme of protocols) {
       console.log(`Registering protocol ${scheme}`);
-      this.electron.protocol.registerHttpProtocol(scheme, (req, cb) => {
-        // format ror2mm://v1/install/thunderstore.io/[author]/[package]/[version]/
-        const chunks = req.url.split('/');
-        console.log('Handling ror2mm. Parsed chunks', chunks);
-        // const protocol = chunks[0];
-        const [
-          protocolVersion,
-          action,
-          provider,
-          author,
-          packageName,
-          version
-        ] = chunks.slice(2);
-        if (
-          protocolVersion === 'v1' &&
-          action === 'install' &&
-          provider === 'thunderstore.io'
-        ) {
-          const packageToInstall = this.allPackagesSource.value.find(
-            p => p.owner === author && p.name === packageName
-          );
-          const versionToInstall = packageToInstall.versions.find(
-            v => v.version.version === version
-          );
-          console.log('Marking package for install', versionToInstall);
-          this.selection.select(versionToInstall.pkg);
-          this.selectedPackage.next(packageToInstall);
+      this.electron.ipcRenderer.send('registerHttp', scheme);
+      this.electron.ipcRenderer.on(
+        scheme,
+        (event: Electron.Event, url: string) => {
+          // format ror2mm://v1/install/thunderstore.io/[author]/[package]/[version]/
+          const chunks = url.split('/');
+          console.log('Handling ror2mm. Parsed chunks', chunks);
+          // const protocol = chunks[0];
+          const [
+            protocolVersion,
+            action,
+            provider,
+            author,
+            packageName,
+            version
+          ] = chunks.slice(2);
+          if (
+            protocolVersion === 'v1' &&
+            action === 'install' &&
+            provider === 'thunderstore.io'
+          ) {
+            const packageToInstall = this.allPackagesSource.value.find(
+              p => p.owner === author && p.name === packageName
+            );
+            const versionToInstall = packageToInstall.versions.find(
+              v => v.version.version === version
+            );
+            console.log('Marking package for install', versionToInstall);
+            this.selection.select(versionToInstall.pkg);
+            this.selectedPackage.next(packageToInstall);
+            this.app.tick();
+          }
         }
-      });
+      );
     }
   }
 

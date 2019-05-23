@@ -1,5 +1,6 @@
-import { ipcMain, BrowserWindow } from 'electron';
-import { createBrowserWindow } from './windows';
+import { ipcMain, BrowserWindow, protocol } from 'electron';
+import { createBrowserWindow, getUrl } from './windows';
+import { log } from 'electron-log';
 
 const args = process.argv.slice(1);
 const serve = args.some(val => val === '--serve');
@@ -43,4 +44,11 @@ export const registerIpcListeners = () => {
       }
     }
   );
+
+  ipcMain.on('registerHttp', (event: Electron.Event, scheme: string) => {
+    protocol.registerFileProtocol(scheme, (req, cb) => {
+      event.sender.send(scheme, req.url);
+      log(`Handled event for scheme: '${scheme}'.`);
+    });
+  });
 };
