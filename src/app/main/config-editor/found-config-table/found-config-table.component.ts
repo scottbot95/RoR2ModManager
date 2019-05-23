@@ -23,15 +23,13 @@ export class FoundConfigTableComponent implements OnInit {
     private ngZone: NgZone
   ) {}
 
-  ngOnInit() {
-    this.electron.glob(
-      `${this.prefs.get('ror2_path')}/BepInEx/config/*.cfg`,
-      (err, matches) => {
-        this.configFiles = matches.map(file => ({
-          filename: this.electron.path.basename(file)
-        }));
-        this.ngZone.run(() => this.changeDetector.detectChanges());
-      }
+  async ngOnInit() {
+    const matches = await this.electron.glob(
+      `${this.prefs.get('ror2_path')}/BepInEx/config/*.cfg`
     );
+    this.configFiles = matches.map(file => ({
+      filename: this.electron.path.basename(file)
+    }));
+    this.ngZone.run(() => this.changeDetector.detectChanges());
   }
 }

@@ -153,7 +153,7 @@ export class PackageService {
       const fileStream = this.electron.fs.createReadStream(zipPath);
 
       if (pkg.pkg.uuid4 === BEPINEX_UUID4) await this.installBepin(fileStream);
-      else await this.installBepInPlugin(fileStream, pkg.pkg.fullName);
+      else await this.installBepInPackage(fileStream, pkg.pkg.fullName);
     }
 
     pkg.pkg.installedVersion = pkg;
@@ -175,10 +175,8 @@ export class PackageService {
   public async uninstallPackage(pkg: Package) {
     this.log.next(`Removing ${pkg.name}...`);
     const join = this.electron.path.join;
+    const bepInExPath = this.getBepInExPath();
     if (pkg.uuid4 === BEPINEX_UUID4) {
-      const bepInExPath = this.electron.path.dirname(
-        this.getBepInExPluginPath()
-      );
       await Promise.all([
         this.electron.fs.remove(join(bepInExPath, 'core')),
         this.electron.fs.remove(join(bepInExPath, 'patchers')),
@@ -191,9 +189,15 @@ export class PackageService {
         )
       ]);
     } else {
-      const installedPath = join(this.getBepInExPluginPath(), pkg.fullName);
+      const installedPaths = [
+        join(bepInExPath, 'plugins', pkg.fullName),
+        join(bepInExPath, 'monomod', pkg.fullName),
+        join(bepInExPath, 'patchers', pkg.fullName)
+      ];
 
-      await this.electron.fs.remove(installedPath);
+      await Promise.all(
+        installedPaths.map(path => this.electron.fs.remove(path))
+      );
     }
 
     pkg.installedVersion = null;
@@ -204,11 +208,6 @@ export class PackageService {
     this.log.next(`Finished removing ${pkg.name}`);
 
     return pkg.uuid4;
-    // this.installedPackagesSource.next(
-    //   this.installedPackagesSource.value.filter(
-    //     installed => installed.uuid4 !== pkg.uuid4
-    //   )
-    // );
   }
 
   public resetSelection() {
@@ -302,13 +301,59 @@ export class PackageService {
     return fileStream.pipe(this.electron.unzipper.Extract({ path })).promise();
   }
 
-  private installBepInPlugin(fileStream: ReadStream, plugin_dir: string) {
-    const install_dir = this.electron.path.join(
-      this.getBepInExPluginPath(),
-      plugin_dir
-    );
-    this.log.next(`Extracting to BepInEx/plugins/${plugin_dir}`);
-    return this.extractZip(fileStream, install_dir);
+  private async installBepInPackage(fileStream: ReadStream, pkgName: string) {
+    const fs = this.electron.fs;
+    const glob = this.electron.glob;
+    const path = this.electron.path;
+
+    const tmp_path = this.getTempPath(pkgName);
+    const bepInExPath = this.getBepInExPath();
+    // extract zip
+    this.log.next(`Extracting ${pkgName}...`);
+    await fs.remove(tmp_path);
+    await this.extractZip(fileStream, tmp_path);
+    this.log.next(`Installing ${pkgName}...`);
+    try {
+      const globOpts = { realpath: true, cwd: tmp_path, nodir: true };
+      const [plugins, monomod, patchers] = await Promise.all([
+        glob('**/plugins/**/*', globOpts),
+        glob('**/monomod/**/*', globOpts),
+        glob('**/patchers/**/*', globOpts)
+      ]);
+      if (
+        plugins.length === 0 &&
+        monomod.length === 0 &&
+        patchers.length === 0
+      ) {
+        await fs.move(tmp_path, path.join(bepInExPath, 'plugins', pkgName), {
+          overwrite: true
+        });
+      } else {
+        const moveFile = (destDir: string) => (file: string) => {
+          const index = file.lastIndexOf(destDir);
+          const relativePath = file.slice(index + destDir.length + 1);
+          console.log(file);
+          console.log(`Moving ${file} to BepInEx/${relativePath}`);
+          return fs.move(
+            file,
+            path.join(bepInExPath, destDir, pkgName, relativePath),
+            {
+              overwrite: true
+            }
+          );
+        };
+
+        await Promise.all([
+          plugins.map(moveFile('plugins')),
+          monomod.map(moveFile('monomod')),
+          patchers.map(moveFile('patchers'))
+        ]);
+
+        await fs.remove(tmp_path);
+      }
+    } catch (err) {
+      throw new Error(`Failed to install ${pkgName} ${err.message || err}`);
+    }
   }
 
   private async installBepin(fileStream: ReadStream): Promise<void> {
@@ -317,52 +362,40 @@ export class PackageService {
     const glob = this.electron.glob;
     const install_dir = this.prefs.get('ror2_path');
 
-    const tmp_path = path.join(
-      this.electron.remote.app.getPath('temp'),
-      this.electron.remote.app.getName(),
-      'BepInExPack'
-    );
+    const tmp_path = this.getTempPath('BepInExPack');
     // extract zip
     this.log.next(`Extracting BepInEx...`);
     await this.extractZip(fileStream, tmp_path);
     this.log.next(`Installing BepInEx...`);
-    return new Promise((resolve, reject) => {
-      glob(
-        'BepInExPack/**/*',
-        {
-          realpath: true,
-          nodir: true,
-          cwd: tmp_path
-        },
-        async (err, files) => {
-          if (err) return reject(err);
-          try {
-            await Promise.all(
-              files.map(async file => {
-                const relativePath = file.slice(
-                  (tmp_path + '/BepInExPack/').length
-                );
-                return fs.move(file, path.join(install_dir, relativePath), {
-                  overwrite: true
-                });
-              })
-            );
-            resolve();
-          } catch (err) {
-            reject(
-              new Error(`Failed to install BepInExPack ${err.message || err}`)
-            );
-          }
-        }
+    try {
+      const files = await glob('BepInExPack/**/*', {
+        realpath: true,
+        nodir: true,
+        cwd: tmp_path
+      });
+      await Promise.all(
+        files.map(async file => {
+          const relativePath = file.slice((tmp_path + '/BepInExPack/').length);
+          return fs.move(file, path.join(install_dir, relativePath), {
+            overwrite: true
+          });
+        })
       );
-    });
+      await fs.remove(tmp_path);
+    } catch (err) {
+      throw new Error(`Failed to install BepInExPack ${err.message || err}`);
+    }
   }
 
-  private getBepInExPluginPath() {
+  private getBepInExPath() {
+    return this.electron.path.join(this.prefs.get('ror2_path'), 'BepInEx');
+  }
+
+  private getTempPath(subDir: string) {
     return this.electron.path.join(
-      this.prefs.get('ror2_path'),
-      'BepInEx',
-      'plugins'
+      this.electron.remote.app.getPath('temp'),
+      this.electron.remote.app.getName(),
+      subDir
     );
   }
 
