@@ -28,7 +28,8 @@ export class ElectronService {
   fs: typeof fs;
   path: typeof path;
   unzipper: typeof unzipper;
-  glob: typeof glob;
+
+  private _glob: typeof glob;
 
   constructor() {
     // Conditional imports
@@ -45,7 +46,7 @@ export class ElectronService {
       this.fs = this.remote.require('fs-extra');
       this.path = this.remote.require('path');
       this.unzipper = this.remote.require('unzipper');
-      this.glob = this.remote.require('glob');
+      this._glob = this.remote.require('glob');
 
       this.configureIpc();
     }
@@ -66,6 +67,18 @@ export class ElectronService {
       return this.remote.dialog.showMessageBox(win, opts);
     }
   }
+
+  glob = (pattern: string, opts?: glob.IOptions): Promise<string[]> => {
+    return new Promise((resolve, reject) => {
+      this._glob(pattern, opts, (err, matches) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(matches);
+        }
+      });
+    });
+  };
 
   showConfirmBox(
     opts: ConfirmBoxOptions,

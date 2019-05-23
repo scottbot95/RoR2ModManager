@@ -115,6 +115,11 @@ const generateTemplate = (): MenuItemConstructorOptions[] => [
         label: 'Download Cache',
         click: () =>
           shell.openItem(path.join(app.getPath('userData'), 'downloadCache'))
+      },
+      {
+        label: 'Temporary files',
+        click: () =>
+          shell.openItem(path.join(app.getPath('temp'), app.getName()))
       }
     ]
   },
