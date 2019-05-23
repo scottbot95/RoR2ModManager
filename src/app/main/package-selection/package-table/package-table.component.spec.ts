@@ -13,7 +13,8 @@ import {
   MockElectronService,
   MockPreferencesService,
   MockThunderstoreService,
-  MockPackageService
+  MockPackageService,
+  MockTranslatePipe
 } from '../../../core/services/mocks.spec';
 import { Component, Directive, Input } from '@angular/core';
 import { By } from '@angular/platform-browser';
@@ -59,7 +60,8 @@ describe('PackageTableComponent', () => {
         PackageTableComponent,
         TestHostComponent,
         MockFocusOnKeysDirective,
-        HumanizePipe
+        HumanizePipe,
+        MockTranslatePipe
       ],
       imports: [
         NoopAnimationsModule,

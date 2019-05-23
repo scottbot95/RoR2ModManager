@@ -3,7 +3,10 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { EditorComponent } from './editor.component';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ConfigParserService } from '../services/config-parser.service';
-import { MockConfigParserService } from '../../../core/services/mocks.spec';
+import {
+  MockConfigParserService,
+  MockTranslatePipe
+} from '../../../core/services/mocks.spec';
 import { MaterialModule } from '../../../shared/material.module';
 import { Component, Input } from '@angular/core';
 
@@ -22,7 +25,11 @@ describe('EditorComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [EditorComponent, MockConfigSectionComponent],
+      declarations: [
+        EditorComponent,
+        MockConfigSectionComponent,
+        MockTranslatePipe
+      ],
       imports: [RouterTestingModule, MaterialModule],
       providers: [
         {

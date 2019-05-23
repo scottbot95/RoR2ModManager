@@ -2,7 +2,10 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { RenameProfileDialogComponent } from './rename-profile-dialog.component';
 import { DialogService } from '../services/dialog.service';
-import { MockDialogService } from '../../core/services/mocks.spec';
+import {
+  MockDialogService,
+  MockTranslatePipe
+} from '../../core/services/mocks.spec';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../shared/material.module';
 import { MatDialogModule } from '@angular/material';
@@ -15,7 +18,7 @@ describe('RenameProfileDialogComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [RenameProfileDialogComponent],
+      declarations: [RenameProfileDialogComponent, MockTranslatePipe],
       imports: [
         ReactiveFormsModule,
         MaterialModule,

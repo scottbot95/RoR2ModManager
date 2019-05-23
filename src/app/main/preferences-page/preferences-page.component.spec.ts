@@ -6,7 +6,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from '../../shared/shared.module';
 import {
   MockPreferencesService,
-  MockElectronService
+  MockElectronService,
+  MockTranslatePipe
 } from '../../core/services/mocks.spec';
 import { ElectronService } from '../../core/services/electron.service';
 import { join } from 'path';
@@ -20,7 +21,7 @@ describe('PreferencesPageComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [PreferencesPageComponent],
+      declarations: [PreferencesPageComponent, MockTranslatePipe],
       imports: [SharedModule, ReactiveFormsModule, NoopAnimationsModule],
       providers: [
         { provide: PreferencesService, useClass: MockPreferencesService },

@@ -5,7 +5,8 @@ import { PackageService } from '../../services/package.service';
 import {
   MockPackageService,
   MockProfileService,
-  MockElectronService
+  MockElectronService,
+  MockTranslatePipe
 } from '../../../core/services/mocks.spec';
 import { MaterialModule } from '../../../shared/material.module';
 import { MatStepperModule } from '@angular/material';
@@ -44,7 +45,8 @@ describe('PackagesPageComponent', () => {
         PackagesPageComponent,
         MockStepOneComponent,
         MockStepTwoComponent,
-        MockStepThreeComponent
+        MockStepThreeComponent,
+        MockTranslatePipe
       ],
       imports: [MaterialModule, MatStepperModule, NoopAnimationsModule],
       providers: [

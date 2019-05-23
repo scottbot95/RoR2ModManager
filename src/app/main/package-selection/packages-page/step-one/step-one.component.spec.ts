@@ -5,7 +5,10 @@ import { MaterialModule } from '../../../../shared/material.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Component, Input } from '@angular/core';
 import { PackageService } from '../../../services/package.service';
-import { MockPackageService } from '../../../../core/services/mocks.spec';
+import {
+  MockPackageService,
+  MockTranslatePipe
+} from '../../../../core/services/mocks.spec';
 
 @Component({
   selector: 'app-package-table',
@@ -32,7 +35,8 @@ describe('StepOneComponent', () => {
       declarations: [
         StepOneComponent,
         MockPackageTableComponent,
-        MockPackageDetailsComponent
+        MockPackageDetailsComponent,
+        MockTranslatePipe
       ],
       imports: [MaterialModule, ReactiveFormsModule],
       providers: [{ provide: PackageService, useClass: MockPackageService }]

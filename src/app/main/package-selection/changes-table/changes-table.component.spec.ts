@@ -4,7 +4,10 @@ import { ChangesTableComponent } from './changes-table.component';
 import { MaterialModule } from '../../../shared/material.module';
 import { HumanizePipe } from '../../../shared/humanize.pipe';
 import { PackageService } from '../../services/package.service';
-import { MockPackageService } from '../../../core/services/mocks.spec';
+import {
+  MockPackageService,
+  MockTranslatePipe
+} from '../../../core/services/mocks.spec';
 import { PreferencesService } from '../../../core/services/preferences.service';
 
 describe('ChangesTableComponent', () => {
@@ -13,7 +16,7 @@ describe('ChangesTableComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ChangesTableComponent, HumanizePipe],
+      declarations: [ChangesTableComponent, HumanizePipe, MockTranslatePipe],
       imports: [MaterialModule],
       providers: [
         { provide: PackageService, useClass: MockPackageService },
