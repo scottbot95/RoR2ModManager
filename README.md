@@ -37,6 +37,20 @@ From there, simply select which mods you would like to install (dependencies wil
 It won't seem like it's doing anything, but don't worry, it will begin downloading and
 installing your selected mods shortly. (I'm working on a progress screen)
 
+## Screenshots
+
+### Package Installation
+
+**Step 1**
+![Step 1](https://i.imgur.com/SUCyXsI.png)
+**Step 2**
+![Step 2](https://i.imgur.com/DFzxY3p.png)
+**Step 3**
+![Step 3](https://i.imgur.com/GfiqzMe.png)
+
+### Config Editor
+![Config Editor](https://i.imgur.com/ZIoQpAj.png)
+
 ![screenshot](https://i.imgur.com/CLMXyly.png)
 
 [build-badge]: https://travis-ci.org/scottbot95/RoR2ModManager.svg?branch=master
