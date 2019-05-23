@@ -15,7 +15,9 @@ import { DatabaseService } from '../../core/services/database.service';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Selectable } from '../../core/models/selectable.model';
 
-export interface SelectablePackge extends Selectable, Package {}
+export interface SelectablePackage extends Selectable, Package {
+  selectedVersion?: PackageVersion;
+}
 
 import { protocols } from '../../../../package.json';
 
@@ -29,18 +31,20 @@ export class PackageChangeset {
   removed = new Set<Package>();
 }
 
-export const BEPIN_UUID4 = '4c253b36-fd0b-4e6d-b4d8-b227972af4da';
+export const BEPINEX_UUID4 = '4c253b36-fd0b-4e6d-b4d8-b227972af4da';
 
 @Injectable()
 export class PackageService {
-  private installedPackagesSource = new BehaviorSubject<SelectablePackge[]>([]);
+  private installedPackagesSource = new BehaviorSubject<SelectablePackage[]>(
+    []
+  );
   public installedPackages$ = this.installedPackagesSource.asObservable();
 
-  private allPackagesSource = new BehaviorSubject<SelectablePackge[]>([]);
+  private allPackagesSource = new BehaviorSubject<SelectablePackage[]>([]);
   public allPackages$ = this.allPackagesSource.asObservable();
 
-  public selectedPackage = new BehaviorSubject<Package>(undefined);
-  public selection = new SelectionModel<SelectablePackge>(true, []);
+  public selectedPackage = new BehaviorSubject<SelectablePackage>(undefined);
+  public selection = new SelectionModel<SelectablePackage>(true, []);
 
   public pendingChanges = new BehaviorSubject<PackageChangeset>(
     new PackageChangeset()
@@ -93,7 +97,7 @@ export class PackageService {
     this.log$.next(new ReplaySubject<string>());
   }
 
-  public async loadPackagesFromCache(): Promise<SelectablePackge[]> {
+  public async loadPackagesFromCache(): Promise<SelectablePackage[]> {
     const serializedPackages = await this.db.packageTable.toArray();
 
     const packages = deserializablePackageList(serializedPackages);
@@ -107,7 +111,7 @@ export class PackageService {
     return packages;
   }
 
-  public downloadPackageList(): Observable<SelectablePackge[]> {
+  public downloadPackageList(): Observable<SelectablePackage[]> {
     const oldPackages = this.allPackagesSource.value;
     this.allPackagesSource.next(null);
 
@@ -131,25 +135,14 @@ export class PackageService {
 
   public async installPackage(pkg: PackageVersion) {
     if (
-      pkg.pkg.uuid4 !== BEPIN_UUID4 &&
-      !pkg.dependencies.some(dep => dep.pkg.uuid4 === BEPIN_UUID4)
+      pkg.pkg.uuid4 !== BEPINEX_UUID4 &&
+      !pkg.dependencies.some(dep => dep.pkg.uuid4 === BEPINEX_UUID4)
     ) {
       const message = `Skipping package ${
         pkg.fullName
       } as it's not a Bepis package`;
       console.warn(message);
       this.log.next(message);
-      // this.electron.remote.dialog.showMessageBox(
-      //   this.electron.remote.getCurrentWindow(),
-      //   {
-      //     type: 'warning',
-      //     title: 'Skipping package',
-      //     message: `${
-      //       pkg.fullName
-      //     } is not a Bepis package. This is currently unsupported, as such it will be skipped`,
-      //     buttons: ['Ok']
-      //   }
-      // );
       return;
     }
     this.log.next(`Downloading ${pkg.name}...`);
@@ -159,7 +152,7 @@ export class PackageService {
     if (this.electron.isElectron()) {
       const fileStream = this.electron.fs.createReadStream(zipPath);
 
-      if (pkg.pkg.uuid4 === BEPIN_UUID4) await this.installBepin(fileStream);
+      if (pkg.pkg.uuid4 === BEPINEX_UUID4) await this.installBepin(fileStream);
       else await this.installBepInPlugin(fileStream, pkg.pkg.fullName);
     }
 
@@ -181,26 +174,24 @@ export class PackageService {
   // TODO use InstalledPackage here and add installedPath to InstalledPackage
   public async uninstallPackage(pkg: Package) {
     this.log.next(`Removing ${pkg.name}...`);
-    if (pkg.uuid4 === BEPIN_UUID4) {
+    const join = this.electron.path.join;
+    if (pkg.uuid4 === BEPINEX_UUID4) {
+      const bepInExPath = this.electron.path.dirname(
+        this.getBepInExPluginPath()
+      );
       await Promise.all([
+        this.electron.fs.remove(join(bepInExPath, 'core')),
+        this.electron.fs.remove(join(bepInExPath, 'patchers')),
+        this.electron.fs.remove(join(bepInExPath, 'plugins')),
         this.electron.fs.remove(
-          this.electron.path.dirname(this.getBepInExPluginPath())
+          join(this.prefs.get('ror2_path'), 'winhttp.dll')
         ),
         this.electron.fs.remove(
-          this.electron.path.join(this.prefs.get('ror2_path'), 'winhttp.dll')
-        ),
-        this.electron.fs.remove(
-          this.electron.path.join(
-            this.prefs.get('ror2_path'),
-            'doorstop_config.ini'
-          )
+          join(this.prefs.get('ror2_path'), 'doorstop_config.ini')
         )
       ]);
     } else {
-      const installedPath = this.electron.path.join(
-        this.getBepInExPluginPath(),
-        pkg.fullName
-      );
+      const installedPath = join(this.getBepInExPluginPath(), pkg.fullName);
 
       await this.electron.fs.remove(installedPath);
     }
@@ -343,20 +334,25 @@ export class PackageService {
           nodir: true,
           cwd: tmp_path
         },
-        (err, files) => {
+        async (err, files) => {
           if (err) return reject(err);
-          Promise.all(
-            files.map(async file => {
-              const relativePath = file.slice(
-                (tmp_path + '/BepInExPack/').length
-              );
-              return fs.move(file, path.join(install_dir, relativePath));
-            })
-          )
-            .then(() => {
-              resolve();
-            })
-            .catch(reject);
+          try {
+            await Promise.all(
+              files.map(async file => {
+                const relativePath = file.slice(
+                  (tmp_path + '/BepInExPack/').length
+                );
+                return fs.move(file, path.join(install_dir, relativePath), {
+                  overwrite: true
+                });
+              })
+            );
+            resolve();
+          } catch (err) {
+            reject(
+              new Error(`Failed to install BepInExPack ${err.message || err}`)
+            );
+          }
         }
       );
     });

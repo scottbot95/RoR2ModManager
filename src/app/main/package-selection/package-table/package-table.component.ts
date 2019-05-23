@@ -25,7 +25,7 @@ import {
 import {
   PackageChangeset,
   PackageService,
-  SelectablePackge
+  SelectablePackage
 } from '../../services/package.service';
 import { PreferencesService } from '../../../core/services/preferences.service';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -33,6 +33,7 @@ import { ElectronService } from '../../../core/services/electron.service';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Router } from '@angular/router';
 import { getPossibleConfigFilenames } from '../../config-editor/services/config-parser.service';
+import { TranslateService } from '@ngx-translate/core';
 
 interface ColumnInfo {
   name: string;
@@ -55,30 +56,34 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   installedPackages: Observable<PackageList>;
 
-  private availableColumns: ColumnInfo[] = [
-    { name: 'select', required: true },
-    { name: 'installed', required: true },
-    { name: 'icon' },
-    { name: 'id' },
-    { name: 'name', required: true },
-    { name: 'author' },
-    { name: 'updated' },
-    { name: 'latest' },
-    { name: 'downloads' }
-  ];
+  private availableColumns: { [key: string]: ColumnInfo } = {
+    select: { name: 'Select', required: true },
+    versionToInstall: { name: 'Version To Install', required: true },
+    installed: { name: 'Installed' },
+    icon: { name: 'Icon' },
+    id: { name: 'Id' },
+    name: { name: 'Name', required: true },
+    author: { name: 'Author' },
+    updated: { name: 'Updated' },
+    latest: { name: 'Latest Version' },
+    downloads: { name: 'Total Downloads' },
+    flags: { name: 'Flags' }
+  };
 
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
-  displayedColumns = [
+  displayedColumns: string[] = [
     'select',
+    'versionToInstall',
     'installed',
     'icon',
     'name',
     'author',
     'updated',
     'latest',
-    'downloads'
+    'downloads',
+    'flags'
   ];
-  selection: SelectionModel<SelectablePackge>;
+  selection: SelectionModel<SelectablePackage>;
 
   filter = new FormControl('');
 
@@ -88,18 +93,23 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private changes = new PackageChangeset();
 
+  private flagDetails: { [flag: string]: string };
+
   constructor(
     public packages: PackageService,
     private prefs: PreferencesService,
     private electron: ElectronService,
     private changeDetector: ChangeDetectorRef,
     private router: Router,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    private translate: TranslateService
   ) {}
 
   ngOnInit() {
     this.selection = this.packages.selection;
     this.installedPackages = this.packages.installedPackages$;
+
+    this.loadColumnsFromPrefs();
 
     // this.subscription.add(1)
     this.refreshPackages = this.refreshPackages.bind(this);
@@ -113,7 +123,6 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.subscription.add(
       this.prefs.onChange('humanizePackageNames').subscribe(shouldHumanize => {
-        console.log('New humanize', shouldHumanize.newValue);
         this.shouldHumanize = shouldHumanize.newValue;
       })
     );
@@ -123,30 +132,32 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.selection.changed.pipe(delay(0)).subscribe(changed => {
         changed.added.forEach(pkg => {
           pkg.selected = true;
-          pkg.dirty = calcPackageDirty(pkg);
-          this.selectAllDependencies(pkg.latestVersion);
+          pkg.selectedVersion = pkg.selectedVersion || pkg.latestVersion;
+          calcPackageDirty(pkg, true);
+          this.selectAllDependencies(pkg.selectedVersion);
           if (this.changes.removed.has(pkg)) {
             this.changes.removed.delete(pkg);
           } else if (pkg.dirty) {
-            this.changes.updated.add(pkg.latestVersion);
+            this.changes.updated.add(pkg.selectedVersion);
           }
         });
         changed.removed.forEach(pkg => {
+          const { selectedVersion } = pkg;
           pkg.selected = false;
-          pkg.dirty = calcPackageDirty(pkg);
-          this.deselectAvailDependencies(pkg.latestVersion);
-          if (this.changes.updated.has(pkg.latestVersion)) {
-            this.changes.updated.delete(pkg.latestVersion);
-          } else if (pkg.dirty) {
+          pkg.selectedVersion = null;
+          calcPackageDirty(pkg, true);
+          this.deselectAvailDependencies(selectedVersion);
+          for (const ver of Array.from(this.changes.updated)) {
+            if (ver.pkg.uuid4 === pkg.uuid4) {
+              this.changes.updated.delete(ver);
+            }
+          }
+          if (pkg.dirty) {
             this.changes.removed.add(pkg);
           }
         });
 
-        this.packages.pendingChanges.next(this.changes);
-        this.formGroup.patchValue(this.changes);
-        if (this.changes.updated.size > 0 || this.changes.removed.size > 0) {
-          this.formGroup.markAsDirty();
-        }
+        this.updatePendingChanges();
       })
     );
 
@@ -157,10 +168,14 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
         this.selection.select(...pkgs);
         if (this.dataSource && this.dataSource.hasData())
           this.dataSource.data.forEach(pkg => {
-            pkg.dirty = calcPackageDirty(pkg);
+            calcPackageDirty(pkg, true);
           });
       })
     );
+
+    this.translate.get('FLAGS.DETAILS').subscribe(translated => {
+      this.flagDetails = translated;
+    });
   }
 
   ngAfterViewInit() {
@@ -192,10 +207,9 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }`;
   }
 
-  showDetails(pkg: Package) {
+  showDetails = (pkg: SelectablePackage) => {
     this.packages.selectedPackage.next(pkg);
-    // this.showPackageDetails.emit(pkg);
-  }
+  };
 
   showContextMenu(pkg: Package) {
     if (pkg.installedVersion) {
@@ -278,26 +292,41 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
   showColumnSelectMenu = () => {
     const activeColumns = new Set(this.displayedColumns);
     this.electron.remote.Menu.buildFromTemplate(
-      this.availableColumns.map<Electron.MenuItemConstructorOptions>(
-        colInfo => {
-          const { name } = colInfo;
-          return {
-            label: name[0].toUpperCase() + name.slice(1),
-            type: 'checkbox',
-            checked: activeColumns.has(name),
-            enabled: !colInfo.required,
-            click: () => {
-              if (activeColumns.has(name)) activeColumns.delete(name);
-              else activeColumns.add(name);
-              this.displayedColumns = this.availableColumns
-                .filter(c => activeColumns.has(c.name))
-                .map(info => info.name);
-              this.changeDetector.detectChanges();
-            }
-          };
-        }
-      )
+      Object.keys(this.availableColumns).map<
+        Electron.MenuItemConstructorOptions
+      >(colName => {
+        const colInfo = this.availableColumns[colName];
+        const { name } = colInfo;
+        return {
+          label: name,
+          type: 'checkbox',
+          checked: activeColumns.has(colName),
+          enabled: !colInfo.required,
+          click: () => {
+            if (activeColumns.has(colName)) activeColumns.delete(colName);
+            else activeColumns.add(colName);
+            this.displayedColumns = Object.keys(this.availableColumns).filter(
+              c => activeColumns.has(c)
+            );
+            this.prefs.set('displayedColumns', this.displayedColumns);
+            this.changeDetector.detectChanges();
+          }
+        };
+      })
     ).popup();
+  };
+
+  getFlagTooltip = (flags: string) => {
+    if (!flags) return '';
+    if (!this.flagDetails) return 'Loading';
+    let tooltip = 'Explanation of flags:\n';
+    const flagsArr = Array.from(flags);
+    for (let i = 0; i < flagsArr.length; i++) {
+      const flag = flagsArr[i];
+      tooltip += `${flag} - ${this.flagDetails[flag]}\n`;
+    }
+
+    return tooltip;
   };
 
   columnDrop(event: CdkDragDrop<string[]>) {
@@ -306,6 +335,22 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
       event.previousIndex,
       event.currentIndex
     );
+  }
+
+  onSelectedVersionChange(pkg: SelectablePackage) {
+    this.changes.updated.forEach(ver => {
+      if (ver.pkg.uuid4 === pkg.uuid4) {
+        this.changes.updated.delete(ver);
+      }
+    });
+
+    this.changes.updated.add(pkg.selectedVersion);
+    if (!this.packages.selection.isSelected(pkg)) {
+      this.packages.selection.select(pkg);
+    }
+
+    calcPackageDirty(pkg);
+    this.updatePendingChanges();
   }
 
   private selectAllDependencies(pkg: PackageVersion) {
@@ -333,4 +378,23 @@ export class PackageTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (toDeselct.length) this.selection.deselect(...toDeselct.map(p => p.pkg));
   }
+
+  private loadColumnsFromPrefs = () => {
+    const prefColumns = new Set(this.prefs.get('displayedColumns'));
+    if (prefColumns.size) {
+      this.displayedColumns = Object.keys(this.availableColumns).filter(
+        colName =>
+          this.availableColumns[colName].required || prefColumns.has(colName)
+      );
+    }
+  };
+
+  private updatePendingChanges = () => {
+    console.log(this.changes);
+    this.packages.pendingChanges.next(this.changes);
+    this.formGroup.patchValue(this.changes);
+    if (this.changes.updated.size > 0 || this.changes.removed.size > 0) {
+      this.formGroup.markAsDirty();
+    }
+  };
 }

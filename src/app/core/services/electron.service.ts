@@ -9,6 +9,14 @@ import * as path from 'path';
 import * as unzipper from 'unzipper';
 import * as glob from 'glob';
 
+export interface ConfirmBoxOptions {
+  message: string;
+  title?: string;
+  confirm?: string;
+  cancel?: string;
+  type?: 'none' | 'info' | 'question' | 'warning' | 'error';
+}
+
 @Injectable()
 export class ElectronService {
   ipcRenderer: typeof ipcRenderer;
@@ -56,6 +64,32 @@ export class ElectronService {
       return this.remote.dialog.showMessageBox(win, opts, callback);
     } else {
       return this.remote.dialog.showMessageBox(win, opts);
+    }
+  }
+
+  showConfirmBox(
+    opts: ConfirmBoxOptions,
+    callback?: (confirmed: boolean) => void
+  ) {
+    const defaultOpts: ConfirmBoxOptions = {
+      message: '',
+      title: 'Are you sure?',
+      confirm: 'Yes',
+      cancel: 'No',
+      type: 'question'
+    };
+    const options = { ...defaultOpts, ...opts };
+    const messageBoxOpts: Electron.MessageBoxOptions = {
+      title: options.title,
+      message: options.message,
+      buttons: [options.confirm, options.cancel],
+      type: options.type
+    };
+    if (callback) {
+      this.showMessageBox(messageBoxOpts, clicked => callback(clicked === 0));
+    } else {
+      const clicked = this.showMessageBox(messageBoxOpts);
+      return clicked === 0;
     }
   }
 

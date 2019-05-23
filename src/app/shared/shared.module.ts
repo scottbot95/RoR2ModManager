@@ -5,6 +5,7 @@ import { MaterialModule } from './material.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FocusOnKeysDirective } from './focus-on-keys.directive';
 import { HumanizePipe } from './humanize.pipe';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
   declarations: [FocusOnKeysDirective, HumanizePipe],
@@ -14,7 +15,8 @@ import { HumanizePipe } from './humanize.pipe';
     FlexLayoutModule,
     ReactiveFormsModule,
     FocusOnKeysDirective,
-    HumanizePipe
+    HumanizePipe,
+    TranslateModule
   ]
 })
 export class SharedModule {}

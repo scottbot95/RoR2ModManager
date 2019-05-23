@@ -20,6 +20,7 @@ class MockNavMenuComponent {}
 
 class TranslateServiceStub {
   setDefaultLang(lang: string): void {}
+  use(lang: string): void {}
 }
 
 describe('AppComponent', () => {

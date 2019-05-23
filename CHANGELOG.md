@@ -9,7 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Ability to select which version of a package you wish to install
 - Fancy new changes progress log
+- Close button to Package Details pane
 - Serveral improvements to profile system
     - **Now supports multiple named profiles and easy switch between them**
     - Renaming profiles
@@ -19,6 +21,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Complete rework of dialog system (Most noticably this will increase load time of dialogs)
+- Uninstalling BepInExPack will no longer remove your config files
+
+### Fixed
+
+- Bug preventing mod manager from updating BepInExPack
 
 ## [0.7.0] 2019-05-14
 

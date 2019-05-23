@@ -1,7 +1,12 @@
 {
   "PAGES": {
-      "HOME": {
-          "TITLE": "App works !"
-      }
+    "HOME": {
+      "TITLE": "App works !"
+    }
+  },
+  "FLAGS": {
+    "DETAILS": {
+      "P": "This package is pinned"
+    }
   }
 }

@@ -45,7 +45,8 @@ export const testBepInExPackPackage: Package = {
   packageUrl: 'https://thunderstore.io/package/bbepis/BepInExPack/',
   totalDownloads: 0,
   requiredBy: new Set(),
-  installedVersion: testBepInExPackPackageVersion
+  installedVersion: testBepInExPackPackageVersion,
+  flagsString: ''
 };
 
 testBepInExPackPackageVersion.pkg = testBepInExPackPackage;
@@ -110,7 +111,8 @@ export const testPackage: Package = {
   versions: [testPackageVersion],
   packageUrl: 'https://thunderstore.io/package/author/TestPackage/',
   totalDownloads: 0,
-  requiredBy: new Set()
+  requiredBy: new Set(),
+  flagsString: ''
 };
 
 testPackageVersion.pkg = testPackage;

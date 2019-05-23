@@ -12,18 +12,22 @@ import { FormControl } from '@angular/forms';
 import { PreferencesService } from '../../../core/services/preferences.service';
 import {
   PackageService,
-  SelectablePackge
+  SelectablePackage
 } from '../../services/package.service';
 
-export const calcPackageDirty = (pkg: SelectablePackge) => {
-  if (pkg.selected) {
-    return (
+export const calcPackageDirty = (pkg: SelectablePackage, mutate = true) => {
+  let dirty: boolean;
+  if (pkg.selected && pkg.selectedVersion) {
+    dirty =
       !pkg.installedVersion ||
-      pkg.latestVersion.version.compare(pkg.installedVersion.version) > 0
-    );
+      pkg.selectedVersion.version.compare(pkg.installedVersion.version) !== 0;
   } else {
-    return !!pkg.installedVersion;
+    dirty = !!pkg.installedVersion;
   }
+
+  if (mutate) pkg.dirty = dirty;
+
+  return dirty;
 };
 
 /**
@@ -31,17 +35,17 @@ export const calcPackageDirty = (pkg: SelectablePackge) => {
  * encapsulate all logic for fetching and manipulating the displayed data
  * (including sorting, pagination, and filtering).
  */
-export class PackageTableDataSource extends DataSource<SelectablePackge> {
-  private dataSource = new BehaviorSubject<SelectablePackge[]>([]);
-  data: SelectablePackge[];
-  filteredData: SelectablePackge[];
+export class PackageTableDataSource extends DataSource<SelectablePackage> {
+  private dataSource = new BehaviorSubject<SelectablePackage[]>([]);
+  data: SelectablePackage[];
+  filteredData: SelectablePackage[];
 
   private loadingSource = new BehaviorSubject<boolean>(false);
   public loading$ = this.loadingSource
     .asObservable()
     .pipe(distinctUntilChanged());
 
-  private changedSource = new Subject<SelectablePackge[]>();
+  private changedSource = new Subject<SelectablePackage[]>();
   /** An event triggered when dataset changes */
   public changed = this.changedSource.asObservable();
 
@@ -72,7 +76,7 @@ export class PackageTableDataSource extends DataSource<SelectablePackge> {
    * the returned stream emits new items.
    * @returns A stream of the items to be rendered.
    */
-  connect(): Observable<SelectablePackge[]> {
+  connect(): Observable<SelectablePackage[]> {
     // Combine everything that affects the rendered data into one update
     // stream for the data-table to consume.
     const dataMutations = [
@@ -134,7 +138,7 @@ export class PackageTableDataSource extends DataSource<SelectablePackge> {
    * Paginate the data (client-side). If you're using server-side pagination,
    * this would be replaced by requesting the appropriate data from the server.
    */
-  private getPagedData(data: SelectablePackge[]): SelectablePackge[] {
+  private getPagedData(data: SelectablePackage[]): SelectablePackage[] {
     const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
     return data.splice(startIndex, this.paginator.pageSize);
   }
@@ -143,7 +147,7 @@ export class PackageTableDataSource extends DataSource<SelectablePackge> {
    * Sort the data (client-side). If you're using server-side sorting,
    * this would be replaced by requesting the appropriate data from the server.
    */
-  private getSortedData(data: SelectablePackge[]): SelectablePackge[] {
+  private getSortedData(data: SelectablePackage[]): SelectablePackage[] {
     if (!this.sort.active || this.sort.direction === '') {
       return data;
     }
@@ -157,7 +161,7 @@ export class PackageTableDataSource extends DataSource<SelectablePackge> {
     );
   }
 
-  private getFilteredData(data: SelectablePackge[]): SelectablePackge[] {
+  private getFilteredData(data: SelectablePackage[]): SelectablePackage[] {
     const filterText = (this.filter.value as string).toLowerCase();
     if (filterText && filterText.length > 0) {
       return data.filter(
@@ -173,11 +177,11 @@ export class PackageTableDataSource extends DataSource<SelectablePackge> {
 }
 
 function sortPackages(
-  data: SelectablePackge[],
+  data: SelectablePackage[],
   by: string,
   isAsc: boolean,
   respectPinned: boolean
-): SelectablePackge[] {
+): SelectablePackage[] {
   return data.sort((a, b) => {
     // todo put preference check here
     if (respectPinned) {

@@ -247,11 +247,14 @@ export class ProfileService {
   }
 
   private async newProfile(event: Electron.Event) {
-    const createOpts = await this.dialog.openDialog({
-      slug: 'new-profile',
-      width: 300,
-      height: 300
-    });
+    const createOpts = await this.dialog.openDialog(
+      {
+        slug: 'new-profile',
+        width: 300,
+        height: 300
+      },
+      this.profileNamesSource.value
+    );
     if (createOpts) this.createProfile(createOpts);
   }
 

@@ -16,6 +16,7 @@
     fxFlex="1 0 0%"
     [formGroup]="formStep1"
     [applyChanges]="nextPage"
+    #table
   >
   </app-package-table>
 
@@ -24,5 +25,6 @@
   <app-package-details
     *ngIf="selectedPackage | async"
     fxFlex="1 0 0%"
+    [table]="table"
   ></app-package-details>
 </form>

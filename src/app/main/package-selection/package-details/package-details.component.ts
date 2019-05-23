@@ -1,9 +1,13 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { Package, PackageVersion } from '../../../core/models/package.model';
 import { PreferencesService } from '../../../core/services/preferences.service';
 import { Subscription } from 'rxjs';
-import { PackageService } from '../../services/package.service';
+import {
+  PackageService,
+  SelectablePackage
+} from '../../services/package.service';
 import { ElectronService } from '../../../core/services/electron.service';
+import { PackageTableComponent } from '../package-table/package-table.component';
 
 @Component({
   selector: 'app-package-details',
@@ -11,7 +15,9 @@ import { ElectronService } from '../../../core/services/electron.service';
   styleUrls: ['./package-details.component.scss']
 })
 export class PackageDetailsComponent implements OnInit, OnDestroy {
-  package: Package;
+  @Input() table: PackageTableComponent;
+
+  package: SelectablePackage;
   packageVersion: PackageVersion;
 
   shouldHumanize = this.prefs.get('humanizePackageNames');
@@ -49,5 +55,14 @@ export class PackageDetailsComponent implements OnInit, OnDestroy {
 
   openPackage() {
     this.electron.remote.shell.openExternal(this.package.packageUrl);
+  }
+
+  close() {
+    this.packages.selectedPackage.next(null);
+  }
+
+  selectVersion(ver: PackageVersion) {
+    this.package.selectedVersion = ver;
+    this.table.onSelectedVersionChange(this.package);
   }
 }

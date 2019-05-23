@@ -18,6 +18,9 @@
       >
         Thunderstore
       </button>
+      <button mat-icon-button matTooltip="Close Details" (click)="close()">
+        <mat-icon>clear</mat-icon>
+      </button>
     </mat-card-title>
     <mat-card-subtitle>
       {{ packageVersion.description }}
@@ -75,7 +78,13 @@
     <strong>Versions:</strong>
     <mat-list dense>
       <ng-container *ngFor="let version of package.versions; last as isLast">
-        <mat-list-item>{{ version.version.version }}</mat-list-item>
+        <mat-list-item
+          (click)="selectVersion(version)"
+          class="clickable"
+          [matTooltip]="'Install version ' + version.version.version"
+        >
+          {{ version.version.version }}
+        </mat-list-item>
         <mat-divider *ngIf="!isLast"></mat-divider>
       </ng-container>
     </mat-list>

@@ -46,7 +46,11 @@ export class PackagesPageComponent implements OnInit, OnDestroy {
       this.stepper.selectionChange.subscribe((event: StepperSelectionEvent) => {
         this.animating = true;
         this.currentStep = event.selectedIndex;
-        if (event.selectedIndex === 0 && event.previouslySelectedIndex === 1) {
+        if (
+          event.selectedIndex === 0 &&
+          event.previouslySelectedIndex === 1 &&
+          this.profile.pendingProfileName
+        ) {
           this.electron.showMessageBox(
             {
               title: 'Cancel Pending Switch?',
