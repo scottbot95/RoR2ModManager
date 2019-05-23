@@ -302,11 +302,58 @@ export class PackageService {
   }
 
   private async installBepInPackage(fileStream: ReadStream, pkgName: string) {
+    const fs = this.electron.fs;
+    const glob = this.electron.glob;
+    const path = this.electron.path;
+
     const tmp_path = this.getTempPath(pkgName);
+    const bepInExPath = this.getBepInExPath();
     // extract zip
     this.log.next(`Extracting ${pkgName}...`);
+    await fs.remove(tmp_path);
     await this.extractZip(fileStream, tmp_path);
     this.log.next(`Installing ${pkgName}...`);
+    try {
+      const globOpts = { realpath: true, cwd: tmp_path, nodir: true };
+      const [plugins, monomod, patchers] = await Promise.all([
+        glob('**/plugins/**/*', globOpts),
+        glob('**/monomod/**/*', globOpts),
+        glob('**/patchers/**/*', globOpts)
+      ]);
+      if (
+        plugins.length === 0 &&
+        monomod.length === 0 &&
+        patchers.length === 0
+      ) {
+        await fs.move(tmp_path, path.join(bepInExPath, 'plugins', pkgName), {
+          overwrite: true
+        });
+      } else {
+        const moveFile = (destDir: string) => (file: string) => {
+          const index = file.lastIndexOf(destDir);
+          const relativePath = file.slice(index + destDir.length + 1);
+          console.log(file);
+          console.log(`Moving ${file} to BepInEx/${relativePath}`);
+          return fs.move(
+            file,
+            path.join(bepInExPath, destDir, pkgName, relativePath),
+            {
+              overwrite: true
+            }
+          );
+        };
+
+        await Promise.all([
+          plugins.map(moveFile('plugins')),
+          monomod.map(moveFile('monomod')),
+          patchers.map(moveFile('patchers'))
+        ]);
+
+        await fs.remove(tmp_path);
+      }
+    } catch (err) {
+      throw new Error(`Failed to install ${pkgName} ${err.message || err}`);
+    }
   }
 
   private async installBepin(fileStream: ReadStream): Promise<void> {
