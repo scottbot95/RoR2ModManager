@@ -12,6 +12,7 @@ import { createBrowserWindow } from './electron/windows';
 import { registerDownloadManager } from './electron/downloads';
 
 import './electron/autoUpdate';
+import { log } from 'electron-log';
 
 app.setAppUserModelId('com.electron.ror2modmanager');
 
@@ -122,9 +123,12 @@ try {
   } else {
     app.on('second-instance', (event, argv, workingDir) => {
       if (win) {
-        if (win.isMinimized) win.restore(); // restore seems to be broken
-        if (canHandleProtocol(argv[1])) {
-          win.webContents.loadURL(argv[1]);
+        const othersArgs = argv.slice(-1);
+        if (canHandleProtocol(othersArgs[0])) {
+          if (win.isMinimized()) win.restore(); // restore seems to be broken
+          win.focus();
+          log(`Loading url ${othersArgs[0]}`);
+          win.webContents.loadURL(othersArgs[0]);
         }
       }
     });

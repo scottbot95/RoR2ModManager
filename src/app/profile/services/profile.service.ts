@@ -77,7 +77,11 @@ export class ProfileService {
     this.activeProfileName = localStorage.getItem('activeProfile');
     if (!this.activeProfileName) {
       this.activeProfileName = 'default';
-      await this.db.saveProfile({ name: 'default', version: 1, packages: [] });
+      await this.saveAndAddProfile({
+        name: 'default',
+        version: 1,
+        packages: []
+      });
     }
     this.setActiveProfile();
   }
