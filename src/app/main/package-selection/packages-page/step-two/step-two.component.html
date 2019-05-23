@@ -1,17 +1,19 @@
 <form fxLayout="column" [formGroup]="formStep2">
   <app-changes-table></app-changes-table>
   <mat-checkbox formControlName="confirmed" class="padding2-top">
-    Apply these changes
+    {{ 'PAGES.PKG_SELECT.STEP_2.APPLY_CHANGES' | translate }}
   </mat-checkbox>
   <mat-error
     *ngIf="formStep2.invalid && (formStep2.dirty || formStep2.touched)"
   >
-    Please check to confirm changes
+    {{ 'PAGES.PKG_SELECT.STEP_2.CONFIRM_CHANGES' | translate }}
   </mat-error>
   <span fxLayout>
     <button mat-button matStepperPrevious>
-      Back
+      {{ 'PAGES.PKG_SELECT.STEP_2.BACK_BUTTON' | translate }}
     </button>
-    <button mat-button matStepperNext>Next</button>
+    <button mat-button matStepperNext>
+      {{ 'PAGES.PKG_SELECT.STEP_2.NEXT_BUTTON' | translate }}
+    </button>
   </span>
 </form>

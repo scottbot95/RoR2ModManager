@@ -2,23 +2,23 @@
   <div fxLayout="column">
     <button
       mat-button
-      matTooltip="Return to list of known config files"
+      [matTooltip]="'PAGES.CONFIG_EDITOR.TOOLTIPS.BACK_BUTTON' | translate"
       (click)="goBack()"
     >
       <mat-icon>arrow_back</mat-icon>
-      Back to List
+      {{ 'PAGES.CONFIG_EDITOR.BACK_BUTTON' | translate }}
     </button>
   </div>
-  <h2>Editing: {{ filename }}</h2>
+  <h2>{{ 'PAGES.CONFIG_EDITOR.TITLE' | translate }}: {{ filename }}</h2>
   <span fxFlex></span>
   <div fxLayout="column" fxLayoutAlign="center">
     <button
       mat-raised-button
       [disabled]="!someSectionDirty()"
-      matTooltip="Undo all changes"
+      [matTooltip]="'PAGES.CONFIG_EDITOR.TOOLTIPS.RESET_BUTTON' | translate"
       (click)="reset()"
     >
-      Reset
+      {{ 'PAGES.CONFIG_EDITOR.RESET_BUTTON' | translate }}
     </button>
   </div>
   <span class="padding"></span>
@@ -26,7 +26,7 @@
     <button
       mat-raised-button
       [disabled]="!someSectionDirty()"
-      matTooltip="Save changes made to disk"
+      [matTooltip]="'PAGES.CONFIG_EDITOR.TOOLTIPS.BACK_BUTTON' | translate"
       (click)="saveChanges()"
     >
       Save

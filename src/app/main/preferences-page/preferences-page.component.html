@@ -1,6 +1,6 @@
 <div class="preferences">
   <section section="theming">
-    <h2>Theming</h2>
+    <h2>{{ 'PAGES.PREFS.SECTION.THEMING.TITLE' | translate }}</h2>
     <mat-card>
       <mat-list>
         <mat-list-item
@@ -8,36 +8,43 @@
             class="fullWidthToggle"
             labelPosition="before"
             [formControl]="darkMode"
-            >Dark Mode</mat-slide-toggle
           >
+            {{ 'PAGES.PREFS.SECTION.THEMING.DARK_MODE' | translate }}
+          </mat-slide-toggle>
         </mat-list-item>
       </mat-list>
     </mat-card>
   </section>
 
   <section section="ror2">
-    <h2>Risk Of Rain 2</h2>
+    <h2>{{ 'PAGES.PREFS.SECTION.ROR2.TITLE' | translate }}</h2>
     <mat-card>
       <mat-list>
         <mat-list-item>
           <label fxLayoutAlign="space-between" fxLayout="row" fxFlex
-            ><span><strong>RoR2 Install Path:</strong> {{ ror2Path }}</span>
+            ><span
+              ><strong
+                >{{ 'PAGES.PREFS.SECTION.ROR2.PATH' | translate }}:</strong
+              >
+              {{ ror2Path }}</span
+            >
 
             <button
               mat-raised-button
               type="button"
-              matTooltip="Choose RoR2 Install Path"
+              [matTooltip]="'PAGES.PREFS.TOOLTIPS.ROR2_PATH' | translate"
               (click)="selectRoR2Path()"
             >
-              Browse
+              {{ 'PAGES.PREFS.SECTION.ROR2.BROWSE_BUTTON' | translate }}
             </button>
           </label>
         </mat-list-item>
       </mat-list>
     </mat-card>
   </section>
+
   <section section="packageList">
-    <h2>Package List</h2>
+    <h2>{{ 'PAGES.PREFS.SECTION.PKG_LIST.TITLE' | translate }}</h2>
     <mat-card>
       <mat-list>
         <mat-list-item>
@@ -45,9 +52,9 @@
             class="fullWidthToggle"
             labelPosition="before"
             [formControl]="respectPinned"
-            matTooltip="Whether or not to respect the `is_pinned` flag from thunderstore.io"
+            [matTooltip]="'PAGES.PREFS.TOOLTIPS.RESPECT_PINNED' | translate"
           >
-            Respect Pinned Flag
+            {{ 'PAGES.PREFS.SECTION.PKG_LIST.PINNED' | translate }}
           </mat-slide-toggle>
         </mat-list-item>
         <mat-list-item>
@@ -55,9 +62,9 @@
             class="fullWidthToggle"
             labelPosition="before"
             [formControl]="humanizePackageNames"
-            matTooltip="Convert names like 'ReallyCoolMod' to 'Really Cool Mod'"
+            [matTooltip]="'PAGES.PREFS.TOOLTIPS.HUMANIZE' | translate"
           >
-            Humanize Package Names
+            {{ 'PAGES.PREFS.SECTION.PKG_LIST.HUMANIZE' | translate }}
           </mat-slide-toggle>
         </mat-list-item>
         <mat-list-item>
@@ -65,21 +72,22 @@
             class="fullWidthToggle"
             labelPosition="before"
             [formControl]="checkForPackageUpdates"
-            matTooltip="Check for updates on start?"
+            [matTooltip]="'PAGES.PREFS.TOOLTIPS.CHECK_FOR_UPDATE' | translate"
           >
-            Check for updates on start
+            {{ 'PAGES.PREFS.SECTION.PKG_LIST.CHECK_FOR_UPDATE' | translate }}
           </mat-slide-toggle>
         </mat-list-item>
       </mat-list>
     </mat-card>
   </section>
+
   <section section="appUpdates">
-    <h2>App Updates</h2>
+    <h2>{{ 'PAGES.PREFS.SECTION.UPDATES.TITLE' | translate }}</h2>
     <mat-card>
       <mat-list>
         <mat-list-item>
           <label>
-            Check for Updates Interval
+            {{ 'PAGES.PREFS.SECTION.UPDATES.UPDATE_INTERVAL' | translate }}
           </label>
           <span fxFlex></span>
           <mat-form-field>
@@ -89,7 +97,7 @@
               [formControl]="appUpdateCheckInterval"
             />
             <span matSuffix>
-              seconds
+              {{ 'PAGES.PREFS.SECTION.UPDATES.SECONDS' | translate }}
             </span>
           </mat-form-field>
         </mat-list-item>

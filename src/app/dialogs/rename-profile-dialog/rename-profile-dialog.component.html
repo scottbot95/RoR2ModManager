@@ -4,10 +4,10 @@
   style="height: 100%"
 >
   <h2 mat-dialog-title>
-    Rename Profile
+    {{ 'PAGES.RENAME_PROFILE.TITLE' | translate }}
   </h2>
   <mat-dialog-content>
-    <p>Old Name: {{ oldName }}</p>
+    <p>{{ 'PAGES.RENAME_PROFILE.OLD_NAME' | translate }}: {{ oldName }}</p>
     <form
       [formGroup]="formGroup"
       (ngSubmit)="close()"
@@ -15,21 +15,21 @@
       #formRef="ngForm"
     >
       <mat-form-field appearance="standard">
-        <mat-label>New Name</mat-label>
+        <mat-label>{{ 'PAGES.RENAME_PROFILE.NEW_NAME' | translate }}</mat-label>
         <input matInput formControlName="newName" required />
         <mat-error *ngIf="newName.errors?.required">
-          This field is required
+          {{ 'PAGES.RENAME_PROFILE.ERRORS.REQUIRED' | translate }}
         </mat-error>
 
         <mat-error *ngIf="newName.errors?.notEqual">
-          You must specify a different name
+          {{ 'PAGES.RENAME_PROFILE.ERRORS.NEW_NAME' | translate }}
         </mat-error>
       </mat-form-field>
     </form>
   </mat-dialog-content>
   <mat-dialog-actions>
     <button mat-raised-button (click)="formRef.onSubmit()">
-      Close
+      {{ 'PAGES.RENAME_PROFILE.SUBMIT_BUTTON' | translate }}
     </button>
   </mat-dialog-actions>
 </div>

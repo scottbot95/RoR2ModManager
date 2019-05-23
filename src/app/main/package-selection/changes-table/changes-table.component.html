@@ -7,7 +7,9 @@
 >
   <!-- Name Column -->
   <ng-container matColumnDef="name">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+      {{ 'PAGES.PKG_SELECT.CONFIRM_TABLE.COLUMNS.NAME' | translate }}
+    </th>
     <td mat-cell *matCellDef="let pkg">
       {{ pkg.name | humanize: shouldHumanize }}
     </td>
@@ -15,7 +17,9 @@
 
   <!-- Author Column -->
   <ng-container matColumnDef="author">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Author</th>
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+      {{ 'PAGES.PKG_SELECT.CONFIRM_TABLE.COLUMNS.AUTHOR' | translate }}
+    </th>
     <td mat-cell *matCellDef="let pkg">
       {{ pkg.author | humanize: shouldHumanize }}
     </td>
@@ -23,19 +27,25 @@
 
   <!-- Action Column -->
   <ng-container matColumnDef="action">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Action</th>
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+      {{ 'PAGES.PKG_SELECT.CONFIRM_TABLE.COLUMNS.ACTION' | translate }}
+    </th>
     <td mat-cell *matCellDef="let pkg">{{ pkg.action | humanize }}</td>
   </ng-container>
 
   <!-- Installed Version Column -->
   <ng-container matColumnDef="installedVersion">
-    <th mat-header-cell *matHeaderCellDef>Installed Version</th>
+    <th mat-header-cell *matHeaderCellDef>
+      {{ 'PAGES.PKG_SELECT.CONFIRM_TABLE.COLUMNS.INSTALLED' | translate }}
+    </th>
     <td mat-cell *matCellDef="let pkg">{{ pkg.installedVersion || '-' }}</td>
   </ng-container>
 
   <!-- VersionToInstall Column -->
   <ng-container matColumnDef="versionToInstall">
-    <th mat-header-cell *matHeaderCellDef>Version To Install</th>
+    <th mat-header-cell *matHeaderCellDef>
+      {{ 'PAGES.PKG_SELECT.CONFIRM_TABLE.COLUMNS.TO_INSTALL' | translate }}
+    </th>
     <td mat-cell *matCellDef="let pkg">{{ pkg.versionToInstall || '-' }}</td>
   </ng-container>
 
