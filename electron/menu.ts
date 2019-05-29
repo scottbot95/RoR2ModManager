@@ -8,6 +8,7 @@ import {
   ipcMain,
   Event
 } from 'electron';
+import { format as formatURL } from 'url';
 import openAboutWindow from 'about-window';
 import * as path from 'path';
 import { prefs } from './prefs';
@@ -129,7 +130,23 @@ const generateTemplate = (): MenuItemConstructorOptions[] => [
       {
         label: 'Report a bug',
         click: () => {
-          shell.openExternal(bugs.url);
+          shell.openExternal(
+            formatURL({
+              pathname: bugs.url,
+              query: { template: 'bug_report.md', title: '[BUG]' }
+            })
+          );
+        }
+      },
+      {
+        label: 'Feature Request',
+        click: () => {
+          shell.openExternal(
+            formatURL({
+              pathname: bugs.url,
+              query: { template: 'feature_request.md', title: '[FEATURE]' }
+            })
+          );
         }
       },
       {
