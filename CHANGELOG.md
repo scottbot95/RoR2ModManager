@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Will now also install config files found in mod archive
+
 ## [1.0.0] 2019-05-22
 
 ### Added

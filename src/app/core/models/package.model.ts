@@ -159,6 +159,7 @@ export const deserializablePackageList = (
           ver.dependencies.push(depVer);
         }
       );
+      ver.dependencies = ver.dependencies.filter(d => !!d);
     });
   });
 

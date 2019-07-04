@@ -66,10 +66,10 @@
       >
         <mat-list-item>
           <span class="clickable" (click)="showDetails(dep.pkg)">
-            {{ dep.pkg.name | humanize: shouldHumanize }}
+            {{ dep?.pkg?.name | humanize: shouldHumanize }}
           </span>
           &#160;
-          <small>by {{ dep.pkg.owner }}</small>
+          <small>by {{ dep?.pkg?.owner }}</small>
         </mat-list-item>
         <mat-divider *ngIf="!isLast"></mat-divider>
       </ng-container>
