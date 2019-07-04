@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  EventEmitter,
-  ApplicationRef
-} from '@angular/core';
+import { Injectable, EventEmitter, ApplicationRef } from '@angular/core';
 import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
 import {
   PackageVersion,
@@ -139,17 +135,18 @@ export class PackageService {
   }
 
   public async installPackage(pkg: PackageVersion) {
-    if (
-      pkg.pkg.uuid4 !== BEPINEX_UUID4 &&
-      !pkg.dependencies.some(dep => dep.pkg.uuid4 === BEPINEX_UUID4)
-    ) {
-      const message = `Skipping package ${
-        pkg.fullName
-      } as it's not a Bepis package`;
-      console.warn(message);
-      this.log.next(message);
-      return;
-    }
+    // check to ensure package is a bepinex mod
+    // if (
+    //   pkg.pkg.uuid4 !== BEPINEX_UUID4 &&
+    //   !pkg.dependencies.some(dep => dep.pkg.uuid4 === BEPINEX_UUID4)
+    // ) {
+    //   const message = `Skipping package ${
+    //     pkg.fullName
+    //   } as it's not a Bepis package`;
+    //   console.warn(message);
+    //   this.log.next(message);
+    //   return;
+    // }
     this.log.next(`Downloading ${pkg.name}...`);
     const zipPath = await this.download.download(pkg);
     this.completeStep();
@@ -198,6 +195,7 @@ export class PackageService {
         join(bepInExPath, 'plugins', pkg.fullName),
         join(bepInExPath, 'monomod', pkg.fullName),
         join(bepInExPath, 'patchers', pkg.fullName)
+        // join(bepInExPath, 'config', pkg.fullName) // uncomment to clean up config on uninstall
       ];
 
       await Promise.all(
@@ -320,35 +318,44 @@ export class PackageService {
     this.log.next(`Installing ${pkgName}...`);
     try {
       const globOpts = { realpath: true, cwd: tmp_path, nodir: true };
-      const [plugins, monomod, patchers] = await Promise.all([
+      const [plugins, monomod, patchers, config] = await Promise.all([
         glob('**/plugins/**/*', globOpts),
         glob('**/monomod/**/*', globOpts),
-        glob('**/patchers/**/*', globOpts)
+        glob('**/patchers/**/*', globOpts),
+        glob('**/config/**/*', globOpts)
       ]);
       if (
         plugins.length === 0 &&
         monomod.length === 0 &&
-        patchers.length === 0
+        patchers.length === 0 &&
+        config.length === 0
       ) {
         await fs.move(tmp_path, path.join(bepInExPath, 'plugins', pkgName), {
           overwrite: true
         });
       } else {
-        const moveFile = (destDir: string) => (file: string) => {
+        const moveFile = (
+          destDir: string,
+          includePkg = true,
+          overwrite = true
+        ) => (file: string) => {
           const index = file.lastIndexOf(destDir);
           const relativePath = file.slice(index + destDir.length + 1);
-          return fs.move(
-            file,
-            path.join(bepInExPath, destDir, pkgName, relativePath),
-            {
-              overwrite: true
-            }
+          const destPath = path.join(
+            bepInExPath,
+            destDir,
+            includePkg ? pkgName : '',
+            relativePath
           );
+          return fs.move(file, destPath, {
+            overwrite
+          });
         };
         const promises = [
           plugins.map(moveFile('plugins')),
           monomod.map(moveFile('monomod')),
-          patchers.map(moveFile('patchers'))
+          patchers.map(moveFile('patchers')),
+          config.map(moveFile('config', false))
         ];
         console.log(promises);
         await Promise.all(promises);
