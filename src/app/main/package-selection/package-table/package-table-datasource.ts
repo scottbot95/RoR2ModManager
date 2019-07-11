@@ -14,6 +14,7 @@ import {
   PackageService,
   SelectablePackage
 } from '../../services/package.service';
+import { HumanizePipe } from '../../../shared/humanize.pipe';
 
 export const calcPackageDirty = (pkg: SelectablePackage, mutate = true) => {
   let dirty: boolean;
@@ -166,8 +167,14 @@ export class PackageTableDataSource extends DataSource<SelectablePackage> {
     if (filterText && filterText.length > 0) {
       return data.filter(
         pkg =>
-          pkg.name.toLowerCase().includes(filterText) ||
-          pkg.owner.toLowerCase().includes(filterText) ||
+          new HumanizePipe()
+            .transform(pkg.name, this.prefs.get('humanizePackageNames'))
+            .toLowerCase()
+            .includes(filterText) ||
+          new HumanizePipe()
+            .transform(pkg.owner, this.prefs.get('humanizePackageNames'))
+            .toLowerCase()
+            .includes(filterText) ||
           pkg.latestVersion.description.toLocaleLowerCase().includes(filterText)
       );
     } else {

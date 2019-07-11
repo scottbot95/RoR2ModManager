@@ -1,4 +1,4 @@
-import { Injectable, EventEmitter } from '@angular/core';
+import { Injectable, EventEmitter, NgZone } from '@angular/core';
 import { ElectronService } from '../../core/services/electron.service';
 import { PackageService } from '../../main/services/package.service';
 import { Package, PackageVersionList } from '../../core/models/package.model';
@@ -7,6 +7,7 @@ import { PackageProfile } from '../../core/models/profile.model';
 import { DatabaseService } from '../../core/services/database.service';
 import { BehaviorSubject } from 'rxjs';
 import { DialogService } from '../../dialogs/services/dialog.service';
+import { Router } from '@angular/router';
 
 export interface CreateProfileOptions {
   name: string;
@@ -31,7 +32,9 @@ export class ProfileService {
     private electron: ElectronService,
     private packages: PackageService,
     private db: DatabaseService,
-    private dialog: DialogService
+    private dialog: DialogService,
+    private router: Router,
+    private ngZone: NgZone
   ) {
     this.exportToFile = this.exportToFile.bind(this);
     this.importFromFile = this.importFromFile.bind(this);
@@ -202,7 +205,7 @@ export class ProfileService {
       await this.db.deleteProfile(name);
       if (this.activeProfileName === name) {
         const profile = this.profiles.get(this.profileNamesSource.value[0]);
-        this.switchProfile(profile);
+        await this.switchProfile(profile);
       }
     }
   }
@@ -262,9 +265,12 @@ export class ProfileService {
     if (createOpts) this.createProfile(createOpts);
   }
 
-  private switchProfile(profile: PackageProfile) {
+  private async switchProfile(profile: PackageProfile) {
     let errors = [];
     let packages: PackageVersionList;
+
+    await this.ngZone.run(() => this.router.navigate(['/packages']));
+
     try {
       packages = profile.packages
         .map(dep => {
@@ -334,7 +340,7 @@ export class ProfileService {
       }
       this.saveAndAddProfile(profile);
 
-      this.switchProfile(profile);
+      await this.switchProfile(profile);
     } catch (err) {
       let message: string;
       if (err.name === 'SyntaxError') {

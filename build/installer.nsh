@@ -12,7 +12,7 @@ Function RoR2InstallDirSelect
 
   ReadRegStr $DirText HKLM "Software\${PRODUCT_NAME}" "RoR2Dir"
   ${If} $DirText == ""
-    StrCpy $DirText "C:\Program Files(x86)\Steam\steamapps\common\Risk of Rain 2"
+    StrCpy $DirText "C:\Program Files (x86)\Steam\steamapps\common\Risk of Rain 2"
   ${EndIf}
 
 

@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Attempted to switch profiles will now drag you to the packages page from whatever page you were on
+- 'Dirty' package rows (rows needing (un)install) are now more distinctive
+
+### Fixed
+
+- Default RoR2 install path was missing a space
+- If `Humanized Package Names` is enabled, filter will now work properly
+
+## [1.0.1] 2019-07-03
+
+### Changed
+
 - Will now also install config files found in mod archive
 
 ## [1.0.0] 2019-05-22
@@ -153,7 +165,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial alpha release
 
-[unreleased]: https://github.com/scottbot95/RoR2ModManager/compare/v1.0.0...HEAD
+[unreleased]: https://github.com/scottbot95/RoR2ModManager/compare/v1.0.1...HEAD
+[unreleased]: https://github.com/scottbot95/RoR2ModManager/compare/v1.0.0...1.0.1
 [1.0.0]: https://github.com/scottbot95/RoR2ModManager/compare/v0.7.0...v1.0.0
 [0.7.0]: https://github.com/scottbot95/RoR2ModManager/compare/v0.6.4...v0.7.0
 [0.6.4]: https://github.com/scottbot95/RoR2ModManager/compare/v0.6.3...v0.6.4
