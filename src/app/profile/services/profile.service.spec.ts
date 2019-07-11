@@ -12,6 +12,7 @@ import {
   MockDialogService
 } from '../../core/services/mocks.spec';
 import { PackageService } from '../../main/services/package.service';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('ProfileService', () => {
   let electron: MockElectronService;
@@ -20,6 +21,7 @@ describe('ProfileService', () => {
 
   beforeEach(() =>
     TestBed.configureTestingModule({
+      imports: [RouterTestingModule],
       providers: [
         ProfileService,
         { provide: ElectronService, useClass: MockElectronService },
