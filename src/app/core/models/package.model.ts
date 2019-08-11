@@ -152,6 +152,9 @@ export const deserializablePackageList = (
           const depPkg = packages.find(
             p => p.owner === owner && p.name === name
           );
+
+          if (!depPkg) return;
+
           const depVer = depPkg.versions.find(v =>
             satisfies(v.version, `~${versionNumber}`)
           );
