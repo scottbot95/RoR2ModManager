@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix bug causing package list to load forever if a mod has a dependency that doesn't exist on the thunderstore
+
+## [1.0.2]
+
 ### Changed
 
 - Attempted to switch profiles will now drag you to the packages page from whatever page you were on

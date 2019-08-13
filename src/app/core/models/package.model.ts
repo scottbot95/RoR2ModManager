@@ -152,6 +152,10 @@ export const deserializablePackageList = (
           const depPkg = packages.find(
             p => p.owner === owner && p.name === name
           );
+          if (!depPkg) {
+            console.warn(`Could not find dependency ${depString} for package ${pkg.fullName}`);
+            return;
+          }
           const depVer = depPkg.versions.find(v =>
             satisfies(v.version, `~${versionNumber}`)
           );
