@@ -12,6 +12,7 @@ jobs:
     - name: Tests
       run: |
         yarn
+        yarn policies set-version v2
         yarn dlx ng lint
         yarn test:ci
         yarn e2e:ci
