@@ -90,7 +90,7 @@
     "@types/unzipper": "^0.9.2",
     "@types/winreg": "^1.2.30",
     "chai": "^4.2.0",
-    "codecov": "^3.3.0",
+    "codecov": "^3.6.5",
     "codelyzer": "4.5.0",
     "conventional-changelog-cli": "2.0.11",
     "core-js": "2.6.1",
