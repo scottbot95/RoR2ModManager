@@ -24,7 +24,7 @@
   "PAGES": {
     "CONFIG_EDITOR": {
       "BACK_BUTTON": "Back to list",
-      "RESET_BUTTON": "Rest",
+      "RESET_BUTTON": "Reset",
       "TITLE": "Editing",
       "TOOLTIPS": {
         "BACK_BUTTON": "Return to list of found config files",
