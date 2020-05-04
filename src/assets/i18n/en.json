@@ -105,7 +105,7 @@
     "PREFS": {
       "SECTION": {
         "PKG_LIST": {
-          "CHECK_FOR_UPDATE": "Chck for updates on start",
+          "CHECK_FOR_UPDATE": "Check for updates on start",
           "HUMANIZE": "Humanize Package Names",
           "PINNED": "Respect Pinned Flag",
           "TITLE": "Package List"
